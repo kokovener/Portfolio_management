@@ -1,0 +1,19 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-27T20:30:00Z"},
+  "title": "Portefeuille PLQ — Maquettes",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 1440, "h": 1040, "title": "1 · Vue Portefeuille (3 mois)", "expand": "fill"},
+    "Projet.dc.html": {"x": 1520, "y": 0, "w": 1440, "h": 1040, "title": "2 · Vue Projet — Expert G1", "expand": "fill"},
+    "Sprint.dc.html": {"x": 3040, "y": 0, "w": 1440, "h": 1040, "title": "3 · Vue Sprint — S20", "expand": "fill"}
+  },
+  "order": ["Main.dc.html", "Projet.dc.html", "Sprint.dc.html"],
+  "notes": {
+    "t1": {"x": 0, "y": -300, "text": "Portefeuille PLQ — interface HTML, trois niveaux : portefeuille → projet → sprint", "kind": "title1", "maxW": 4480}
+  },
+  "designSystems": [
+    {"title": "PLQ — Design System", "namespace": "plq", "artifact": "https://claude.ai/artifact/SW339XsDhEpz696xhonAC1", "version": "1793131084-2ea9", "copiedAt": "2026-10-27T20:30:00Z"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "remote": "https://github.com/kokovener/Portfolio_management.git",
+  "docs_dir": "C:\\Users\\fkowalczyk\\OneDrive - Les producteurs de lait du Québec\\Documents\\Claude\\Portefeuille_PLQ",
+  "staging_dir": "dist/backup",
+  "pseudonym_map": "config/backup_pseudonymes.json",
+  "exclude_code": [],
+  "exclude_docs": [],
+  "keep_people": [
+    "Franck Kowalczyk"
+  ]
+}

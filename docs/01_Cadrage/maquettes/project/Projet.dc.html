@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Vue Projet — Expert G1</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/plq/styles.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto+Slab:wght@300;400&display=swap">
+<style>
+body{margin:0;background:#f8f8fa;color:#2e2e36;font-family:Montserrat,system-ui,sans-serif;font-size:14px;line-height:1.4}
+a{color:#0070a8}a:hover{color:#005982}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2fa8c7}
+.card{background:#fff;border:1px solid #e4e4e9;border-radius:12px;box-shadow:0 1px 2px rgba(0,64,94,.06);padding:16px}
+.btn{padding:10px 16px;border-radius:999px;font-weight:600;font-size:13px;border:1px solid #0070a8;background:#0070a8;color:#fff;cursor:pointer;font-family:inherit}
+.btn.ghost{background:#fff;color:#0070a8}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:13px}
+.kv dt{color:#82828c;margin:0}.kv dd{margin:0;font-weight:500}
+.step{flex:1;padding:8px 6px;text-align:center;font-size:12px;font-weight:600;color:#82828c;border-bottom:3px solid #e4e4e9}
+.step.done{color:#00405e;border-color:#2fa8c7}.step.on{color:#fff;background:#00405e;border-color:#00405e;border-radius:6px 6px 0 0}
+.jal{display:grid;grid-template-columns:24px 1fr 110px 90px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #f1f1f4;font-size:13px}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid #cfcfd6;background:#fff;justify-self:center}
+.dot.done{background:#5b9e5b;border-color:#5b9e5b}.dot.risk{border-color:#d8932f;background:#fff}.dot.now{border-color:#0070a8;background:#0070a8}
+.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:#f1f1f4;color:#54545e;white-space:nowrap}
+.tag.ok{background:#eef1da;color:#7d8a3a}.tag.warn{background:#f6ecd6;color:#b8923f}.tag.bad{background:#fdecea;color:#c2473b}.tag.blue{background:#e4f2f8;color:#00405e}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#54545e}
+.field input,.field select,.field textarea{font-family:inherit;font-size:13px;padding:9px 10px;border:1px solid #cfcfd6;border-radius:8px;background:#fff;color:#2e2e36}
+.rag{width:10px;height:10px;border-radius:50%;display:inline-block}
+.g{background:#5b9e5b}.y{background:#d8932f}.r{background:#c2473b}
+.src{display:grid;grid-template-columns:1fr 120px 90px;gap:8px;align-items:center;font-size:12px;padding:8px 0;border-bottom:1px solid #f1f1f4}
+</style>
+</helmet>
+
+<div style="max-width:1400px;margin:0 auto;padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+
+  <div style="font-size:12px;color:#82828c"><a href="Main.dc.html" style="text-decoration:none">Portefeuille</a> › Hors programme › <span style="color:#2e2e36;font-weight:600">Expert G1 — graphe de connaissance</span></div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span class="eyebrow">Projet · voie flux · hors sprint</span>
+      <h1 style="margin:0;font-size:26px;font-weight:800;color:#00405e;letter-spacing:-.02em;display:flex;align-items:center;gap:10px"><span class="rag y"></span>Expert G1 — graphe de connaissance</h1>
+      <span style="font-size:12px;color:#82828c">Source : artefact « Expert G1 — Gantt S1 » (bloc feed) · lu lundi 27 oct. 07h00 EDT · santé calculée : jaune (2 items à risque, 3 attentes)</span>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="Sprint.dc.html" class="btn ghost" style="text-decoration:none">Voir le sprint S20</a>
+      <button class="btn ghost" type="button">Ouvrir le Gantt S1</button>
+      <button class="btn" type="button">Modifier</button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:2px">
+    <div class="step done">Idée</div>
+    <div class="step done">Qualifié</div>
+    <div class="step done">Planifié</div>
+    <div class="step on">Actif · pilote</div>
+    <div class="step">Terminé</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start">
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+        <div class="card">
+          <span class="eyebrow">Fiche</span>
+          <dl class="kv" style="margin:10px 0 0">
+            <dt>Responsable</dt><dd>Franck Kowalczyk</dd>
+            <dt>Type · parent</dt><dd>Projet · hors programme</dd>
+            <dt>Priorité</dt><dd>P1 — valeur 4 · urgence 4 · effort 2 · risque 3</dd>
+            <dt>Fenêtre</dt><dd>22 oct. → 20 nov. 2026 (bascule VM non datée)</dd>
+            <dt>Prochain jalon</dt><dd><b>Go / no-go pilote — 11 nov.</b> (dans 15 j)</dd>
+            <dt>Dépend de</dt><dd>DBA (DDL Entrepôt), Architecte (VM), validateurs Alain / Marc-André</dd>
+            <dt>Budget</dt><dd>Clé API plafond 500 $ · 0 h Jira (hors sprint)</dd>
+          </dl>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Charge demandée · 4 semaines</span>
+          <dl class="kv" style="margin:10px 0 0">
+            <dt>Franck</dt><dd>0,6 ETP · WIP 2 / 3 projets</dd>
+            <dt>Claude</dt><dd>continu · hors capacité humaine</dd>
+            <dt>Architecte</dt><dd>0,1 ETP · <span class="tag bad">WIP 3 / 2</span></dd>
+            <dt>Super-utilisateurs</dt><dd>2 × 0,5 j · semaine du 5 nov.</dd>
+            <dt>Absences</dt><dd>aucune détectée (Outlook)</dd>
+          </dl>
+          <p style="margin:10px 0 0;font-size:11px;color:#82828c">Saisi par Franck ; l'absence vient d'Outlook, le WIP du portefeuille.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="eyebrow">Jalons · 8 (dont 5 faits)</span>
+          <span style="font-size:12px;color:#82828c">progression 62 % = faits / total, pas un % déclaré</span>
+        </div>
+        <div style="margin-top:6px">
+          <div class="jal"><div class="dot done"></div><div>J1 — début de construction</div><span>22 oct.</span><span class="tag ok">fait</span></div>
+          <div class="jal"><div class="dot done"></div><div>Parseurs SQL · VB6 · C# · SSRS conformes</div><span>24 oct.</span><span class="tag ok">fait · 3 j d'avance</span></div>
+          <div class="jal"><div class="dot done"></div><div>1re question au graphe (engagement 4 nov.)</div><span>26 oct.</span><span class="tag ok">fait</span></div>
+          <div class="jal"><div class="dot done"></div><div>Décision résumés : B définitif</div><span>27 oct.</span><span class="tag ok">fait</span></div>
+          <div class="jal"><div class="dot done"></div><div>Aivosto : non-achat</div><span>27 oct.</span><span class="tag ok">fait</span></div>
+          <div class="jal"><div class="dot risk"></div><div>Validateurs confirmés (Alain, Marc-André)</div><span>4 nov.</span><span class="tag warn">à risque</span></div>
+          <div class="jal"><div class="dot now"></div><div>Pilote couche doc v0.3 + dossier de validation</div><span>31 oct. → 4 nov.</span><span class="tag blue">en cours</span></div>
+          <div class="jal" style="border-bottom:none"><div class="dot"></div><div><b>Go / no-go pilote + couche doc</b></div><span>11 nov.</span><span class="tag">à venir</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+        <div class="card">
+          <span class="eyebrow">Risques · 2</span>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <div><span class="tag bad">P4 · I3 = 12</span> <b>Validateurs non confirmés</b> avant le 4 nov. → go/no-go glisse. <span style="color:#82828c">Mitigation : relance Alain / Marc-André cette semaine.</span></div>
+            <div><span class="tag warn">P3 · I2 = 6</span> <b>Inventaire Access / Excel / extranets</b> incomplet au 30 oct. <span style="color:#82828c">Mitigation : périmètre réduit aux 5 écrans du pilote.</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Attentes d'un tiers · 3</span>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px;font-size:13px">
+            <div><span class="tag">DBA</span> DDL FPLQEntrepot + Mirroring — attendu le 28 oct.</div>
+            <div><span class="tag">Architecte</span> CollecteLait, S7120 encore déployés ? — 28 oct.</div>
+            <div><span class="tag">DBA</span> Rapports déployés, tables Web*, colonnes absentes — 30 oct.</div>
+          </div>
+          <p style="margin:10px 0 0;font-size:11px;color:#82828c">Chaque attente compte comme demande sur le rôle visé dans la vue portefeuille.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow">Décisions liées · 3</span>
+        <div style="margin-top:8px;font-size:13px;display:flex;flex-direction:column;gap:6px">
+          <div><span style="color:#82828c">27 oct.</span> — Résumés : B définitif, pas d'option A ciblée. <span style="color:#82828c">Franck</span></div>
+          <div><span style="color:#82828c">27 oct.</span> — Texte C# dans le graphe, sous réserve du dimensionnement. <span style="color:#82828c">Franck</span></div>
+          <div><span style="color:#82828c">22 oct.</span> — Bascule VM sortie du calendrier ; pilote sur le poste de Franck. <span style="color:#82828c">Franck</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="border-top:3px solid #0070a8">
+        <span class="eyebrow">Gérer · saisie rapide</span>
+        <form style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+          <div class="field"><label for="etape">Étape</label><select id="etape"><option>Actif</option><option>Planifié</option><option>Terminé</option></select></div>
+          <div class="field"><label for="sante">Santé</label><select id="sante"><option>Jaune — à surveiller</option><option>Vert</option><option>Rouge</option></select></div>
+          <div class="field"><label for="jalon">Prochain jalon</label><input id="jalon" type="text" value="Go / no-go pilote"></div>
+          <div class="field"><label for="date">Date</label><input id="date" type="date" value="2026-11-11"></div>
+          <div class="field"><label for="charge">Charge Franck (ETP)</label><input id="charge" type="number" value="0.6" step="0.1"></div>
+          <div class="field"><label for="note">Note du lundi</label><textarea id="note" rows="3">Validateurs à confirmer avant le 4 nov.</textarea></div>
+          <div style="display:flex;gap:8px"><button class="btn" type="button">Enregistrer</button><button class="btn ghost" type="button">+ Risque</button><button class="btn ghost" type="button">+ Jalon</button></div>
+        </form>
+        <p style="margin:10px 0 0;font-size:11px;color:#82828c">Écrit dans la base du portefeuille. Les champs venant d'une source (jalons du feed, absences, % Smartsheet) sont en lecture seule ici.</p>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow">Sources de ce projet</span>
+        <div style="margin-top:6px">
+          <div class="src"><span>Artefact Gantt S1 — feed</span><span class="tag ok">lu · 27 oct. 07h00</span><a href="#" style="font-size:12px">ouvrir</a></div>
+          <div class="src"><span>Outlook — absences</span><span class="tag ok">lu · 27 oct. 07h00</span><span></span></div>
+          <div class="src"><span>Jira</span><span class="tag">n/a · hors sprint</span><span></span></div>
+          <div class="src" style="border-bottom:none"><span>Base portefeuille — saisies</span><span class="tag blue">Franck · 24 oct.</span><span></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow">Historique · instantanés du lundi</span>
+        <div style="margin-top:8px;font-size:12px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between"><span>27 oct.</span><span>62 % · jaune · 2 risques</span></div>
+          <div style="display:flex;justify-content:space-between;color:#82828c"><span>20 oct.</span><span>— · projet créé</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

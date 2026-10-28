@@ -1,0 +1,217 @@
+{
+ "modele": "1",
+ "source": {
+  "systeme": "artefact",
+  "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+  "lu_le": "2026-10-27T20:30-04:00",
+  "par": "feed Expert G1 — Gantt S1"
+ },
+ "items": [
+  {
+   "id": "feed.expertg1",
+   "nom": "Expert G1 — graphe de connaissance",
+   "type": "projet",
+   "parent": null,
+   "voie": "flux",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "fenetre": {
+    "debut": "2026-10-22",
+    "fin": "2026-11-20"
+   },
+   "liens": [
+    {
+     "libelle": "Gantt S1",
+     "url": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg"
+    },
+    {
+     "libelle": "Architecture S1",
+     "url": "https://claude.ai/artifact/EHnLV4jNSTWnGK1MFv9VhM"
+    }
+   ],
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00",
+    "par": "feed Expert G1 — Gantt S1"
+   },
+   "updated_at": "2026-10-27T18:14-04:00"
+  }
+ ],
+ "jalons": [
+  {
+   "id": "feed.expertg1.j1",
+   "item": "feed.expertg1",
+   "nom": "J1 : début de construction",
+   "date": "2026-10-22",
+   "statut": "fait",
+   "fait_le": "2026-10-22",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.parseurs",
+   "item": "feed.expertg1",
+   "nom": "Parseurs SQL · VB6 · C# · SSRS conformes",
+   "date": "2026-10-24",
+   "date_initiale": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-24",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.q1",
+   "item": "feed.expertg1",
+   "nom": "1re question au graphe (engagement 4 nov.)",
+   "date": "2026-10-26",
+   "date_initiale": "2026-11-04",
+   "statut": "fait",
+   "fait_le": "2026-10-26",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.resumes",
+   "item": "feed.expertg1",
+   "nom": "Décision résumés : B définitif",
+   "date": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-27",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.aivosto",
+   "item": "feed.expertg1",
+   "nom": "Aivosto : non-achat",
+   "date": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-27",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.validateurs",
+   "item": "feed.expertg1",
+   "nom": "Validateurs confirmés (Alain, Marc-André)",
+   "date": "2026-11-04",
+   "date_initiale": "2026-11-04",
+   "statut": "a_risque",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.pilote-doc",
+   "item": "feed.expertg1",
+   "nom": "Pilote couche doc v0.3 + dossier de validation",
+   "date": "2026-11-04",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.go-nogo",
+   "item": "feed.expertg1",
+   "nom": "Go / no-go pilote + couche doc",
+   "date": "2026-11-11",
+   "date_initiale": "2026-11-11",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  }
+ ],
+ "risques": [
+  {
+   "id": "feed.expertg1.r1",
+   "item": "feed.expertg1",
+   "titre": "Validateurs non confirmés avant le 4 nov. → go/no-go glisse",
+   "probabilite": 4,
+   "impact": 3,
+   "mitigation": "Relance Alain / Marc-André cette semaine",
+   "ouvert": true,
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.r2",
+   "item": "feed.expertg1",
+   "titre": "Inventaire Access / Excel / extranets incomplet au 30 oct.",
+   "probabilite": 3,
+   "impact": 2,
+   "mitigation": "Périmètre réduit aux 5 écrans du pilote",
+   "ouvert": true,
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  }
+ ],
+ "attentes": [
+  {
+   "id": "feed.expertg1.a1",
+   "item": "feed.expertg1",
+   "tiers": "DBA",
+   "objet": "DDL FPLQEntrepot + Mirroring.TBLMAPPINGS",
+   "attendue_le": "2026-10-28",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.a2",
+   "item": "feed.expertg1",
+   "tiers": "Architecte",
+   "objet": "CollecteLait, S7120 encore déployés ?",
+   "attendue_le": "2026-10-28",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.a3",
+   "item": "feed.expertg1",
+   "tiers": "DBA",
+   "objet": "Rapports déployés, tables Web*, colonnes absentes",
+   "attendue_le": "2026-10-30",
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T20:30-04:00"
+   }
+  }
+ ]
+}

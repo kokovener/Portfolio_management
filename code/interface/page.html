@@ -1,0 +1,699 @@
+<title>Portefeuille PLQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f8f8fa;--card:#fff;--ink:#2e2e36;--ink2:#54545e;--mute:#82828c;--line:#e4e4e9;--line2:#f1f1f4;
+  --navy:#00405e;--blue:#0070a8;--blue-h:#005982;--cyan:#2fa8c7;--mist:#e4f2f8;--mist-b:#c2e4ef;
+  --gold:#ddb76b;--gold-t:#f6ecd6;--gold-ink:#7d6a35;--green:#aeba5c;--green-t:#eef1da;--green-ink:#6b7730;
+  --ok:#5b9e5b;--warn:#d8932f;--bad:#c2473b;--bad-t:#fdecea;--today:#c2410c;--idle:#cfcfd6;
+  --on-tile:#fff;--on-terroir:#00405e;--shadow:0 1px 2px rgba(0,64,94,.06);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#2c343d;--line2:#232a32;
+  --navy:#9fd3ea;--blue:#3d9fd1;--blue-h:#6bb8e0;--cyan:#5cc2dd;--mist:#1d3442;--mist-b:#2a4b5e;
+  --gold:#c9a55c;--gold-t:#3a3221;--gold-ink:#e6cf98;--green:#97a34c;--green-t:#2b3120;--green-ink:#cdd79a;
+  --ok:#6db36d;--warn:#e0a24a;--bad:#e06a5e;--bad-t:#3b2220;--today:#ff8a4c;--idle:#56606b;
+  --on-tile:#fff;--on-terroir:#10202a;--shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#2c343d;--line2:#232a32;
+  --navy:#9fd3ea;--blue:#3d9fd1;--blue-h:#6bb8e0;--cyan:#5cc2dd;--mist:#1d3442;--mist-b:#2a4b5e;
+  --gold:#c9a55c;--gold-t:#3a3221;--gold-ink:#e6cf98;--green:#97a34c;--green-t:#2b3120;--green-ink:#cdd79a;
+  --ok:#6db36d;--warn:#e0a24a;--bad:#e06a5e;--bad-t:#3b2220;--today:#ff8a4c;--idle:#56606b;
+  --on-tile:#fff;--on-terroir:#10202a;--shadow:none;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:14px;line-height:1.4}
+a{color:var(--blue)}a:hover{color:var(--blue-h)}
+button,input,select,textarea{font-family:inherit}
+.wrap{max-width:1400px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+h1{margin:0;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.muted{color:var(--mute);font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;min-width:0}
+.card.top{border-top:3px solid var(--blue)}.card.alert{border-top:3px solid var(--warn)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.between{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tab{padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px;color:var(--ink2);background:transparent;border:1px solid transparent;cursor:pointer}
+.tab.on{background:var(--navy);color:var(--card)}
+.btn{padding:9px 15px;border-radius:999px;font-weight:600;font-size:13px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{filter:brightness(.92);color:#fff}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--blue)}.btn.ghost:hover{background:var(--mist)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn:focus-visible,.tab:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.chip{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--mist);color:var(--navy);white-space:nowrap}
+.tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--line2);color:var(--ink2);white-space:nowrap;display:inline-block}
+.tag.ok{background:var(--green-t);color:var(--green-ink)}.tag.warn{background:var(--gold-t);color:var(--gold-ink)}.tag.bad{background:var(--bad-t);color:var(--bad)}.tag.blue{background:var(--mist);color:var(--navy)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{border-radius:8px;padding:16px 18px;color:var(--on-tile);display:flex;flex-direction:column;gap:4px;min-height:92px;justify-content:flex-end}
+.tile b{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em}.tile span{font-size:12px;font-weight:500}
+.t1{background:#0070a8}.t2{background:#1f8fb0}.t3{background:var(--gold);color:var(--on-terroir)}.t4{background:var(--green);color:var(--on-terroir)}
+.main2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.rag{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.rag.vert{background:var(--ok)}.rag.jaune{background:var(--warn)}.rag.rouge{background:var(--bad)}.rag.idle{background:var(--idle)}
+/* timeline */
+.tl{min-width:920px}
+.tlr{display:grid;grid-template-columns:270px minmax(0,1fr);align-items:stretch;border-bottom:1px solid var(--line2)}
+.lab{padding:5px 10px;min-height:44px;display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap}
+.lab .tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.lab a,.lab .nm{font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis}
+.lab small{color:var(--mute);font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.trk{position:relative;min-height:40px;background-image:repeating-linear-gradient(to right,var(--line2) 0 1px,transparent 1px calc(100%/13))}
+.grp{padding:12px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);border-bottom:1px solid var(--line)}
+.wk{display:flex;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}.wk span{flex:1;text-align:center;padding:6px 0}
+.wk span.now{color:var(--today);font-weight:700}
+.sp{position:absolute;top:6px;bottom:6px;font-size:11px;font-weight:600;color:var(--navy);background:var(--mist);border:1px solid var(--mist-b);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;padding:0 4px}
+.sp.conge{background:var(--gold-t);border-color:var(--gold);color:var(--gold-ink)}
+.bar{position:absolute;top:11px;height:18px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+.b-dev{background:#0070a8}.b-ana{background:#1f8fb0}.b-flow{background:var(--green);color:var(--on-terroir)}
+.b-run{background:repeating-linear-gradient(135deg,var(--idle) 0 4px,transparent 4px 8px);color:var(--ink2);border:1px solid var(--idle)}
+.b-idea{background:transparent;border:1px dashed var(--mute);color:var(--ink2)}.b-open{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent)}
+.ms{position:absolute;top:13px;width:14px;height:14px;margin-left:-7px;transform:rotate(45deg);background:var(--navy);border:2px solid var(--card);cursor:default}
+.ms.warn{background:var(--warn)}.ms.bad{background:var(--bad)}.ms.done{background:var(--ok)}
+.now-line{position:absolute;top:0;bottom:0;width:2px;background:var(--today);opacity:.75;pointer-events:none}
+.legend{font-size:12px;color:var(--mute)}
+.tg{width:18px;height:18px;flex:none;border:none;background:transparent;color:var(--mute);cursor:pointer;padding:0;font-size:11px;line-height:18px;border-radius:4px}
+.tg:hover{background:var(--line2);color:var(--navy)}.tg.sp0{cursor:default;visibility:hidden}
+.grp .tg{margin-right:4px}.grp{display:flex;align-items:center;cursor:pointer}
+.lnk-off{opacity:.6;cursor:not-allowed}
+.mv{margin-left:auto;display:none;flex:none}.lab:hover .mv,.lab:focus-within .mv{display:flex}
+.jbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line2);margin:6px 0 4px}.jbar span{display:block;height:100%}
+.ptab{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.ptab th{text-align:left;color:var(--mute);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
+.ptab td{padding:5px 6px;border-bottom:1px solid var(--line2)}.ptab td.n{text-align:right;font-variant-numeric:tabular-nums}.ptab tr.hors td{color:var(--mute);font-style:italic}
+/* lists */
+.lrow{display:grid;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px}
+.lrow:last-child{border-bottom:none}
+.role{grid-template-columns:96px 1fr 104px;font-size:12px}
+.track{height:10px;background:var(--line2);border-radius:999px;overflow:hidden}.fill{height:100%;border-radius:999px;background:var(--blue)}
+.fill.warn{background:var(--warn)}.fill.bad{background:var(--bad)}
+.risk{grid-template-columns:32px 1fr;font-size:12px;align-items:start}
+.score{font-weight:700;color:#fff;border-radius:4px;text-align:center;padding:2px 0;font-size:11px}
+.s-bad{background:var(--bad)}.s-warn{background:var(--warn)}.s-low{background:var(--gold);color:var(--on-terroir)}
+ul.al{margin:8px 0 0;padding-left:18px;font-size:12px;display:flex;flex-direction:column;gap:6px}
+.funnel{display:flex;gap:6px;flex-wrap:wrap}.stage{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stage b{font-size:22px;font-weight:800;color:var(--navy)}.stage span{font-size:12px;color:var(--ink2)}.stage.on{border-color:var(--blue)}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:13px;margin:10px 0 0}.kv dt{color:var(--mute)}.kv dd{margin:0;font-weight:500;min-width:0}
+.steps{display:flex;gap:2px}.step{flex:1;padding:8px 6px;text-align:center;font-size:12px;font-weight:600;color:var(--mute);border-bottom:3px solid var(--line)}
+.step.done{color:var(--navy);border-color:var(--cyan)}.step.on{color:var(--card);background:var(--navy);border-color:var(--navy);border-radius:6px 6px 0 0}
+.jal{grid-template-columns:20px 1fr auto auto}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--idle);background:var(--card);justify-self:center}
+.dot.fait{background:var(--ok);border-color:var(--ok)}.dot.a_risque,.dot.depasse{border-color:var(--warn)}.dot.en_cours{background:var(--blue);border-color:var(--blue)}
+.prov{font-size:10px;color:var(--mute);font-weight:500}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink2);min-width:0}
+.field input,.field select,.field textarea{font-size:13px;padding:8px 10px;border:1px solid var(--idle);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.f3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+form.g{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.ro{font-size:12px;display:grid;grid-template-columns:110px 1fr;gap:4px 10px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.ro dt{color:var(--mute)}.ro dd{margin:0;overflow-wrap:anywhere;min-width:0}
+.kv dd,.muted,.prov{overflow-wrap:anywhere}
+.gtabs{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.gtabs button{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer;font-weight:600}
+.gtabs button.on{background:var(--mist);border-color:var(--mist-b);color:var(--navy)}
+.av{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--mist);color:var(--navy);font-size:10px;font-weight:700;align-items:center;justify-content:center;margin-right:2px}
+.slot{padding:4px 8px;border-radius:6px;font-size:11px;font-weight:600;background:var(--mist);color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:var(--card);padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:10;max-width:calc(100% - 32px)}
+.toast.err{background:var(--bad);color:#fff}
+.empty{font-size:12px;color:var(--mute);padding:8px 0}
+.crumb{font-size:12px;color:var(--mute)}.crumb a{text-decoration:none}
+.err-list{margin:6px 0 0;padding-left:18px;font-size:12px;color:var(--bad)}
+details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-wrap;margin:6px 0 0}
+@media (max-width:1100px){.main2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.f3{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}.kv{grid-template-columns:100px 1fr}}
+</style>
+
+<div id="app" class="wrap"><p class="muted">Chargement du portefeuille…</p></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>/*__SCHEMA__*/</script>
+<script>/*__CORE__*/</script>
+<script>
+/* Portfolio PLQ — interface (model v2: Jira epics, ranks, Jira data, support from STG21 links).
+ * Reads the artifact `db` (one collection per model entity, doc_id = id), computes health/alerts live
+ * with PortfolioCore, and writes only portfolio-owned fields (model v2 §3) from the "Gérer" panel.
+ * Gérer is hidden when user.canEdit() is false; db rules restrict writes to the owner (D20).
+ */
+(function () {
+  'use strict';
+  const C = window.PortfolioCore;
+  const SCHEMA = window.PORTFOLIO_SCHEMA;
+  const ROLE_FR = { pm: 'PM', architecte: 'Architecte', ba: 'BA', af: 'AF', ux: 'UX', dev: 'Dev', qa: 'QA', coordo: 'Coordo', expert: 'Expert', claude: 'Claude', super_utilisateur: 'Super-utilisateurs', direction: 'Direction', cdp: 'CDP' };
+  const ETAPES = [['idee', 'Idée'], ['qualifie', 'Qualifié'], ['planifie', 'Planifié'], ['actif', 'Actif'], ['termine', 'Terminé']];
+  const STATUT_J = { fait: ['fait', 'ok'], en_cours: ['en cours', 'blue'], a_venir: ['à venir', ''], a_risque: ['à risque', 'warn'], depasse: ['dépassé', 'bad'] };
+  const STATUT_MEP = { planifiee: ['planifiée', ''], prete: ['prête', 'ok'], completee: ['complétée', 'ok'], annulee: ['annulée', 'bad'] };
+  const JIRA_URL = 'https://jira-plq.atlassian.net/browse/';
+  const SYS_FR = { smartsheet: 'Smartsheet', jira: 'Jira', jsm: 'JSM', artefact: 'Artefact', outlook: 'Outlook', miro: 'Miro', ledger: 'Ledger', saisie: 'Saisie', calcul: 'Calcul' };
+
+  const S = {
+    base: C.emptyBase(), ix: C.index(C.emptyBase()), today: C.todayIso(), view: 'portefeuille', itemId: null, creating: false,
+    sprintId: null, canEdit: false, db: null, status: 'chargement', diag: [], filters: { voie: 'toutes', etape: 'ap' },
+    gerer: { tab: 'item', id: null }, loadedAt: null, errors: [], toggled: loadToggled()
+  };
+
+  // ---------- accordion state (feedback R07): per-viewer convenience, browser storage may be unavailable ----------
+  function loadToggled() { try { return new Set(JSON.parse(localStorage.getItem('plq.toggled') || '[]')); } catch (e) { return new Set(); } }
+  function saveToggled() { try { localStorage.setItem('plq.toggled', JSON.stringify([...S.toggled])); } catch (e) { /* ignore */ } }
+  // Groups (programmes) are open by default; items with children are closed by default.
+  function isOpen(id) { return id.startsWith('grp:') ? !S.toggled.has(id) : S.toggled.has(id); }
+
+  // ---------- utils ----------
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const $ = (sel) => document.querySelector(sel);
+  const itemNom = (id) => (S.ix.items[id] || { nom: id || '—' }).nom;
+  const initials = (n) => String(n || '?').split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  const prov = (src) => src ? `${SYS_FR[src.systeme] || src.systeme}${src.ref ? ' · ' + src.ref : ''} · lu ${C.fmtTs(src.lu_le)}${src.par ? ' · ' + src.par : ''}` : '—';
+  const isSaisie = (r) => r && r.source && r.source.systeme === 'saisie';
+  function toast(msg, err) { const t = $('#toast'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = msg; clearTimeout(toast.h); toast.h = setTimeout(() => { t.className = ''; t.textContent = ''; }, err ? 7000 : 3500); }
+  function santeOf(item) { return C.sante(S.base, item, S.today); }
+  function ragCls(item) { return ['idee', 'qualifie'].includes(item.etape) ? 'idle' : santeOf(item).couleur; }
+
+  // ---------- db access (shape-tolerant: the snapshot API is read defensively) ----------
+  function unwrap(d) {
+    let v = typeof d.data === 'function' ? d.data() : (d.data !== undefined && typeof d.data === 'object' ? d.data : d);
+    if (v && typeof v === 'object' && !v.id && d.id) v = Object.assign({}, v, { id: d.id });
+    return v;
+  }
+  async function readCollection(name) {
+    const col = S.db.collection(name);
+    let snap;
+    if (typeof col.get === 'function') snap = await col.get();
+    else if (typeof col.onSnapshot === 'function') snap = await new Promise((res, rej) => { const u = col.onSnapshot((s) => { try { u && u(); } catch (e) { /* ignore */ } res(s); }, rej); });
+    else throw new Error('collection API inconnue');
+    const arr = Array.isArray(snap) ? snap : (snap && (snap.docs || snap.items || snap.documents)) || [];
+    return arr.map(unwrap).filter((r) => r && r.id);
+  }
+  async function load() {
+    if (!S.db) return;
+    const t0 = performance.now(); const base = C.emptyBase(); const diag = [];
+    await Promise.all(C.COLLECTIONS.map(async (c) => {
+      try { base[c] = await readCollection(c); diag.push(`${c}: ${base[c].length}`); } catch (e) { diag.push(`${c}: ERREUR ${e && (e.code || e.message)}`); }
+    }));
+    S.base = base; S.ix = C.index(base); S.loadedAt = C.nowTs(); S.status = 'ok';
+    S.diag = [`lu en ${Math.round(performance.now() - t0)} ms · canEdit=${S.canEdit}`].concat(diag.sort());
+    if (!S.sprintId || !S.ix.sprints[S.sprintId]) { const a = C.sprintAt(base, S.today) || base.sprints[0]; S.sprintId = a ? a.id : null; }
+    render();
+  }
+  async function write(col, rec) {
+    const errs = C.validate(SCHEMA, C.DEF_OF[col], rec);
+    if (rec.sante) errs.push('sante : calculée, jamais saisie (D8)');
+    if (errs.length) { S.errors = errs; render(); toast('Refusé par le modèle : ' + errs[0], true); return false; }
+    try {
+      await S.db.doc(`${col}/${rec.id}`).set(rec);
+    } catch (e) { toast(`Écriture refusée (${e && (e.code || e.message)})`, true); return false; }
+    S.errors = []; toast(`Enregistré dans la base · ${col}/${rec.id}`);
+    await load(); return true;
+  }
+
+  // R09: move an item among its displayed siblings; ranks 1..n are written on the siblings whose rank changes.
+  async function move(id, d) {
+    const it = S.ix.items[id]; if (!it || !S.canEdit) return;
+    const sib = S.base.items.filter((i) => (i.parent || null) === (it.parent || null) && i.type !== 'programme' && !['idee', 'qualifie'].includes(i.etape) && (it.parent || i.type !== 'programme')).sort(C.bySiblingOrder);
+    const k = sib.findIndex((i) => i.id === id); const j = k + d; if (k < 0 || j < 0 || j >= sib.length) return;
+    [sib[k], sib[j]] = [sib[j], sib[k]];
+    const changed = sib.map((i, n) => Object.assign({}, i, { rang: n + 1 })).filter((i, n) => S.ix.items[i.id].rang !== n + 1);
+    for (const rec of changed) {
+      delete rec.sante; const errs = C.validate(SCHEMA, 'item', rec);
+      if (errs.length) { toast('Refusé par le modèle : ' + errs[0], true); return; }
+    }
+    try { for (const rec of changed) await S.db.doc(`items/${rec.id}`).set(rec); } catch (e) { toast(`Écriture refusée (${e && (e.code || e.message)})`, true); return; }
+    toast(`Ordre enregistré · ${changed.length} item${changed.length > 1 ? 's' : ''}`); await load();
+  }
+
+  // ---------- header ----------
+  function header() {
+    const inst = S.base.instantanes.slice().sort((a, b) => b.pris_le.localeCompare(a.pris_le))[0];
+    const fresh = inst ? `Instantané ${C.fmtTs(inst.pris_le)} · ${inst.sources_ok ?? '?'}/${inst.sources_total ?? '?'} sources OK` : '';
+    const nav = [['portefeuille', 'Portefeuille'], ['projet', 'Projet'], ['sprint', 'Sprint']]
+      .map(([k, l]) => `<button class="tab${S.view === k ? ' on' : ''}" data-act="view" data-v="${k}" type="button">${l}</button>`).join('');
+    return `<div class="between" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:2px"><span class="eyebrow">Les Producteurs de lait du Québec · TI</span>
+      <h1>Portefeuille PLQ</h1></div>
+      <div class="tabs" role="tablist">${nav}</div>
+      <div class="row"><span class="muted">${esc(fresh)}${fresh ? ' · ' : ''}base lue ${esc(C.fmtTs(S.loadedAt))}</span>
+      ${S.canEdit ? '<button class="btn" type="button" data-act="new-item">+ Ajouter un projet</button>' : '<span class="tag">lecture seule</span>'}</div></div>`;
+  }
+
+  // ---------- portfolio view ----------
+  const H_DAYS = 91;
+  function hStart() { return C.mondayOf(S.today); }
+  function pos(date) { return Math.max(0, Math.min(100, 100 * C.daysBetween(hStart(), date) / H_DAYS)); }
+  function visible(i) {
+    const f = S.filters;
+    if (f.voie !== 'toutes' && i.voie !== f.voie) return false;
+    if (f.etape === 'ap') return ['actif', 'planifie', 'idee', 'qualifie'].includes(i.etape);
+    if (f.etape === 'nt') return i.etape !== 'termine';
+    return true;
+  }
+  function msHtml(list) {
+    const groups = {};
+    list.forEach((j) => { const k = j.date; (groups[k] = groups[k] || []).push(j); });
+    return Object.keys(groups).filter((k) => k >= hStart() && k <= C.addDays(hStart(), H_DAYS)).map((k) => {
+      const js = groups[k];
+      const bad = js.some((j) => j.statut !== 'fait' && (j.statut === 'depasse' || j.date < S.today));
+      const warn = js.some((j) => j.statut === 'a_risque' || C.recul(j) >= C.SEUILS.recul_jo);
+      const done = js.every((j) => j.statut === 'fait');
+      const title = js.map((j) => `${j.nom} · ${C.fmtDate(j.date)} · ${(STATUT_J[j.statut] || [j.statut])[0]}${C.recul(j) ? ' · +' + C.recul(j) + ' j ouvrés' : ''}`).join('\n');
+      return `<div class="ms${bad ? ' bad' : warn ? ' warn' : done ? ' done' : ''}" style="left:${pos(k)}%" title="${esc(title)}"></div>`;
+    }).join('');
+  }
+  function barHtml(i) {
+    const h0 = hStart(); const h1 = C.addDays(h0, H_DAYS);
+    const cls = ['idee', 'qualifie'].includes(i.etape) ? 'b-idea' : i.type === 'run' ? 'b-run' : i.voie === 'flux' ? 'b-flow' : (i.phase_source && /dev/i.test(i.phase_source)) ? 'b-dev' : 'b-ana';
+    let a, b, open = false, label;
+    if (i.fenetre && i.fenetre.debut) { a = i.fenetre.debut; b = i.fenetre.fin || h1; open = !i.fenetre.fin; }
+    else if (i.type === 'run') { a = h0; b = h1; open = true; }
+    else return '';
+    if (b < h0 || a > h1) return '';
+    if (i.type === 'run') { const n = (i.support || []).reduce((k, x) => k + x.ouverts, 0); label = i.support ? `support · ${n} ouverts` : 'run · MEP au fil de l\'eau'; }
+    else label = i.contenu_sprint || i.phase_source || (i.etape === 'idee' ? 'fenêtre possible' : '');
+    const l = pos(a < h0 ? h0 : a); const r = pos(b > h1 ? h1 : b);
+    return `<div class="bar ${cls}${open ? ' b-open' : ''}" style="left:${l}%;width:${Math.max(1.2, r - l)}%" title="${esc(i.nom + ' · ' + C.fmtDate(a) + ' → ' + (i.fenetre && i.fenetre.fin === null ? 'non daté' : C.fmtDate(b)))}">${esc(label)}</div>`;
+  }
+  function itemRow(i, depth, nKids) {
+    const p = C.pct(S.base, i);
+    const deps = S.base.dependances.filter((d) => C.refItem(S.ix, d.vers) === i.id);
+    const age = i.updated_at ? C.daysBetween(i.updated_at.slice(0, 10), S.today) : null;
+    const bits = [i.phase_source, p ? `${C.fmtNum(p.valeur)} %` : null, deps.length ? `⛓ ${deps[0].type} ${C.refNom(S.base, S.ix, deps[0].de)}` : null,
+      age !== null && age > 7 ? `MAJ il y a ${age} j` : null, i.promu ? 'promu' : null].filter(Boolean).join(' · ');
+    const nowL = pos(S.today);
+    return `<div class="tlr"><div class="lab" style="padding-left:${6 + 14 * depth}px">${nKids ? `<button class="tg" type="button" data-act="toggle" data-id="${esc(i.id)}" aria-expanded="${isOpen(i.id)}" title="${isOpen(i.id) ? 'Replier' : 'Déplier'} (${nKids} enfant${nKids > 1 ? 's' : ''})">${isOpen(i.id) ? '▾' : '▸'}</button>` : '<span class="tg sp0"></span>'}<span class="rag ${ragCls(i)}" title="${esc(santeOf(i).motifs.join('\n') || 'vert')}"></span>
+      <span class="tx"><a href="#" data-act="open-item" data-id="${esc(i.id)}" title="${esc(i.nom)}">${esc(i.nom)}</a><small title="${esc(bits)}">${esc(bits)}</small></span>${S.canEdit && i.type !== 'programme' ? `<span class="mv"><button class="tg" type="button" data-act="move" data-id="${esc(i.id)}" data-d="-1" title="Monter dans la section">▲</button><button class="tg" type="button" data-act="move" data-id="${esc(i.id)}" data-d="1" title="Descendre dans la section">▼</button></span>` : ''}</div>
+      <div class="trk">${barHtml(i)}${msHtml(C.jalonsOf(S.base, i.id))}<div class="now-line" style="left:${nowL}%"></div></div></div>`;
+  }
+  function timeline() {
+    const h0 = hStart(); const items = S.base.items.filter(visible);
+    const weeks = []; for (let k = 0; k < 13; k++) weeks.push(C.addDays(h0, 7 * k));
+    const spr = S.base.sprints.filter((s) => s.fin >= h0 && s.debut <= C.addDays(h0, H_DAYS)).map((s) =>
+      `<div class="sp" style="left:${pos(s.debut)}%;width:${pos(C.addDays(s.fin, 1)) - pos(s.debut)}%" title="${esc(s.nom)}">${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)}–${C.fmtDate(s.fin)}</div>`).join('') +
+      S.base.absences.filter((a) => a.personne === null && a.fin >= h0).map((a) =>
+        `<div class="sp conge" style="left:${pos(a.debut)}%;width:${pos(C.addDays(a.fin, 1)) - pos(a.debut)}%">${esc(a.libelle || 'congés')}</div>`).join('');
+    let html = `<div class="tlr"><div class="lab"><small>Sprint GOU21</small></div><div class="trk" style="background:none">${spr || '<span class="muted" style="padding:10px;display:block">aucun sprint lu</span>'}</div></div>
+      <div class="tlr"><div class="lab"><small>Semaine du</small></div><div class="wk">${weeks.map((w) => `<span class="${w === C.mondayOf(S.today) ? 'now' : ''}">${C.fmtDate(w)}</span>`).join('')}</div></div>`;
+    const kids = (pid) => items.filter((i) => i.parent === pid && !['idee', 'qualifie'].includes(i.etape)).sort(C.bySiblingOrder);
+    const walk = (pid, depth) => kids(pid).map((i) => { const k = kids(i.id).length; return itemRow(i, depth, k) + (k && isOpen(i.id) ? walk(i.id, depth + 1) : ''); }).join('');
+    const grp = (key, label) => `<div class="grp" data-act="toggle" data-id="grp:${esc(key)}" role="button" aria-expanded="${isOpen('grp:' + key)}"><span class="tg">${isOpen('grp:' + key) ? '▾' : '▸'}</span>${label}</div>`;
+    S.base.items.filter((i) => i.type === 'programme').forEach((pg) => {
+      const n = items.filter((i) => isDesc(i, pg.id)).length;
+      html += grp(pg.id, `Programme ${esc(pg.nom.replace(/^Programme /, ''))} — voie ${esc(pg.voie)} · ${n} items`) + (isOpen('grp:' + pg.id) ? (visible(pg) ? itemRow(pg, 0, 0) : '') + walk(pg.id, 1) : '');
+    });
+    const hors = items.filter((i) => !i.parent && i.type !== 'programme' && !['idee', 'qualifie'].includes(i.etape)).sort(C.bySiblingOrder);
+    if (hors.length) html += grp('hors', 'Hors programme') + (isOpen('grp:hors') ? hors.map((i) => { const k = kids(i.id).length; return itemRow(i, 0, k) + (k && isOpen(i.id) ? walk(i.id, 1) : ''); }).join('') : '');
+    const cand = items.filter((i) => ['idee', 'qualifie'].includes(i.etape));
+    if (cand.length) html += grp('cand', 'Candidats — à qualifier') + (isOpen('grp:cand') ? cand.map((i) => itemRow(i, 0, 0)).join('') : '');
+    const meps = S.base.meps.filter((m) => m.date >= h0);
+    html += `<div class="grp">MEP planifiées · versions Jira · ledger</div><div class="tlr"><div class="lab"><span class="tx"><span class="nm">MEP</span><small>${S.base.meps.length} lues · ${meps.filter((m) => m.date >= S.today).length} à venir</small></span></div>
+      <div class="trk">${meps.map((m) => `<div class="ms${m.statut === 'planifiee' && m.date >= S.today && m.date <= C.addDays(S.today, 7) ? ' warn' : ['prete', 'completee'].includes(m.statut) ? ' done' : ''}" style="left:${pos(m.date)}%" title="${esc(`${m.systeme} · ${m.libelle || ''} · ${C.fmtDate(m.date)} · ${m.ticket || 'sans ticket'} · ${STATUT_MEP[m.statut][0]}`)}"></div>`).join('')}
+      <div class="now-line" style="left:${pos(S.today)}%"></div></div></div>`;
+    return `<div class="card" style="padding:4px 0 10px;overflow-x:auto"><div class="tl">${html}</div></div>`;
+  }
+  function isDesc(i, pid) { let p = i.parent; let k = 0; while (p && k++ < 10) { if (p === pid) return true; p = (S.ix.items[p] || {}).parent; } return false; }
+  function viewPortefeuille() {
+    const al = C.alertes(S.base, S.today);
+    const actifs = S.base.items.filter((i) => i.type === 'projet' && i.etape === 'actif').length;
+    const progs = S.base.items.filter((i) => i.type === 'programme').length;
+    const j30 = S.base.jalons.filter((j) => j.statut !== 'fait' && j.date >= S.today && j.date <= C.addDays(S.today, 30)).length;
+    const kinds = {}; al.forEach((a) => { kinds[a.kind] = (kinds[a.kind] || 0) + 1; });
+    const KFR = { fraicheur: 'fraîcheur', phase: 'phase', wip: 'WIP', jalon: 'jalon', dependance: 'dépendance', mep: 'MEP' };
+    const wip = C.wipParPersonne(S.base, S.today)[0];
+    const risques = S.base.risques.filter((r) => r.ouvert !== false).sort((a, b) => C.risqueScore(b) - C.risqueScore(a)).slice(0, 5);
+    const runs = S.base.items.filter((i) => i.type === 'run' && i.support);
+    const supp = runs.flatMap((i) => i.support.map((s) => Object.assign({ src: i.source }, s))).sort((a, b) => b.ouverts - a.ouverts);
+    const cnt = {}; ETAPES.forEach(([k]) => { cnt[k] = 0; });
+    S.base.items.filter((i) => i.type !== 'programme').forEach((i) => { if (i.etape !== 'termine' || (i.updated_at && C.daysBetween(i.updated_at.slice(0, 10), S.today) <= 90)) cnt[i.etape]++; });
+    return `
+    <div class="tiles">
+      <div class="tile t1"><b>${actifs}</b><span>projets actifs · ${progs} programme${progs > 1 ? 's' : ''}</span></div>
+      <div class="tile t2"><b>${j30}</b><span>jalons dans les 30 prochains jours</span></div>
+      <div class="tile t3"><b>${al.length}</b><span>alertes${al.length ? ' : ' + Object.keys(kinds).map((k) => `${kinds[k]} ${KFR[k]}`).join(' · ') : ''}</span></div>
+      <div class="tile t4"><b>${wip ? `${wip.wip} / ${wip.limite}` : '—'}</b><span>${wip ? `${esc(wip.nom.split(' ')[0])} (${ROLE_FR[wip.role] || wip.role}) : WIP le plus chargé` : 'aucun WIP saisi cette semaine'}</span></div>
+    </div>
+    <div class="row">
+      <label class="chip">Voie <select data-act="filter" data-f="voie" aria-label="Voie"><option value="toutes">toutes</option><option value="scrum"${S.filters.voie === 'scrum' ? ' selected' : ''}>Scrum</option><option value="flux"${S.filters.voie === 'flux' ? ' selected' : ''}>Flux</option></select></label>
+      <label class="chip">Étape <select data-act="filter" data-f="etape" aria-label="Étape"><option value="ap">Actif + Planifié + candidats</option><option value="nt"${S.filters.etape === 'nt' ? ' selected' : ''}>Tout sauf Terminé</option><option value="all"${S.filters.etape === 'all' ? ' selected' : ''}>Toutes</option></select></label>
+      <span class="chip">Horizon : 13 semaines</span>
+      <button class="btn ghost sm" type="button" data-act="expand-all">Tout déplier</button><button class="btn ghost sm" type="button" data-act="collapse-all">Tout replier</button>
+      <span class="legend" style="margin-left:auto">Barre = fenêtre · losange = jalon · hachuré = run · ligne orange = aujourd'hui · pastille = santé calculée (D8)</span>
+    </div>
+    <div class="main2">
+      ${timeline()}
+      <div class="side">
+        <div class="card"><span class="eyebrow">Top 5 risques · portefeuille</span>
+          ${risques.length ? risques.map((r) => { const s = C.risqueScore(r); return `<div class="lrow risk"><div class="score ${s >= 15 ? 's-bad' : s >= 10 ? 's-warn' : 's-low'}">${s}</div><div>${esc(r.titre)}<br><small class="muted">${esc(r.item ? itemNom(r.item) : 'Portefeuille')} · P${r.probabilite} · I${r.impact}</small></div></div>`; }).join('') : '<p class="empty">Aucun risque ouvert.</p>'}</div>
+        <div class="card alert"><span class="eyebrow" style="color:var(--warn)">Alertes · calculées à l'affichage</span>
+          ${al.length ? `<ul class="al">${al.map((a) => `<li><b>${KFR[a.kind]}</b> — ${esc(a.texte)}</li>`).join('')}</ul>` : '<p class="empty">Aucune alerte.</p>'}</div>
+        <div class="card"><span class="eyebrow">Support extranets · tickets GOU21 liés à STG21</span>
+          ${supp.length ? `<div style="display:grid;grid-template-columns:1fr 36px 56px;gap:4px 8px;font-size:12px;margin-top:8px;align-items:center">${supp.map((s) => `<span>${esc(s.extranet)}</span><b>${s.ouverts}</b><span class="tag${s.tendance > 0 ? ' warn' : s.tendance < 0 ? ' ok' : ''}">${s.tendance == null ? '' : s.tendance > 0 ? '↑ ' + s.tendance : s.tendance < 0 ? '↓ ' + (-s.tendance) : '='}</span>`).join('')}</div>
+          <p class="prov" style="margin:8px 0 0">${esc(prov(supp[0].src))}</p>` : '<p class="empty">Aucun ticket GOU21 ouvert lié à STG21.</p>'}</div>
+      </div>
+    </div>
+    <div class="card"><div class="between"><span class="eyebrow">Entonnoir d'admission</span><span class="muted">Priorité = valeur + urgence − effort (D9) · risque affiché à côté</span></div>
+      <div class="funnel" style="margin-top:10px">${ETAPES.map(([k, l]) => `<div class="stage${k === 'actif' ? ' on' : ''}"><b>${cnt[k]}</b><span>${l}${k === 'termine' ? ' · 90 j' : ''}</span></div>`).join('')}</div></div>`;
+  }
+
+  // ---------- project view ----------
+  // Feedback R12: only web links open from the artifact; file:/// and other schemes are shown disabled with the reason.
+  function lienHtml(l) {
+    return /^https?:\/\//i.test(l.url) ? `<a class="btn ghost" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.libelle)} ↗</a>`
+      : `<span class="btn ghost lnk-off" title="${esc('Lien non web, non ouvrable depuis le portefeuille : ' + l.url + ' — saisir l’URL SharePoint dans Gérer')}">${esc(l.libelle)} ⚠</span>`;
+  }
+  function depsLines(item) {
+    const mine = (ref) => ref.kind === 'item' ? ref.id === item.id : C.refItem(S.ix, ref) === item.id;
+    const amont = S.base.dependances.filter((d) => mine(d.vers)); const aval = S.base.dependances.filter((d) => mine(d.de));
+    return { amont, aval };
+  }
+  function viewProjet() {
+    if (S.creating) return `<div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › Nouveau projet</div>
+      <div class="card top" style="max-width:720px"><span class="eyebrow">Gérer · nouveau projet (saisie)</span>${itemForm(null)}${errorsHtml()}</div>`;
+    const it = S.ix.items[S.itemId];
+    if (!it) return '<div class="card"><p class="empty">Aucun projet sélectionné. Choisir un projet dans la vue Portefeuille.</p></div>';
+    const san = santeOf(it); const p = C.pct(S.base, it); const js = C.jalonsOf(S.base, it.id);
+    const rang = C.rangs(S.base)[it.id]; const rn = C.risqueMaxNote(S.base, it.id);
+    const nx = C.prochainJalon(S.base, it.id); const { amont, aval } = depsLines(it);
+    const risques = S.base.risques.filter((r) => r.item === it.id); const att = S.base.attentes.filter((a) => a.item === it.id);
+    const charges = S.base.charges.filter((c) => c.item === it.id);
+    const pers = [...new Set(charges.map((c) => c.personne).filter(Boolean))];
+    const abs = S.base.absences.filter((a) => (pers.includes(a.personne) || a.personne === null) && a.fin >= S.today && a.debut <= C.addDays(S.today, 42));
+    const insts = S.base.instantanes.flatMap((x) => x.items.filter((y) => y.item === it.id).map((y) => Object.assign({ date: x.date }, y))).sort((a, b) => b.date.localeCompare(a.date));
+    const spAct = C.sprintAt(S.base, S.today);
+    const parent = it.parent ? S.ix.items[it.parent] : null;
+    const stepIdx = ETAPES.findIndex(([k]) => k === it.etape);
+    const editBtn = (col, r) => S.canEdit && isSaisie(r) ? ` <button class="btn ghost sm" type="button" data-act="edit" data-col="${col}" data-id="${esc(r.id)}">modifier</button>` : '';
+    const srcTag = (r) => `<span class="prov" title="${esc(prov(r.source))}">${esc(SYS_FR[r.source.systeme] || r.source.systeme)}</span>`;
+    return `
+    <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › ${parent ? `<a href="#" data-act="open-item" data-id="${esc(parent.id)}">${esc(parent.nom)}</a>` : 'Hors programme'} › <span style="color:var(--ink);font-weight:600">${esc(it.nom)}</span></div>
+    <div class="between" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="eyebrow">${esc(it.type)} · voie ${esc(it.voie)}${it.promu ? ' · item promu' : ''}</span>
+        <h1><span class="rag ${ragCls(it)}"></span>${esc(it.nom)}</h1>
+        <span class="muted">Source : ${esc(prov(it.source))} · santé calculée : <b>${san.couleur}</b>${san.motifs.length ? ' (' + esc(san.motifs.join(' ; ')) + ')' : ''}</span></div>
+      <div class="row">${spAct ? `<button class="btn ghost" type="button" data-act="open-sprint" data-id="${esc(spAct.id)}">Voir le sprint ${esc(spAct.nom.replace(/^G2\.1 - /, ''))}</button>` : ''}
+        ${(it.liens || []).map(lienHtml).join('')}</div>
+    </div>
+    <div class="steps">${ETAPES.map(([k, l], n) => `<div class="step${n < stepIdx ? ' done' : n === stepIdx ? ' on' : ''}">${l}</div>`).join('')}</div>
+    <div class="main2">
+      <div class="side">
+        <div class="two">
+          <div class="card"><span class="eyebrow">Fiche</span><dl class="kv">
+            <dt>Responsable</dt><dd>${esc(it.responsable || '—')}</dd>
+            <dt>Type · parent</dt><dd>${esc(it.type)} · ${esc(parent ? parent.nom : 'hors programme')}</dd>
+            <dt>Priorité</dt><dd>${it.priorite ? `P${rang || '?'} — valeur ${it.priorite.valeur} · urgence ${it.priorite.urgence} · effort ${it.priorite.effort} · risque ${rn ?? '—'} <small class="muted">(score ${C.prioriteScore(it.priorite)})</small>` : 'non évaluée'}</dd>
+            <dt>Fenêtre</dt><dd>${it.fenetre && it.fenetre.debut ? `${C.fmtDate(it.fenetre.debut)} → ${it.fenetre.fin ? C.fmtDate(it.fenetre.fin, true) : 'non datée'}` : 'non saisie'}</dd>
+            <dt>Prochain jalon</dt><dd>${nx ? `<b>${esc(nx.nom)} — ${C.fmtDate(nx.date)}</b> (${C.daysBetween(S.today, nx.date) >= 0 ? 'dans ' + C.daysBetween(S.today, nx.date) + ' j' : 'dépassé'})` : '—'}</dd>
+            <dt>Dépend de</dt><dd>${amont.length ? amont.map((d) => `${esc(C.refNom(S.base, S.ix, d.de))} <span class="tag${C.predecesseurRecule(S.base, S.ix, d.de) ? ' warn' : ''}">${d.type}</span>`).join('<br>') : '—'}</dd>
+            <dt>Alimente</dt><dd>${aval.length ? aval.map((d) => `${esc(C.refNom(S.base, S.ix, d.vers))} <span class="tag">${d.type}</span>`).join('<br>') : '—'}</dd>
+            ${it.note_lundi ? `<dt>Note du lundi</dt><dd>${esc(it.note_lundi)}</dd>` : ''}
+          </dl></div>
+          ${dataJira(it, charges, abs)}
+        </div>
+        <div class="card"><div class="between"><span class="eyebrow">Jalons · ${js.length} (dont ${js.filter((j) => j.statut === 'fait').length} faits)</span>
+          <span class="muted">progression ${p ? C.fmtNum(p.valeur) + ' % ' + (p.origine === 'source' ? '(lue à la source)' : '= faits / total') : '—'}</span></div>
+          ${js.length ? js.map((j) => { const st = STATUT_J[j.statut] || [j.statut, '']; const rc = C.recul(j); const late = j.statut !== 'fait' && j.date < S.today;
+            return `<div class="lrow jal"><div class="dot ${j.statut}"></div><div>${esc(j.nom)} ${srcTag(j)}${editBtn('jalons', j)}</div><span>${C.fmtDate(j.date)}${rc ? ` <small class="muted">(init. ${C.fmtDate(j.date_initiale)}, +${rc} j o.)</small>` : ''}</span><span class="tag ${late ? 'bad' : st[1]}">${late ? 'dépassé' : st[0]}${j.fait_le && j.fait_le < j.date ? ' · ' + C.workingDaysBetween(j.fait_le, j.date) + ' j o. d\'avance' : ''}</span></div>`; }).join('') : '<p class="empty">Aucun jalon. Smartsheet n\'en fournit pas au grain L : les saisir dans Gérer.</p>'}
+        </div>
+        <div class="two">
+          <div class="card"><span class="eyebrow">Risques · ${risques.length}</span>
+            ${risques.length ? risques.map((r) => { const s = C.risqueScore(r); return `<div class="lrow" style="grid-template-columns:1fr"><div><span class="tag ${s >= 15 ? 'bad' : s >= 10 ? 'warn' : ''}">P${r.probabilite} · I${r.impact} = ${s}</span> ${r.ouvert === false ? '<span class="tag ok">clos</span> ' : ''}<b>${esc(r.titre)}</b>${r.mitigation ? ` <span class="muted">Mitigation : ${esc(r.mitigation)}</span>` : ''} ${srcTag(r)}${editBtn('risques', r)}</div></div>`; }).join('') : '<p class="empty">Aucun risque.</p>'}</div>
+          <div class="card"><span class="eyebrow">Attentes d'un tiers · ${att.filter((a) => !a.recue_le).length} ouvertes</span>
+            ${att.length ? att.map((a) => { const late = !a.recue_le ? C.workingDaysBetween(a.attendue_le, S.today) : 0; return `<div class="lrow" style="grid-template-columns:1fr"><div><span class="tag">${esc(a.tiers)}</span> ${esc(a.objet)} — attendue le ${C.fmtDate(a.attendue_le)}${a.recue_le ? ` · <span class="tag ok">reçue ${C.fmtDate(a.recue_le)}</span>` : late > 0 ? ` · <span class="tag ${late > 5 ? 'warn' : ''}">${late} j o. de retard</span>` : ''} ${srcTag(a)}${editBtn('attentes', a)}</div></div>`; }).join('') : '<p class="empty">Aucune attente.</p>'}</div>
+        </div>
+      </div>
+      <div class="side">
+        ${S.canEdit ? gerer(it) : ''}
+        <div class="card"><span class="eyebrow">Sources de ce projet</span>
+          ${C.sourcesOf(S.base, it.id).map((s) => `<div class="lrow" style="grid-template-columns:1fr auto"><span>${esc(SYS_FR[s.systeme] || s.systeme)} <small class="muted">${esc(s.ref || '')} · ${s.n} enr.</small></span><span class="tag ${s.systeme === 'saisie' ? 'blue' : 'ok'}">lu ${esc(C.fmtTs(s.lu_le))}</span></div>`).join('')}</div>
+        <div class="card"><span class="eyebrow">Historique · instantanés du lundi</span>
+          ${insts.length ? insts.map((x) => `<div class="between" style="font-size:12px;padding:4px 0"><span>${C.fmtDate(x.date)}</span><span>${esc(x.resume || `${x.sante} · ${x.etape}`)}</span></div>`).join('') : '<p class="empty">Aucun instantané (tâche du lundi, étape 4).</p>'}</div>
+      </div>
+    </div>`;
+  }
+
+  // R10: "Data Jira" — the item's epics (Gérer), ticket progress, active-sprint content and points per person;
+  // load entered by hand (WIP, ETP) stays below.
+  function dataJira(it, charges, abs) {
+    const sp = C.sprintAt(S.base, S.today);
+    const J = C.jiraOf(S.base, it.id, sp && sp.id); const st = J.stat; const ep = it.epics_jira || [];
+    const saisies = charges.filter((c) => c.mode !== 'points');
+    const editBtn = (col, r) => S.canEdit && isSaisie(r) ? ` <button class="btn ghost sm" type="button" data-act="edit" data-col="${col}" data-id="${esc(r.id)}">modifier</button>` : '';
+    const t = st && st.tickets; const w = (n) => t && t.total ? (100 * n / t.total) + '%' : '0';
+    return `<div class="card"><div class="between"><span class="eyebrow">Data Jira</span>${st ? `<span class="prov" title="${esc(prov(st.source))}">Jira · lu ${esc(C.fmtTs(st.source.lu_le))}</span>` : ''}</div>
+      <div class="row" style="margin-top:6px">${ep.length ? ep.map((k) => `<a class="tag blue" href="${JIRA_URL}${esc(k)}" target="_blank" rel="noopener noreferrer">${esc(k)} ↗</a>`).join('') : `<span class="muted">Aucune épopée liée${S.canEdit ? ' — la saisir dans Gérer (champ « Épopées Jira »)' : ''}.</span>`}</div>
+      ${st ? `<div class="jbar" title="${t.faits} faits · ${t.en_cours} en cours · ${t.a_faire} à faire"><span style="width:${w(t.faits)};background:var(--ok)"></span><span style="width:${w(t.en_cours)};background:var(--blue)"></span></div>
+        <div class="between" style="font-size:12px"><span><b>${C.fmtNum(J.pct)} %</b> des tickets faits <small class="muted">(dès « Prêt pour Preprod », annulés exclus)</small></span><span class="muted">${t.faits} faits · ${t.en_cours} en cours · ${t.a_faire} à faire · ${t.total} au total</span></div>
+        ${st.sprint ? `<dl class="kv"><dt>${esc((S.ix.sprints[st.sprint.ref] || { nom: st.sprint.ref }).nom.replace(/^G2\.1 - /, ''))} (courant)</dt><dd>${st.sprint.tickets} tâche${st.sprint.tickets > 1 ? 's' : ''} parente${st.sprint.tickets > 1 ? 's' : ''} · ${C.fmtNum(st.sprint.points)} pts équipe · ${st.sprint.faits} faite${st.sprint.faits > 1 ? 's' : ''} (${C.fmtNum(st.sprint.points_faits || 0)} pts)</dd>
+          ${J.parPersonne.length ? `<dt>Sous-tâches</dt><dd class="muted">par personne : à faire / total</dd>` : ''}
+          ${J.parPersonne.map((p) => `<dt>${esc(p.nom)}</dt><dd>${p.sousTaches - p.faites} / ${p.sousTaches}${p.enCours ? ` · ${p.enCours} en cours` : ''}</dd>`).join('')}</dl>` : ''}`
+        : ep.length ? '<p class="empty">Épopées liées, pas encore lues : la lecture Jira du lundi les comptera.</p>' : ''}
+      ${saisies.length ? `<span class="eyebrow" style="display:block;margin-top:12px">Charge saisie</span><dl class="kv">${saisies.map((c) => `<dt>${esc(c.personne ? (S.ix.personnes[c.personne] || { nom: c.personne }).nom.split(' ')[0] : ROLE_FR[c.role])}</dt><dd>${esc(ROLE_FR[c.role] || c.role)} · ${c.mode === 'wip' ? 'WIP ' + c.valeur : c.mode === 'etp' ? C.fmtNum(c.valeur) + ' ETP' : C.fmtNum(c.valeur) + ' j-p'} · ${c.periode.type === 'sprint' ? esc((S.ix.sprints[c.periode.ref] || { nom: c.periode.ref }).nom) : 'sem. ' + C.fmtDate(c.periode.ref)}${editBtn('charges', c)}</dd>`).join('')}</dl>` : ''}
+      <dl class="kv"><dt>Absences</dt><dd>${abs.length ? abs.map((a) => `${esc(a.personne ? (S.ix.personnes[a.personne] || { nom: a.personne }).nom : a.libelle || 'collective')} ${C.fmtDate(a.debut)}–${C.fmtDate(a.fin)}`).join('<br>') : 'aucune détectée (6 semaines)'}</dd></dl></div>`;
+  }
+
+  // ---------- Gérer (owned fields only, model v2 §3) ----------
+  function opt(v, l, cur) { return `<option value="${esc(v)}"${String(cur) === String(v) ? ' selected' : ''}>${esc(l)}</option>`; }
+  function notes(name, cur) { return `<select name="${name}">${opt('', '—', cur == null ? '' : cur)}${[1, 2, 3, 4, 5].map((n) => opt(n, n, cur)).join('')}</select>`; }
+  function errorsHtml() { return S.errors.length ? `<ul class="err-list">${S.errors.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>` : ''; }
+  function itemForm(it) {
+    const x = it || { type: 'projet', voie: 'flux', etape: 'idee', promu: false };
+    const parents = S.base.items.filter((i) => (i.type === 'programme' || i.type === 'projet') && (!it || i.id !== it.id));
+    const pr = x.priorite || {};
+    return `<form class="g" data-form="item">
+      <div class="field"><label>Nom<input name="nom" required value="${esc(x.nom || '')}"></label></div>
+      <div class="f3"><div class="field"><label>Type<select name="type">${['programme', 'projet', 'run'].map((v) => opt(v, v, x.type)).join('')}</select></label></div>
+        <div class="field"><label>Voie<select name="voie">${opt('scrum', 'Scrum', x.voie)}${opt('flux', 'Flux', x.voie)}</select></label></div>
+        <div class="field"><label>Étape<select name="etape">${ETAPES.map(([v, l]) => opt(v, l, x.etape)).join('')}</select></label></div></div>
+      <div class="f2"><div class="field"><label>Parent<select name="parent">${opt('', 'hors programme', x.parent || '')}${parents.map((p) => opt(p.id, p.nom, x.parent || '')).join('')}</select></label></div>
+        <div class="field"><label>Responsable<input name="responsable" value="${esc(x.responsable || '')}"></label></div></div>
+      <div class="f3"><div class="field"><label>Valeur${notes('valeur', pr.valeur)}</label></div><div class="field"><label>Urgence${notes('urgence', pr.urgence)}</label></div><div class="field"><label>Effort${notes('effort', pr.effort)}</label></div></div>
+      <div class="f2"><div class="field"><label>Fenêtre — début<input type="date" name="debut" value="${esc((x.fenetre || {}).debut || '')}"></label></div>
+        <div class="field"><label>Fenêtre — fin (vide = non datée)<input type="date" name="fin" value="${esc((x.fenetre || {}).fin || '')}"></label></div></div>
+      <label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" name="promu"${x.promu ? ' checked' : ''}> item promu (sous le grain L, D4)</label>
+      <div class="field"><label>Note du lundi<textarea name="note_lundi" rows="2">${esc(x.note_lundi || '')}</textarea></label></div>
+      <div class="field"><label>Épopées Jira GOU21 (clés séparées par des virgules)<input name="epics_jira" placeholder="GOU21-9199, GOU21-9604" value="${esc((x.epics_jira || []).join(', '))}"></label></div>
+      <div class="field"><label>Liens (une ligne : libellé | url)<textarea name="liens" rows="2">${esc((x.liens || []).map((l) => `${l.libelle} | ${l.url}`).join('\n'))}</textarea></label></div>
+      <div class="row"><button class="btn" type="submit">Enregistrer</button>${it ? '' : '<button class="btn ghost" type="button" data-act="view" data-v="portefeuille">Annuler</button>'}</div>
+    </form>`;
+  }
+  function gerer(it) {
+    const g = S.gerer; const tabs = [['item', 'Item'], ['jalons', '+ Jalon'], ['risques', '+ Risque'], ['attentes', '+ Attente'], ['dependances', '+ Dépendance'], ['charges', 'Charge flux']];
+    const rec = g.id ? (S.base[g.tab] || []).find((r) => r.id === g.id) : null;
+    let body = '';
+    if (g.tab === 'item') {
+      body = itemForm(it) + `<dl class="ro"><dt>Santé</dt><dd>${santeOf(it).couleur} · calculée (D8)</dd>
+        ${typeof it.pct_avancement === 'number' ? `<dt>% avancement</dt><dd>${C.fmtNum(it.pct_avancement)} % · ${esc(prov(it.source))}</dd>` : ''}
+        ${it.phase_source ? `<dt>Phase source</dt><dd>${esc(it.phase_source)} · ${esc(prov(it.source))}</dd>` : ''}
+        ${it.contenu_sprint ? `<dt>Contenu sprint</dt><dd>${esc(it.contenu_sprint)} · ${esc(prov(it.source))}</dd>` : ''}
+        ${it.support ? `<dt>Support</dt><dd>${it.support.length} extranets · ${esc(prov(it.source))}</dd>` : ''}
+        <dt>Mis à jour</dt><dd>${esc(C.fmtTs(it.updated_at))}</dd></dl>`;
+    } else if (g.tab === 'jalons') {
+      const j = rec || {};
+      body = `<form class="g" data-form="jalons"><div class="field"><label>Nom (oui / non à une date, D4)<input name="nom" required value="${esc(j.nom || '')}"></label></div>
+        <div class="f2"><div class="field"><label>Date cible<input type="date" name="date" required value="${esc(j.date || '')}"></label></div>
+        <div class="field"><label>Statut<select name="statut">${Object.keys(STATUT_J).map((k) => opt(k, STATUT_J[k][0], j.statut || 'a_venir')).join('')}</select></label></div></div>
+        ${j.date_initiale ? `<p class="muted" style="margin:0">Date initiale conservée : ${C.fmtDate(j.date_initiale)}</p>` : ''}
+        <div class="row"><button class="btn" type="submit">${rec ? 'Mettre à jour' : 'Ajouter le jalon'}</button></div></form>`;
+    } else if (g.tab === 'risques') {
+      const r = rec || {};
+      body = `<form class="g" data-form="risques"><div class="field"><label>Titre<input name="titre" required value="${esc(r.titre || '')}"></label></div>
+        <div class="f2"><div class="field"><label>Probabilité 1–5${notes('probabilite', r.probabilite)}</label></div><div class="field"><label>Impact 1–5${notes('impact', r.impact)}</label></div></div>
+        <div class="field"><label>Mitigation<input name="mitigation" value="${esc(r.mitigation || '')}"></label></div>
+        <label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" name="ouvert"${r.ouvert === false ? '' : ' checked'}> ouvert</label>
+        <label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" name="portefeuille"${rec && r.item === null ? ' checked' : ''}> risque de portefeuille (non rattaché à l'item)</label>
+        <p class="muted" style="margin:0">Échelle risk-scoring-standard PLQ · score = P × I calculé.</p>
+        <div class="row"><button class="btn" type="submit">${rec ? 'Mettre à jour' : 'Ajouter le risque'}</button></div></form>`;
+    } else if (g.tab === 'attentes') {
+      const a = rec || {};
+      body = `<form class="g" data-form="attentes"><div class="f2"><div class="field"><label>Tiers (rôle ou personne)<input name="tiers" required value="${esc(a.tiers || '')}"></label></div>
+        <div class="field"><label>Attendue le<input type="date" name="attendue_le" required value="${esc(a.attendue_le || '')}"></label></div></div>
+        <div class="field"><label>Objet<input name="objet" required value="${esc(a.objet || '')}"></label></div>
+        <div class="field"><label>Reçue le (vide = en attente)<input type="date" name="recue_le" value="${esc(a.recue_le || '')}"></label></div>
+        <div class="row"><button class="btn" type="submit">${rec ? 'Mettre à jour' : 'Ajouter l\'attente'}</button></div></form>`;
+    } else if (g.tab === 'dependances') {
+      const own = [`item:${it.id}`].concat(C.jalonsOf(S.base, it.id).map((j) => `jalon:${j.id}`));
+      const all = S.base.items.map((i) => [`item:${i.id}`, `Item · ${i.nom}`]).concat(S.base.jalons.map((j) => [`jalon:${j.id}`, `Jalon · ${itemNom(j.item)} — ${j.nom}`]), S.base.livrables.map((l) => [`livrable:${l.id}`, `Livrable · ${l.nom}`]));
+      const lab = (k) => (all.find((a) => a[0] === k) || [k, k])[1];
+      body = `<form class="g" data-form="dependances"><div class="field"><label>Personne_05 de cet item<select name="mine">${own.map((k) => opt(k, lab(k), '')).join('')}</select></label></div>
+        <div class="f2"><div class="field"><label>Sens<select name="sens">${opt('vers', 'cet item est le successeur', '')}${opt('de', 'cet item est le prédécesseur', '')}</select></label></div>
+        <div class="field"><label>Type (D16)<select name="type">${['bloque', 'alimente', 'attend'].map((v) => opt(v, v, '')).join('')}</select></label></div></div>
+        <div class="field"><label>Autre extrémité<select name="autre">${all.filter((a) => !own.includes(a[0])).map((a) => opt(a[0], a[1], '')).join('')}</select></label></div>
+        <div class="field"><label>Note<input name="note"></label></div>
+        <div class="row"><button class="btn" type="submit">Ajouter la dépendance</button></div></form>`;
+    } else if (g.tab === 'charges') {
+      const c = rec || {};
+      body = `<form class="g" data-form="charges"><div class="f2"><div class="field"><label>Personne<select name="personne">${S.base.personnes.filter((p) => p.voie === 'flux').map((p) => opt(p.id, `${p.nom} (${ROLE_FR[p.role] || p.role})`, c.personne || '')).join('')}</select></label></div>
+        <div class="field"><label>Mode (voie flux)<select name="mode">${opt('wip', 'WIP', c.mode || 'wip')}${opt('etp', 'ETP', c.mode)}</select></label></div></div>
+        <div class="f2"><div class="field"><label>Valeur<input type="number" name="valeur" min="0" step="0.1" required value="${esc(c.valeur ?? 1)}"></label></div>
+        <div class="field"><label>Semaine du (lundi)<input type="date" name="semaine" required value="${esc(c.periode ? c.periode.ref : C.mondayOf(S.today))}"></label></div></div>
+        <p class="muted" style="margin:0">Jours-personne Scrum : calculés (Jira + absences), non saisissables.</p>
+        <div class="row"><button class="btn" type="submit">${rec ? 'Mettre à jour' : 'Ajouter la charge'}</button></div></form>`;
+    }
+    return `<div class="card top"><span class="eyebrow">Gérer · champs du portefeuille</span>
+      <div class="gtabs">${tabs.map(([k, l]) => `<button type="button" class="${g.tab === k ? 'on' : ''}" data-act="gtab" data-t="${k}">${l}</button>`).join('')}</div>
+      ${rec ? `<p class="muted" style="margin:8px 0 0">Modification de ${esc(rec.id)} · <a href="#" data-act="gtab" data-t="${g.tab}">nouveau</a></p>` : ''}
+      ${body}${errorsHtml()}
+      <p class="muted" style="margin:10px 0 0">Écrit dans la base du portefeuille, jamais dans une source. Les enregistrements d'un feed, de Smartsheet ou du ledger restent en lecture seule.</p></div>`;
+  }
+
+  function src() { return { systeme: 'saisie', ref: 'Gérer', lu_le: C.nowTs(), par: 'Franck' }; }
+  function ids(col) { return S.base[col].map((r) => r.id); }
+  async function submit(kind, f) {
+    const v = (k) => (f.get(k) || '').toString().trim();
+    const it = S.ix.items[S.itemId];
+    if (kind === 'item') {
+      const cur = S.creating ? null : it;
+      // Freshness of a source item is measured on the source only (decision Franck 2026-10-27)
+      const keepTs = cur && cur.source && cur.source.systeme !== 'saisie';
+      const rec = Object.assign({}, cur || {}, { nom: v('nom'), type: v('type'), voie: v('voie'), etape: v('etape'), parent: v('parent') || null, promu: !!f.get('promu'), updated_at: keepTs ? cur.updated_at : C.nowTs() });
+      if (!cur) { rec.id = C.newId('saisie', rec.nom, ids('items')); rec.source = src(); }
+      ['responsable', 'note_lundi'].forEach((k) => { if (v(k)) rec[k] = v(k); else delete rec[k]; });
+      if (v('valeur') && v('urgence') && v('effort')) { const p = { valeur: +v('valeur'), urgence: +v('urgence'), effort: +v('effort') }; p.score = C.prioriteScore(p); rec.priorite = p; } else delete rec.priorite;
+      if (v('debut')) rec.fenetre = { debut: v('debut'), fin: v('fin') || null }; else delete rec.fenetre;
+      const ep = v('epics_jira').toUpperCase().split(/[\s,;]+/).filter(Boolean);
+      if (ep.length) rec.epics_jira = [...new Set(ep)]; else delete rec.epics_jira;
+      const liens = v('liens').split('\n').map((l) => l.split('|').map((s) => s.trim())).filter((x) => x[0] && x[1]).map(([libelle, url]) => ({ libelle, url }));
+      if (liens.length) rec.liens = liens; else delete rec.liens;
+      delete rec.sante; // computed at display, never written from Gérer (D8)
+      if (await write('items', rec)) { S.creating = false; S.itemId = rec.id; S.view = 'projet'; render(); }
+      return;
+    }
+    const cur = S.gerer.id ? S.base[kind].find((r) => r.id === S.gerer.id) : null;
+    let rec;
+    if (kind === 'jalons') {
+      rec = Object.assign({}, cur || { id: C.newId(`saisie.${C.slug(it.id)}`, v('nom'), ids('jalons')), item: it.id }, { nom: v('nom'), date: v('date'), statut: v('statut'), source: src() });
+      if (cur && cur.date !== rec.date && !cur.date_initiale) rec.date_initiale = cur.date;
+      if (!cur) rec.date_initiale = rec.date;
+      if (rec.statut === 'fait' && !rec.fait_le) rec.fait_le = S.today; if (rec.statut !== 'fait') delete rec.fait_le;
+    } else if (kind === 'risques') {
+      if (!v('probabilite') || !v('impact')) { toast('Probabilité et impact obligatoires', true); return; }
+      rec = Object.assign({}, cur || { id: C.newId(`saisie.${C.slug(it.id)}.r`, v('titre'), ids('risques')) }, { item: f.get('portefeuille') ? null : it.id, titre: v('titre'), probabilite: +v('probabilite'), impact: +v('impact'), ouvert: !!f.get('ouvert'), source: src() });
+      rec.score = C.risqueScore(rec); if (v('mitigation')) rec.mitigation = v('mitigation'); else delete rec.mitigation;
+    } else if (kind === 'attentes') {
+      rec = Object.assign({}, cur || { id: C.newId(`saisie.${C.slug(it.id)}.a`, v('tiers') + '-' + v('objet'), ids('attentes')), item: it.id }, { tiers: v('tiers'), objet: v('objet'), attendue_le: v('attendue_le'), recue_le: v('recue_le') || null, source: src() });
+    } else if (kind === 'dependances') {
+      const [mk, mid] = v('mine').split(':'); const [ak, aid] = v('autre').split(':');
+      const mine = { kind: mk, id: mid }; const autre = { kind: ak, id: aid };
+      const de = v('sens') === 'de' ? mine : autre; const vers = v('sens') === 'de' ? autre : mine;
+      rec = { id: C.newId('dep', `${de.id}-${vers.id}`, ids('dependances')), type: v('type'), de, vers, source: src() };
+      if (v('note')) rec.note = v('note');
+    } else if (kind === 'charges') {
+      const p = S.ix.personnes[v('personne')];
+      rec = Object.assign({}, cur || { id: C.newId(`saisie.${C.slug(it.id)}.c`, `${v('personne')}-${v('semaine')}`, ids('charges')), item: it.id },
+        { periode: { type: 'semaine', ref: C.mondayOf(v('semaine')) }, role: p ? (p.role in ROLE_FR && !['direction', 'cdp'].includes(p.role) ? p.role : 'expert') : 'expert', personne: v('personne'), mode: v('mode'), valeur: +v('valeur'), source: src() });
+    } else if (kind === 'personnes') {
+      const p = S.ix.personnes[v('personne')]; if (!p) return;
+      rec = Object.assign({}, p, { wip_limite: +v('wip_limite') });
+    } else if (kind === 'absences') {
+      rec = { id: C.newId('saisie.abs', `${v('libelle')}-${v('debut')}`, ids('absences')), personne: null, debut: v('debut'), fin: v('fin'), jours_ouvres: C.weekdaysInRange(v('debut'), v('fin')), libelle: v('libelle'), source: src() };
+    }
+    if (rec && await write(kind, rec)) { S.gerer = { tab: ['personnes', 'absences'].includes(kind) ? S.gerer.tab : kind, id: null }; render(); }
+  }
+
+  // ---------- sprint view ----------
+  function viewSprint() {
+    const sv = S.sprintId ? C.sprintVue(S.base, S.sprintId, S.today) : null;
+    if (!sv) return '<div class="card"><p class="empty">Aucun sprint lu (adaptateur Jira GOU21, étape 3).</p></div>';
+    const s = sv.sprint; const sprints = S.base.sprints.slice().sort((a, b) => a.debut.localeCompare(b.debut));
+    const flux = S.base.personnes.filter((p) => p.voie === 'flux');
+    const devAbs = S.base.absences.filter((a) => a.debut <= s.fin && a.fin >= s.debut && a.personne && (S.ix.personnes[a.personne] || {}).role === 'dev').length;
+    return `
+    <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › Sprints GOU21 › <span style="color:var(--ink);font-weight:600">${esc(s.nom)}</span></div>
+    <div class="between" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:4px"><span class="eyebrow">Sprint GOU21 · ${esc(SYS_FR[s.source.systeme])} · Jira fait foi</span>
+        <h1>${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)} → ${C.fmtDate(s.fin, true)}</h1>
+        <span class="muted">${s.objectif ? 'Objectif : ' + esc(s.objectif) + ' · ' : 'Objectif non lu · '}${sv.jours_ouvres} jours ouvrés · état ${esc(s.etat)} · ${esc(prov(s.source))}</span></div>
+      <div class="tabs">${sprints.map((x) => `<button class="tab${x.id === s.id ? ' on' : ''}" type="button" data-act="open-sprint" data-id="${esc(x.id)}" title="${esc(x.etat)}">${esc(x.nom.replace(/^G2\.1 - /, ''))}<small style="font-weight:500;opacity:.75"> · ${x.etat === 'clos' ? 'précédent' : x.etat === 'actif' ? 'courant' : 'suivant'}</small></button>`).join('')}</div>
+    </div>
+    <div class="tiles">
+      <div class="tile t1"><b>${sv.items.length}</b><span>items dans ce sprint (Jira) · ${sv.jira.tickets} tâches parentes · ${C.fmtNum(sv.jira.points)} pts équipe${sv.jira.sansPoints ? ` (${sv.jira.sansPoints} sans points)` : ''} · ${sv.jira.sousTaches} sous-tâches</span></div>
+      <div class="tile t2"><b>${sv.jalons.length}</b><span>jalons tombent dans le sprint</span></div>
+      <div class="tile t3"><b>${C.fmtNum(sv.dev.net)} / ${C.fmtNum(sv.dev.brut)}</b><span>jours-personne dev disponibles (${sv.dev.n} dev · ${devAbs} absence${devAbs > 1 ? 's' : ''})</span></div>
+      <div class="tile t4"><b>${C.fmtNum(sv.reserve_pct)} %</b><span>réservé au run · ${C.fmtNum(sv.reserve_j)} j-p</span></div>
+    </div>
+    <div class="main2">
+      <div class="side">
+        <div class="card"><span class="eyebrow">Capacité · sous-tâches par personne · Jira</span>
+          ${sv.personnes.length ? `<table class="ptab"><thead><tr><th>Personne</th><th>Rôle</th><th style="text-align:right">Sous-tâches</th><th style="text-align:right">À faire</th><th style="text-align:right">En cours</th><th style="text-align:right">Faites</th><th style="text-align:right">Dispo (j)</th></tr></thead><tbody>
+            ${sv.personnes.map((p) => `<tr><td>${esc(p.nom)}${p.connu ? '' : ' <span class="tag warn" title="Assigné Jira absent de Team_G2.1">hors équipe</span>'}</td><td>${esc(ROLE_FR[p.role] || p.role || '—')}</td><td class="n"><b>${p.sousTaches || '—'}</b></td><td class="n">${p.aFaire || '—'}</td><td class="n">${p.enCours || '—'}</td><td class="n">${p.faites || '—'}</td><td class="n">${p.capacite == null ? '—' : C.fmtNum(p.capacite)}</td></tr>`).join('')}
+          </tbody></table>` : '<p class="empty">Aucune sous-tâche Jira lue pour ce sprint.</p>'}
+          ${sv.roles.map((r) => `<div class="lrow role"><span>${ROLE_FR[r.role] || r.role} (${r.n})</span><div class="track"><div class="fill${r.pct > 100 ? ' bad' : r.pct >= 95 ? ' warn' : ''}" style="width:${Math.min(100, r.pct || 0)}%"></div></div><span>${C.fmtNum(r.demande)} / ${C.fmtNum(r.capacite)} j <span class="tag ${r.pct > 100 ? 'bad' : r.pct >= 95 ? 'warn' : 'ok'}">${r.pct == null ? '—' : r.pct + ' %'}</span></span></div>`).join('')}
+          <p class="muted" style="margin:8px 0 0">Flux Jira : la tâche parente est groomée par l'équipe, qui lui donne ses points (mesure d'équipe) ; chaque personne porte des sous-tâches (QA, FE, BE, UX, archi). Charge par personne = nombre de sous-tâches, jamais de points. Faite = dès « Prêt pour Preprod » ; annulées exclues. Dispo : jours ouvrés − absences Outlook.</p></div>
+        <div class="card"><span class="eyebrow">Items dans le sprint · qui, sur quoi</span>
+          ${sv.items.length ? sv.items.map((i) => { const ps = [...(sv.personnesParItem[i.id] || [])]; const sa = santeOf(i);
+            return `<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto auto auto"><div style="min-width:0"><a href="#" data-act="open-item" data-id="${esc(i.id)}" style="font-weight:600;text-decoration:none">${esc(i.nom)}</a><br><small class="muted">${esc([sv.jira.parItem[i.id] ? `${sv.jira.parItem[i.id].tickets} tâches · ${C.fmtNum(sv.jira.parItem[i.id].points)} pts équipe · ${sv.jira.parItem[i.id].sousTaches} sous-tâches` : null, i.contenu_sprint].filter(Boolean).join(' · ') || '—')}</small></div><span class="tag ${i.voie === 'scrum' ? 'blue' : ''}">${i.voie === 'scrum' ? 'Scrum · GOU21' : 'Flux'}</span><div>${ps.map((p) => { const nm = p.startsWith('nom:') ? p.slice(4) : (S.ix.personnes[p] || { nom: p }).nom; return `<span class="av" title="${esc(nm)}">${esc(initials(nm))}</span>`; }).join('') || '<small class="muted">—</small>'}</div><span><span class="rag ${sa.couleur}"></span> ${sa.couleur}</span></div>`; }).join('') : '<p class="empty">Aucun item.</p>'}
+          ${sv.jira.horsItem.tickets ? `<div class="lrow" style="grid-template-columns:1fr"><small class="muted">Hors item du portefeuille (épopées non liées, comptées au programme) : ${sv.jira.horsItem.tickets} tâches · ${C.fmtNum(sv.jira.horsItem.points)} pts</small></div>` : ''}</div>
+      </div>
+      <div class="side">
+        <div class="card"><span class="eyebrow">Jalons dans le sprint · items du sprint</span>
+          ${sv.jalons.length ? sv.jalons.map((j) => { const st = STATUT_J[j.statut] || [j.statut, '']; return `<div class="lrow" style="grid-template-columns:56px 1fr auto"><b>${C.fmtDate(j.date)}</b><div>${esc(j.nom)} — <a href="#" data-act="open-item" data-id="${esc(j.item)}">${esc(itemNom(j.item))}</a></div><span class="tag ${st[1]}">${st[0]}</span></div>`; }).join('') : '<p class="empty">Aucun jalon.</p>'}</div>
+        <div class="card"><span class="eyebrow">Absences</span>
+          ${sv.absences.length ? sv.absences.map((a) => `<div class="between" style="font-size:13px;padding:3px 0"><span>${esc(a.personne ? (S.ix.personnes[a.personne] || { nom: a.personne }).nom : (a.libelle || 'collective'))}</span><span class="muted">${C.fmtDate(a.debut)}–${C.fmtDate(a.fin)} · ${C.fmtNum(a.jours_ouvres)} j · ${esc(SYS_FR[a.source.systeme])}</span></div>`).join('') : '<p class="empty">Aucune absence lue (Outlook, étape 3) ni saisie.</p>'}</div>
+        <div class="card top"><span class="eyebrow">Run · ce sprint</span>
+          <div class="between" style="font-size:13px;margin-top:8px"><span>Support extranets ouverts</span><b>${sv.support_ouverts}</b></div>
+          <div class="between" style="font-size:13px"><span>Réserve dev</span><b>${C.fmtNum(sv.reserve_pct)} % · ${C.fmtNum(sv.reserve_j)} j</b></div>
+          <span class="eyebrow" style="display:block;margin-top:12px">MEP du sprint</span>
+          ${sv.meps.length ? sv.meps.map((m) => `<div class="between" style="font-size:13px;padding:3px 0"><span>${C.fmtDate(m.date)} · ${esc(m.systeme)} · ${esc(m.ticket || 'sans ticket')}</span><span class="tag ${STATUT_MEP[m.statut][1]}">${STATUT_MEP[m.statut][0]}</span></div>`).join('') : '<p class="empty">Aucune MEP lue dans ce sprint.</p>'}</div>
+        <div class="card"><span class="eyebrow">Actions de la rétro · Miro</span>
+          ${sv.actions.length ? sv.actions.map((a) => `<div class="row" style="font-size:13px;padding:3px 0"><span class="tag ${a.statut === 'fait' ? 'ok' : a.statut === 'en_cours' ? 'warn' : ''}">${a.statut.replace('_', ' ')}</span><span>${esc(a.texte)}${a.owner ? ` · <small class="muted">${esc(a.owner)}</small>` : ''}</span></div>`).join('') : '<p class="empty">Aucune action pour ce sprint (cadre « Actions » du dernier board de rétro Miro).</p>'}</div>
+        ${S.canEdit ? `<div class="card top"><span class="eyebrow">Gérer · équipe</span>
+          <form class="g" data-form="personnes"><div class="f2"><div class="field"><label>Personne (voie flux)<select name="personne">${flux.map((p) => opt(p.id, `${p.nom} — limite ${p.wip_limite || 3}`, '')).join('')}</select></label></div>
+            <div class="field"><label>Limite WIP<input type="number" name="wip_limite" min="1" step="1" required value="2"></label></div></div>
+            <div class="row"><button class="btn ghost" type="submit">Enregistrer la limite</button></div></form>
+          <form class="g" data-form="absences"><div class="field"><label>Absence collective (congés, fermeture)<input name="libelle" required placeholder="Congés des Fêtes"></label></div>
+            <div class="f2"><div class="field"><label>Début<input type="date" name="debut" required></label></div><div class="field"><label>Fin<input type="date" name="fin" required></label></div></div>
+            <div class="row"><button class="btn ghost" type="submit">Ajouter l'absence</button></div></form>${errorsHtml()}
+          <p class="muted" style="margin:10px 0 0">Nom, rôle et absences individuelles viennent de Team_G2.1 et d'Outlook : lecture seule.</p></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // ---------- render + events ----------
+  function render() {
+    let body;
+    if (S.status === 'chargement') body = '<p class="muted">Chargement de la base…</p>';
+    else if (S.status === 'indisponible') body = '<div class="card"><p>Base du portefeuille indisponible dans cette vue (connexion requise ou capacité non accordée).</p></div>';
+    else body = S.view === 'projet' ? viewProjet() : S.view === 'sprint' ? viewSprint() : viewPortefeuille();
+    const n = C.COLLECTIONS.reduce((k, c) => k + S.base[c].length, 0);
+    $('#app').innerHTML = header() + body + `<details class="diag"><summary>Base : ${n} enregistrements · ${esc(S.status)}</summary><pre>${esc(S.diag.join('\n'))}</pre></details>`;
+  }
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-act]'); if (!t || t.tagName === 'SELECT') return;
+    const a = t.dataset.act;
+    if (['view', 'open-item', 'open-sprint', 'gtab', 'edit', 'new-item', 'toggle', 'expand-all', 'collapse-all', 'move'].includes(a)) e.preventDefault();
+    if (a === 'move') { e.stopPropagation(); move(t.dataset.id, +t.dataset.d); return; }
+    if (a === 'toggle') { const id = t.dataset.id; if (S.toggled.has(id)) S.toggled.delete(id); else S.toggled.add(id); saveToggled(); render(); return; }
+    if (a === 'expand-all' || a === 'collapse-all') {
+      S.toggled = new Set(a === 'expand-all' ? S.base.items.map((i) => i.id) : ['grp:hors', 'grp:cand'].concat(S.base.items.filter((i) => i.type === 'programme').map((i) => 'grp:' + i.id)));
+      saveToggled(); render(); return;
+    }
+    if (a === 'view') { S.view = t.dataset.v; S.creating = false; if (S.view === 'projet' && !S.itemId) { const f = S.base.items.find((i) => i.etape === 'actif' && i.type === 'projet'); S.itemId = f && f.id; } }
+    else if (a === 'open-item') { S.view = 'projet'; S.itemId = t.dataset.id; S.creating = false; S.gerer = { tab: 'item', id: null }; S.errors = []; }
+    else if (a === 'open-sprint') { S.view = 'sprint'; S.sprintId = t.dataset.id; }
+    else if (a === 'gtab') { S.gerer = { tab: t.dataset.t, id: null }; S.errors = []; }
+    else if (a === 'edit') { S.gerer = { tab: t.dataset.col, id: t.dataset.id }; S.errors = []; }
+    else if (a === 'new-item') { S.view = 'projet'; S.creating = true; S.errors = []; }
+    else return;
+    render(); window.scrollTo(0, 0);
+  });
+  document.addEventListener('change', (e) => {
+    const t = e.target; if (t.dataset && t.dataset.act === 'filter') { S.filters[t.dataset.f] = t.value; render(); }
+  });
+  document.addEventListener('submit', async (e) => {
+    const f = e.target.closest('form[data-form]'); if (!f) return; e.preventDefault();
+    if (!S.canEdit || !S.db) { toast('Lecture seule', true); return; }
+    const btn = f.querySelector('[type=submit]'); if (btn) btn.disabled = true;
+    try { await submit(f.dataset.form, new FormData(f)); } finally { if (btn) btn.disabled = false; }
+  });
+
+  async function init() {
+    render();
+    const use = window.claude && typeof window.claude.use === 'function' ? window.claude.use.bind(window.claude) : null;
+    if (!use) { S.status = 'indisponible'; S.diag = ['window.claude absent']; render(); return; }
+    const [db, user] = await Promise.all([use('db').catch(() => null), use('user').catch(() => null)]);
+    try { S.canEdit = user ? !!(await user.canEdit()) : false; } catch (e) { S.canEdit = false; }
+    if (!db) { S.status = 'indisponible'; S.diag = ['use("db") = null']; render(); return; }
+    // Deep link: #projet/<id> or #sprint/<id> (used by the Monday digest at step 4)
+    const m = (location.hash || '').match(/^#(projet|sprint)\/(.+)$/);
+    if (m) { S.view = m[1]; if (m[1] === 'projet') S.itemId = decodeURIComponent(m[2]); else S.sprintId = decodeURIComponent(m[2]); }
+    S.db = db; await load();
+  }
+  init();
+})();
+</script>

@@ -1,0 +1,242 @@
+{
+  "modele": "1",
+  "source": {
+    "systeme": "ledger",
+    "ref": "Goutte2.1/Daily_Brief/_ledger/2026-W44.md",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-jira + ledger"
+  },
+  "items": [
+    {
+      "id": "run.ti",
+      "nom": "Run TI — G1, IIS, extranets",
+      "type": "run",
+      "parent": null,
+      "voie": "flux",
+      "etape": "actif",
+      "promu": false,
+      "responsable": "Personne_14",
+      "source": {
+        "systeme": "jira",
+        "ref": "SDD, PLQ",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "adaptateur-jira"
+      },
+      "updated_at": "2026-10-27T15:40-04:00"
+    },
+    {
+      "id": "run.extranets",
+      "nom": "Run G2.1 — support extranets",
+      "type": "run",
+      "parent": "goutte21",
+      "voie": "flux",
+      "etape": "actif",
+      "promu": false,
+      "responsable": "Personne_14",
+      "support": [
+        {
+          "extranet": "Interprovince",
+          "ouverts": 4,
+          "age_moyen_j": 6,
+          "plus_vieux_j": 21,
+          "tendance": 2
+        },
+        {
+          "extranet": "Producteurs",
+          "ouverts": 2,
+          "tendance": 0
+        },
+        {
+          "extranet": "Transporteurs",
+          "ouverts": 2,
+          "tendance": 0
+        },
+        {
+          "extranet": "Transformateurs",
+          "ouverts": 1,
+          "tendance": -1
+        }
+      ],
+      "source": {
+        "systeme": "saisie",
+        "ref": "chiffres de la maquette — remplacés par la lecture JSM STG21 à l'étape 3",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      },
+      "updated_at": "2026-10-27T15:40-04:00"
+    }
+  ],
+  "meps": [
+    {
+      "id": "jira.sdd-2981",
+      "date": "2026-10-23",
+      "ticket": "SDD-2981",
+      "systeme": "G1",
+      "libelle": "Inactivation d'unités de production",
+      "statut": "planifiee",
+      "item": "run.ti",
+      "responsable": "Richard Tremblay",
+      "source": {
+        "systeme": "ledger",
+        "ref": "2026-W44.md#2026-10-26",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "jira.plq-9437",
+      "date": "2026-10-26",
+      "ticket": "PLQ-9437",
+      "systeme": "IIS (G20, G21, Extranets)",
+      "libelle": "Migration serveurs IIS test QA vers Windows Core",
+      "statut": "planifiee",
+      "item": "run.ti",
+      "responsable": "Personne_04",
+      "source": {
+        "systeme": "ledger",
+        "ref": "2026-W44.md#2026-10-26",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "jira.gou21-11323",
+      "date": "2026-10-26",
+      "ticket": "GOU21-11323",
+      "systeme": "Extranet (cluster dev)",
+      "libelle": "Décommissionnement instances Extranet cluster dev",
+      "statut": "completee",
+      "item": "run.extranets",
+      "responsable": "Personne_04",
+      "source": {
+        "systeme": "ledger",
+        "ref": "2026-W44.md#2026-10-27",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "jira.gou21-11325",
+      "date": "2026-10-26",
+      "ticket": "GOU21-11325",
+      "systeme": "G2.1",
+      "libelle": "Correction association région - secrétaire de région",
+      "statut": "planifiee",
+      "item": "goutte21",
+      "source": {
+        "systeme": "ledger",
+        "ref": "2026-W44.md#2026-10-27",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    }
+  ],
+  "attentes": [
+    {
+      "id": "run.bitbucket.a1",
+      "item": "run.ti",
+      "tiers": "Personne_09",
+      "objet": "Validation de la bascule des repos vers Bitbucket Cloud",
+      "attendue_le": "2026-10-26",
+      "recue_le": null,
+      "source": {
+        "systeme": "ledger",
+        "ref": "2026-W44.md#2026-10-26 BLOQ",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    }
+  ],
+  "sprints": [
+    {
+      "id": "jira.gou21-s19",
+      "nom": "G2.1 - S19",
+      "debut": "2026-10-20",
+      "fin": "2026-11-02",
+      "etat": "actif",
+      "jours_ouvres": 10,
+      "reserve_run_pct": 15,
+      "source": {
+        "systeme": "jira",
+        "ref": "board 38 / sprint 71",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "jira.gou21-s20",
+      "nom": "G2.1 - S20",
+      "debut": "2026-11-03",
+      "fin": "2026-11-16",
+      "etat": "futur",
+      "jours_ouvres": 10,
+      "reserve_run_pct": 15,
+      "source": {
+        "systeme": "jira",
+        "ref": "board 38 (dates déduites de S19 + 14 j, à confirmer à l'étape 3)",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    }
+  ],
+  "personnes": [
+    {
+      "id": "team.kowalczyk-franck",
+      "nom": "Franck Kowalczyk",
+      "role": "pm",
+      "voie": "flux",
+      "wip_limite": 3,
+      "source": {
+        "systeme": "saisie",
+        "ref": "Team_G2.1_v1.xlsx",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "team.personne-09",
+      "nom": "Personne_09",
+      "role": "architecte",
+      "voie": "flux",
+      "wip_limite": 2,
+      "source": {
+        "systeme": "saisie",
+        "ref": "Team_G2.1_v1.xlsx",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "team.personne-14",
+      "nom": "Personne_14",
+      "role": "coordo",
+      "voie": "flux",
+      "wip_limite": 3,
+      "source": {
+        "systeme": "saisie",
+        "ref": "Team_G2.1_v1.xlsx",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    },
+    {
+      "id": "team.personne-04",
+      "nom": "Personne_04",
+      "role": "dev",
+      "voie": "scrum",
+      "source": {
+        "systeme": "saisie",
+        "ref": "Team_G2.1_v1.xlsx",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    }
+  ],
+  "charges": [
+    {
+      "id": "run.ti.s19.dev",
+      "item": "run.ti",
+      "periode": {
+        "type": "sprint",
+        "ref": "jira.gou21-s19"
+      },
+      "role": "dev",
+      "mode": "jours_personne",
+      "valeur": 4.5,
+      "source": {
+        "systeme": "calcul",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "réserve run 15 % de 30 j"
+      }
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "modele": "1",
+  "source": {
+    "systeme": "saisie",
+    "ref": "Gérer",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+  },
+  "items": [
+    {
+      "id": "saisie.codes-taxes",
+      "nom": "Gestion des codes de taxes",
+      "type": "projet",
+      "parent": "goutte21",
+      "voie": "flux",
+      "etape": "planifie",
+      "promu": true,
+      "responsable": "Franck Kowalczyk",
+      "priorite": {
+        "valeur": 4,
+        "urgence": 3,
+        "effort": 2,
+        "score": 5
+      },
+      "liens": [
+        {
+          "libelle": "Pré-read CDP v1",
+          "url": "file:///Goutte2.1/01_Gouvernance/Comites/Codes_Taxes_Pre-read_CDP_v1.docx"
+        },
+        {
+          "libelle": "4 scénarios v1",
+          "url": "file:///Goutte2.1/01_Gouvernance/Comites/Codes_Taxes_4_Scenarios_v1.pptx"
+        }
+      ],
+      "note_lundi": "Recommandation S2 (import + écran de visualisation) ; décision CDP attendue",
+      "source": {
+        "systeme": "saisie",
+        "ref": "Gérer",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      },
+      "updated_at": "2026-10-27T15:40-04:00"
+    }
+  ],
+  "jalons": [
+    {
+      "id": "saisie.codes-taxes.preread",
+      "item": "saisie.codes-taxes",
+      "nom": "Pré-lecture CDP envoyée",
+      "date": "2026-06-09",
+      "statut": "fait",
+      "fait_le": "2026-06-09",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    },
+    {
+      "id": "saisie.codes-taxes.decision-cdp",
+      "item": "saisie.codes-taxes",
+      "nom": "Décision CDP (scénario retenu)",
+      "date": "2026-12-04",
+      "date_initiale": "2026-11-20",
+      "statut": "a_risque",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    },
+    {
+      "id": "saisie.codes-taxes.brd",
+      "item": "saisie.codes-taxes",
+      "nom": "BRD validé",
+      "date": "2026-12-18",
+      "statut": "a_venir",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    },
+    {
+      "id": "saisie.codes-taxes.mep",
+      "item": "saisie.codes-taxes",
+      "nom": "MEP",
+      "date": "2027-01-22",
+      "statut": "a_venir",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    }
+  ],
+  "livrables": [
+    {
+      "id": "feed.archi.adr-codes-taxes",
+      "nom": "ADR codes de taxes (intermédiaire de communication ERP)",
+      "date": "2026-11-28",
+      "date_initiale": "2026-11-14",
+      "statut": "a_risque",
+      "responsable": "Personne_09",
+      "source": {
+        "systeme": "artefact",
+        "ref": "feed architecte (à brancher à l'étape 3)",
+        "lu_le": "2026-10-27T15:40-04:00"
+      }
+    }
+  ],
+  "dependances": [
+    {
+      "id": "dep.adr-taxes-vers-decision-cdp",
+      "type": "bloque",
+      "de": {
+        "kind": "livrable",
+        "id": "feed.archi.adr-codes-taxes"
+      },
+      "vers": {
+        "kind": "jalon",
+        "id": "saisie.codes-taxes.decision-cdp"
+      },
+      "note": "Le CDP tranche sur l'option seulement avec l'ADR de l'intermédiaire ERP",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    },
+    {
+      "id": "dep.taxes-alimente-l8d",
+      "type": "alimente",
+      "de": {
+        "kind": "item",
+        "id": "saisie.codes-taxes"
+      },
+      "vers": {
+        "kind": "item",
+        "id": "goutte21.l8d"
+      },
+      "note": "Les taux de taxe alimentent la facturation de la paie transporteur",
+      "source": {
+        "systeme": "saisie",
+        "lu_le": "2026-10-27T15:40-04:00",
+        "par": "Franck"
+      }
+    }
+  ]
+}

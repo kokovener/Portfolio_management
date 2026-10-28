@@ -1,0 +1,33 @@
+{
+  "modele": "1",
+  "source": { "systeme": "calcul", "ref": "base du portefeuille après la tâche du lundi", "lu_le": "2026-10-27T07:00-04:00", "par": "tache-lundi" },
+  "items": [
+    {
+      "id": "feed.expertg1",
+      "nom": "Expert G1 — graphe de connaissance",
+      "type": "projet",
+      "parent": null,
+      "voie": "flux",
+      "etape": "actif",
+      "promu": false,
+      "pct_avancement": 62.5,
+      "priorite": { "valeur": 4, "urgence": 4, "effort": 2, "score": 6 },
+      "sante": { "couleur": "jaune", "motifs": ["risque feed.expertg1.r1 = 12 (≥ 10)"], "calcule_le": "2026-10-27T07:00-04:00" },
+      "source": { "systeme": "artefact", "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg", "lu_le": "2026-10-27T07:00-04:00", "par": "feed" },
+      "updated_at": "2026-10-27T07:00-04:00"
+    }
+  ],
+  "instantanes": [
+    {
+      "id": "instantane.2026-10-27",
+      "date": "2026-10-27",
+      "pris_le": "2026-10-27T07:00-04:00",
+      "sources_ok": 1,
+      "sources_total": 5,
+      "items": [
+        { "item": "feed.expertg1", "etape": "actif", "sante": "jaune", "pct_avancement": 62.5, "jalons_faits": 5, "jalons_total": 8, "risques_ouverts": 2, "prochain_jalon": "2026-11-04", "resume": "62 % · jaune · 2 risques" }
+      ],
+      "source": { "systeme": "calcul", "ref": "tache-lundi", "lu_le": "2026-10-27T07:00-04:00", "par": "tache-lundi" }
+    }
+  ]
+}

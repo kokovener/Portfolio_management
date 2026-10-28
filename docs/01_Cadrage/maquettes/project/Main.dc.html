@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Vue Portefeuille — 3 mois</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/plq/styles.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto+Slab:wght@300;400&display=swap">
+<style>
+body{margin:0;background:#f8f8fa;color:#2e2e36;font-family:Montserrat,system-ui,sans-serif;font-size:14px;line-height:1.4}
+a{color:#0070a8}a:hover{color:#005982}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#2fa8c7}
+.card{background:#fff;border:1px solid #e4e4e9;border-radius:12px;box-shadow:0 1px 2px rgba(0,64,94,.06)}
+.tab{padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px;color:#54545e;background:transparent;border:1px solid transparent;cursor:pointer}
+.tab.on{background:#00405e;color:#fff}
+.btn{padding:10px 16px;border-radius:999px;font-weight:600;font-size:13px;border:1px solid #0070a8;background:#0070a8;color:#fff;cursor:pointer;font-family:inherit}
+.btn.ghost{background:#fff;color:#0070a8}
+.chip{padding:5px 10px;border-radius:999px;font-size:12px;font-weight:600;background:#e4f2f8;color:#00405e}
+.tile{border-radius:8px;padding:18px 20px;color:#fff;display:flex;flex-direction:column;gap:4px;min-height:96px;justify-content:flex-end}
+.tile b{font-size:34px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.tile span{font-size:12px;font-weight:500;opacity:.95}
+.grid{display:grid;grid-template-columns:260px repeat(13,minmax(0,1fr));align-items:center}
+.gh{font-size:11px;color:#82828c;text-align:center;padding:6px 0;border-bottom:1px solid #e4e4e9;font-variant-numeric:tabular-nums}
+.sp{font-size:11px;font-weight:600;color:#00405e;background:#e4f2f8;border:1px solid #c2e4ef;border-radius:4px;margin:2px;padding:3px 0;text-align:center}
+.grp{grid-column:1/-1;padding:12px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#82828c;border-bottom:1px solid #e4e4e9}
+.lab{padding:8px 10px;border-bottom:1px solid #f1f1f4;height:40px;box-sizing:border-box;display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap}
+.lab small{color:#82828c;font-size:11px}
+.cell{height:40px;border-bottom:1px solid #f1f1f4;border-left:1px dashed #f1f1f4}
+.bar{height:18px;border-radius:4px;align-self:center;margin:0 3px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+.b-dev{background:#0070a8}.b-ana{background:#2fa8c7}.b-flow{background:#aeba5c;color:#00405e}.b-run{background:repeating-linear-gradient(135deg,#cfcfd6 0 4px,#fff 4px 8px);color:#54545e;border:1px solid #cfcfd6}.b-wait{background:#f6ecd6;color:#7d6a35;border:1px solid #ddb76b}.b-risk{background:#fff;border:2px solid #d8932f;color:#7d6a35}.b-idea{background:#fff;border:1px dashed #82828c;color:#54545e}
+.ms{width:14px;height:14px;transform:rotate(45deg);background:#00405e;justify-self:center;align-self:center}
+.ms.warn{background:#d8932f}
+.rag{width:10px;height:10px;border-radius:50%;display:inline-block}
+.g{background:#5b9e5b}.y{background:#d8932f}.r{background:#c2473b}
+.role{display:grid;grid-template-columns:90px 1fr 44px;gap:8px;align-items:center;font-size:12px}
+.track{height:10px;background:#f1f1f4;border-radius:999px;overflow:hidden}
+.fill{height:100%;border-radius:999px}
+.risk{display:grid;grid-template-columns:28px 1fr 56px;gap:8px;align-items:start;font-size:12px;padding:8px 0;border-bottom:1px solid #f1f1f4}
+.risk b{font-size:11px;color:#00405e}
+.score{font-weight:700;color:#fff;border-radius:4px;text-align:center;padding:2px 0;font-size:11px}
+.funnel{display:flex;gap:6px;align-items:stretch}
+.stage{flex:1;background:#fff;border:1px solid #e4e4e9;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.stage b{font-size:22px;font-weight:800;color:#00405e}
+.stage span{font-size:12px;color:#54545e}
+</style>
+</helmet>
+
+<div style="max-width:1400px;margin:0 auto;padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px">
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <span class="eyebrow">Les Producteurs de lait du Québec · TI</span>
+      <h1 style="margin:0;font-size:26px;font-weight:800;color:#00405e;letter-spacing:-.02em">Portefeuille PLQ</h1>
+    </div>
+    <div style="display:flex;gap:4px;background:#fff;border:1px solid #e4e4e9;border-radius:999px;padding:4px">
+      <button class="tab on" type="button">Vue équipe</button>
+      <button class="tab" type="button">Vue CDP</button>
+      <button class="tab" type="button">Vue auditeur</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:#82828c">Rafraîchi lundi 27 oct. · 07h00 EDT · 5 sources OK</span>
+      <button class="btn ghost" type="button">Importer Excel</button>
+      <button class="btn" type="button">+ Ajouter un projet</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+    <div class="tile" style="background:#0070a8"><b>11</b><span>projets actifs · 2 programmes</span></div>
+    <div class="tile" style="background:#2fa8c7"><b>6</b><span>jalons dans les 30 prochains jours</span></div>
+    <div class="tile" style="background:#ddb76b;color:#00405e"><b>3</b><span>alertes : 1 fraîcheur · 1 WIP · 1 jalon glissé</span></div>
+    <div class="tile" style="background:#aeba5c;color:#00405e"><b>3 / 2</b><span>Architecte : projets en cours / limite WIP</span></div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <span class="chip">Horizon : 3 mois</span>
+    <span class="chip">Voie : toutes</span>
+    <span class="chip">Étape : Actif + Planifié</span>
+    <span class="chip">Rôle : tous</span>
+    <span style="font-size:12px;color:#82828c;margin-left:auto">Barres = fenêtre de travail · losange = jalon · hachuré = run · ligne orange = aujourd'hui</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start">
+
+    <div class="card" style="padding:4px 0 10px;overflow-x:auto">
+      <div class="grid" style="min-width:1000px">
+        <div style="padding:6px 10px;font-size:11px;color:#82828c;border-bottom:1px solid #e4e4e9">Sprint GOU21</div>
+        <div class="sp" style="grid-column:2/3">S19</div>
+        <div class="sp" style="grid-column:3/5">S20 · 3–16 nov</div>
+        <div class="sp" style="grid-column:5/7">S21 · 17–30 nov</div>
+        <div class="sp" style="grid-column:7/9">S22 · 1–14 déc</div>
+        <div class="sp" style="grid-column:9/12;background:#f6ecd6;border-color:#ecd6a6">S23 · 15 déc–4 jan · congés</div>
+        <div class="sp" style="grid-column:12/14">S24 · 5–18 jan</div>
+        <div class="sp" style="grid-column:14/15">S25</div>
+
+        <div style="padding:6px 10px;font-size:11px;color:#82828c;border-bottom:1px solid #e4e4e9">Semaine du</div>
+        <div class="gh" style="color:#c2410c;font-weight:700">27 oct</div><div class="gh">3 nov</div><div class="gh">10 nov</div><div class="gh">17 nov</div><div class="gh">24 nov</div><div class="gh">1 déc</div><div class="gh">8 déc</div><div class="gh">15 déc</div><div class="gh">22 déc</div><div class="gh">29 déc</div><div class="gh">5 jan</div><div class="gh">12 jan</div><div class="gh">19 jan</div>
+
+        <div class="grp">Programme Goutte 2.1 — voie Scrum · 29 L · lecture Smartsheet au grain L</div>
+        <div class="lab"><span class="rag g"></span><a href="Projet.dc.html" style="font-weight:600;text-decoration:none">L6 Transporteur</a><small>Dev · 32 %</small></div>
+        <div class="bar b-dev" style="grid-column:2/8">Dev · 3 entités en sprint</div>
+        <div class="ms" style="grid-column:8"></div>
+        <div class="cell" style="grid-column:9/15"></div>
+
+        <div class="lab"><span class="rag y"></span><a href="Projet.dc.html" style="font-weight:600;text-decoration:none">L8D Paie transporteur</a><small>AF / UX · 28 % · ⛓ attend ADR Luc</small></div>
+        <div class="bar b-ana" style="grid-column:2/6">AF + UX · 4 entités</div>
+        <div class="ms warn" style="grid-column:6"></div>
+        <div class="bar b-dev" style="grid-column:7/13">Dev à partir de S22</div>
+        <div class="cell" style="grid-column:13/15"></div>
+
+        <div class="lab"><span class="rag r"></span><a href="Projet.dc.html" style="font-weight:600;text-decoration:none">L8E Paie producteur</a><small>BA · 12 entités · MAJ il y a 18 j</small></div>
+        <div class="bar b-ana" style="grid-column:2/10;opacity:.6">BA · WBS en cours · fraîcheur !</div>
+        <div class="cell" style="grid-column:10/15"></div>
+
+        <div class="lab" style="padding-left:24px"><span class="rag y"></span><a href="Projet.dc.html" style="font-weight:600;text-decoration:none">Codes de taxes</a><small>item promu · ⛓ bloqué par livrable archi</small></div>
+        <div class="bar b-ana" style="grid-column:2/4">pré-lecture CDP</div>
+        <div class="ms warn" style="grid-column:4"></div>
+        <div class="bar b-wait" style="grid-column:5/7">attend archi · 28 nov.</div>
+        <div class="ms" style="grid-column:7"></div>
+        <div class="cell" style="grid-column:8/15"></div>
+
+        <div class="lab"><span class="rag g"></span><span style="font-weight:600">Run G2.1 — extranets</span><small>JSM STG21 · 10 extranets · 9 ouverts</small></div>
+        <div class="bar b-run" style="grid-column:2/15">support extranets · ~15 % de la capacité dev</div>
+
+        <div class="lab"><span class="rag g"></span><span style="font-weight:600">MEP planifiées</span><small>versions Jira · ledger</small></div>
+        <div class="ms" style="grid-column:2" title="GOU21-11325 · 26 oct."></div>
+        <div class="ms" style="grid-column:3" title="L6 · lot 1 · 5 nov."></div>
+        <div class="cell" style="grid-column:4/6"></div>
+        <div class="ms warn" style="grid-column:6" title="Extranet Interprovince · 1 déc. · ticket non prêt"></div>
+        <div class="cell" style="grid-column:7/9"></div>
+        <div class="ms" style="grid-column:9" title="L6 · lot 2 · 15 déc."></div>
+        <div class="cell" style="grid-column:10/15"></div>
+
+        <div class="grp">Hors programme — voie flux (kanban) · lecture artefacts, Jira SDD / PLQ</div>
+        <div class="lab"><span class="rag y"></span><a href="Projet.dc.html" style="font-weight:600;text-decoration:none">Expert G1 — graphe</a><small>Franck · pilote</small></div>
+        <div class="bar b-flow" style="grid-column:2/4">couche doc · pilote</div>
+        <div class="ms warn" style="grid-column:4"></div>
+        <div class="bar b-flow" style="grid-column:5/8;opacity:.7">ouverture analystes</div>
+        <div class="cell" style="grid-column:8/15"></div>
+
+        <div class="lab"><span class="rag y"></span><span style="font-weight:600">Bitbucket Cloud — bascule</span><small>Luc · attente validation</small></div>
+        <div class="bar b-wait" style="grid-column:2/5">attente Luc</div>
+        <div class="ms" style="grid-column:5"></div>
+        <div class="cell" style="grid-column:6/15"></div>
+
+        <div class="lab"><span class="rag g"></span><span style="font-weight:600">IIS → Windows Core</span><small>Cristian · PLQ-9437</small></div>
+        <div class="bar b-dev" style="grid-column:2/3;background:#5b9e5b">fait</div>
+        <div class="cell" style="grid-column:3/15"></div>
+
+        <div class="lab"><span class="rag g"></span><span style="font-weight:600">Run TI — G1, extranets</span><small>SDD · PLQ</small></div>
+        <div class="bar b-run" style="grid-column:2/15">maintenance G1 · MEP planifiées</div>
+
+        <div class="grp">Candidats — à qualifier (CDP)</div>
+        <div class="lab"><span class="rag" style="background:#cfcfd6"></span><span style="font-weight:600">Méthane P2</span><small>idée · valeur ? effort ?</small></div>
+        <div class="cell" style="grid-column:2/8"></div>
+        <div class="bar b-idea" style="grid-column:8/13">fenêtre possible après L8D</div>
+        <div class="cell" style="grid-column:13/15"></div>
+
+        <div class="lab"><span class="rag" style="background:#cfcfd6"></span><span style="font-weight:600">Portefeuille PLQ v0</span><small>Franck · ce produit</small></div>
+        <div class="bar b-flow" style="grid-column:2/4">v0</div>
+        <div class="cell" style="grid-column:4/15"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="padding:16px">
+        <span class="eyebrow">Charge par rôle · 4 prochaines semaines</span>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <div class="role"><span>Architecte</span><div class="track"><div class="fill" style="width:100%;background:#c2473b"></div></div><span style="font-weight:700;color:#c2473b">150 %</span></div>
+          <div class="role"><span>BA</span><div class="track"><div class="fill" style="width:100%;background:#d8932f"></div></div><span style="font-weight:700;color:#d8932f">110 %</span></div>
+          <div class="role"><span>AF</span><div class="track"><div class="fill" style="width:95%;background:#0070a8"></div></div><span>95 %</span></div>
+          <div class="role"><span>Dev</span><div class="track"><div class="fill" style="width:85%;background:#0070a8"></div></div><span>85 %</span></div>
+          <div class="role"><span>UX</span><div class="track"><div class="fill" style="width:70%;background:#0070a8"></div></div><span>70 %</span></div>
+          <div class="role"><span>QA</span><div class="track"><div class="fill" style="width:60%;background:#0070a8"></div></div><span>60 %</span></div>
+        </div>
+        <p style="margin:10px 0 0;font-size:11px;color:#82828c">Demande = projets × personnes ; capacité = jours ouvrés − absences Outlook. Voie flux : WIP par personne, pas d'heures.</p>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <span class="eyebrow">Top 5 risques · portefeuille</span>
+        <div style="margin-top:6px">
+          <div class="risk"><div class="score" style="background:#c2473b">20</div><div><b>R2</b> · Jalons analystes non mis à jour → % faux<br><small style="color:#82828c">L8E : 18 j sans MAJ</small></div><span style="color:#82828c">Goutte</span></div>
+          <div class="risk"><div class="score" style="background:#c2473b">16</div><div><b>R3</b> · Gate Archi engorgé (Luc, 3 projets)<br><small style="color:#82828c">limite WIP 2 dépassée</small></div><span style="color:#82828c">Transverse</span></div>
+          <div class="risk"><div class="score" style="background:#d8932f">12</div><div><b>G1-1</b> · Validateurs pilote non confirmés avant le 4 nov<br><small style="color:#82828c">go/no-go 11 nov glisse</small></div><span style="color:#82828c">Expert G1</span></div>
+          <div class="risk"><div class="score" style="background:#d8932f">12</div><div><b>R8</b> · Worklogs Jira incomplets → coûts auditeur faux</div><span style="color:#82828c">Goutte</span></div>
+          <div class="risk" style="border-bottom:none"><div class="score" style="background:#ddb76b;color:#00405e">9</div><div><b>R9</b> · Roadmap Review trimestriel non tenu</div><span style="color:#82828c">Gouvernance</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px;border-top:3px solid #d8932f">
+        <span class="eyebrow" style="color:#d8932f">Alertes du lundi</span>
+        <ul style="margin:8px 0 0;padding-left:18px;font-size:12px;display:flex;flex-direction:column;gap:6px">
+          <li><b>Fraîcheur</b> — L8E Paie producteur : aucune mise à jour depuis 18 jours (seuil 14).</li>
+          <li><b>WIP</b> — Architecte sur 3 projets (limite 2) : Bitbucket, L8D gate, Expert G1 VM.</li>
+          <li><b>Jalon glissé</b> — L8D validation UX-2 : 24 nov → 1 déc (+7 j).</li>
+          <li><b>Dépendance</b> — livrable archi « ADR codes de taxes » reculé au 28 nov → décision CDP Codes de taxes en alerte.</li>
+          <li><b>MEP</b> — Extranet Interprovince le 1 déc : aucun ticket « prêt » à 7 jours.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <span class="eyebrow">Support extranets · JSM STG21 · ouverts par extranet</span>
+        <div style="display:grid;grid-template-columns:1fr 36px 60px;gap:4px 8px;font-size:12px;margin-top:8px;align-items:center">
+          <span>Interprovince</span><b>4</b><span class="chip" style="background:#f6ecd6;color:#b8923f">↑ 2</span>
+          <span>Producteurs</span><b>2</b><span class="chip">=</span>
+          <span>Transporteurs</span><b>2</b><span class="chip">=</span>
+          <span>Transformateurs</span><b>1</b><span class="chip" style="background:#eef1da;color:#7d8a3a">↓ 1</span>
+          <span style="color:#82828c">6 autres extranets</span><b style="color:#82828c">0</b><span></span>
+        </div>
+        <p style="margin:10px 0 0;font-size:11px;color:#82828c">Même board que l'artefact Triage STG21 · âge moyen 6 j · plus vieux 21 j (Interprovince).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+      <span class="eyebrow">Entonnoir d'admission · glisser un projet pour changer d'étape</span>
+      <span style="font-size:12px;color:#82828c">Critères de priorité : valeur · urgence · effort · risque</span>
+    </div>
+    <div class="funnel" style="margin-top:10px">
+      <div class="stage"><b>3</b><span>Idée</span></div>
+      <div class="stage"><b>2</b><span>Qualifié</span></div>
+      <div class="stage"><b>4</b><span>Planifié</span></div>
+      <div class="stage" style="border-color:#0070a8"><b>11</b><span>Actif</span></div>
+      <div class="stage"><b>2</b><span>Terminé · 90 j</span></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

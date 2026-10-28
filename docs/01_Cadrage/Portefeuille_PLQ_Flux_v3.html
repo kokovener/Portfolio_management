@@ -1,0 +1,237 @@
+<title>Flux Portefeuille PLQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one wide left-to-right flow figure (sources → lundi 7 h → base → sorties), then two reference tables.
+   Tokens reuse the Portefeuille PLQ page palette (navy / bleu PLQ / or / vert terroir). */
+:root{
+  --bg:#f8f8fa;--card:#ffffff;--ink:#2e2e36;--ink2:#54545e;--mute:#7c7c88;--line:#dcdce3;--soft:#eef0f4;
+  --navy:#00405e;--blue:#0070a8;--mist:#e4f2f8;--gold:#b98a2c;--gold-t:#f6ecd6;--green:#6b7730;--green-t:#eef1da;
+  --write:#0070a8;--font:Montserrat,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#33404b;--soft:#222a33;
+  --navy:#9fd3ea;--blue:#5cb3e0;--mist:#1d3442;--gold:#e0b866;--gold-t:#3a3221;--green:#c2cf7f;--green-t:#2b3120;--write:#5cb3e0;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#33404b;--soft:#222a33;
+  --navy:#9fd3ea;--blue:#5cb3e0;--mist:#1d3442;--gold:#e0b866;--gold-t:#3a3221;--green:#c2cf7f;--green-t:#2b3120;--write:#5cb3e0;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{margin:4px 0 6px;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02em;text-wrap:balance}
+h2{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--navy)}
+.lede{margin:0;max-width:72ch;color:var(--ink2)}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;min-width:980px;height:auto;color:var(--ink);font-family:var(--font)}
+figcaption{margin-top:10px;font-size:12px;color:var(--mute);max-width:90ch}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.panel{min-width:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--soft);vertical-align:top}
+td:first-child{font-weight:600;color:var(--navy);white-space:nowrap}
+.tw{overflow-x:auto}
+.foot{font-size:12px;color:var(--mute)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Les Producteurs de lait du Québec · TI · Portefeuille PLQ</span>
+    <h1>D'où viennent les chiffres du portefeuille</h1>
+    <p class="lede">Chaque lundi à 7 h, une tâche lit six sources sans jamais les modifier, fige d'abord une photo de la base, puis écrit ce qu'elle a lu. Un agent analyste croise ensuite toute la base et propose au plus cinq signaux à confirmer. Franck complète à la main ce que les sources ne donnent pas. La page calcule santé, alertes et capacité au moment où on l'ouvre.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 650" role="img" aria-label="Six sources en lecture seule alimentent la tâche du lundi, qui écrit dans la base du portefeuille ; Franck et Claude y écrivent aussi ; la page lit la base en direct et la tâche produit le digest et le message Teams.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--write)"/></marker>
+      </defs>
+
+      <!-- column headings -->
+      <g font-size="11" font-weight="700" letter-spacing="1.4" fill="var(--mute)">
+        <text x="20" y="56">SOURCES · LECTURE SEULE</text>
+        <text x="340" y="56">TRAITEMENT</text>
+        <text x="680" y="56">BASE</text>
+        <text x="940" y="56">SORTIES</text>
+      </g>
+
+      <!-- sources -->
+      <g font-size="12">
+        <g><rect x="20" y="80" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="106" font-weight="700" fill="var(--navy)">Smartsheet · Goutte21_Master</text>
+          <text x="34" y="126" fill="var(--ink2)">programme, L et sous-L · % · phase</text></g>
+        <g><rect x="20" y="162" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="188" font-weight="700" fill="var(--navy)">Jira GOU21 · board 38</text>
+          <text x="34" y="206" fill="var(--ink2)">sprints · MEP · tâches et sous-tâches</text>
+          <text x="34" y="222" fill="var(--ink2)">épopées · liens web vers STG21</text></g>
+        <g><rect x="20" y="244" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="270" font-weight="700" fill="var(--navy)">Ledgers Goutte 2.1</text>
+          <text x="34" y="290" fill="var(--ink2)">MEP SDD et PLQ (hors connecteur)</text></g>
+        <g><rect x="20" y="326" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="352" font-weight="700" fill="var(--navy)">Artefacts de projet</text>
+          <text x="34" y="372" fill="var(--ink2)">bloc feed JSON (Expert G1…)</text></g>
+        <g><rect x="20" y="408" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="434" font-weight="700" fill="var(--navy)">Team_G2.1.xlsx + Outlook</text>
+          <text x="34" y="454" fill="var(--ink2)">équipe et rôles · absences</text></g>
+        <g><rect x="20" y="490" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="516" font-weight="700" fill="var(--navy)">Miro · rétro du sprint</text>
+          <text x="34" y="536" fill="var(--ink2)">cadre « Actions »</text></g>
+      </g>
+      <!-- source → task arrows -->
+      <g stroke="currentColor" stroke-width="1.2" fill="none" marker-end="url(#ar)" opacity=".7">
+        <line x1="280" y1="115" x2="338" y2="115"/><line x1="280" y1="197" x2="338" y2="197"/>
+        <line x1="280" y1="279" x2="338" y2="279"/><line x1="280" y1="361" x2="338" y2="361"/>
+        <line x1="280" y1="443" x2="338" y2="443"/><line x1="280" y1="525" x2="338" y2="525"/>
+      </g>
+      <text x="309" y="580" font-size="11" text-anchor="middle" fill="var(--mute)">lit</text>
+
+      <!-- task -->
+      <rect x="340" y="80" width="280" height="480" rx="10" fill="var(--mist)" stroke="var(--blue)"/>
+      <text x="356" y="106" font-size="13" font-weight="800" fill="var(--navy)">Tâche planifiée · lundi 7 h</text>
+      <g font-size="12">
+        <rect x="356" y="122" width="248" height="56" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="144" font-weight="700" fill="var(--ink)">1 · Instantané de la base</text>
+        <text x="368" y="163" fill="var(--ink2)">avant toute lecture, jamais supprimé</text>
+        <rect x="356" y="190" width="248" height="178" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="212" font-weight="700" fill="var(--ink)">2 · Six adaptateurs</text>
+        <text x="368" y="236" fill="var(--ink2)">Smartsheet → items L</text>
+        <text x="368" y="256" fill="var(--ink2)">Jira → sprints, MEP</text>
+        <text x="368" y="276" fill="var(--ink2)">Jira data → points d'équipe,</text>
+        <text x="380" y="292" fill="var(--ink2)">sous-tâches, support STG21</text>
+        <text x="368" y="314" fill="var(--ink2)">Artefacts → jalons, risques</text>
+        <text x="368" y="334" fill="var(--ink2)">Outlook → personnes, absences</text>
+        <text x="368" y="354" fill="var(--ink2)">Miro → actions de rétro</text>
+        <rect x="356" y="376" width="248" height="46" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="396" font-weight="700" fill="var(--ink)">3 · Validation</text>
+        <text x="368" y="413" fill="var(--ink2)">modèle canonique v2 (schema.json)</text>
+        <rect x="356" y="430" width="248" height="58" rx="6" fill="var(--gold-t)" stroke="var(--gold)" stroke-dasharray="5 3"/>
+        <text x="368" y="450" font-weight="700" fill="var(--ink)">3b · Agent analyste</text>
+        <text x="368" y="467" fill="var(--ink2)">croise toute la base : ≤ 5 signaux</text>
+        <text x="368" y="482" font-size="11" fill="var(--mute)">à confirmer, jamais écrits en base</text>
+        <rect x="356" y="496" width="248" height="56" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="516" font-weight="700" fill="var(--ink)">4 · Digest du lundi</text>
+        <text x="368" y="534" fill="var(--ink2)">alertes + signaux + recommandation</text>
+      </g>
+
+      <!-- Gérer + Claude -->
+      <g font-size="12">
+        <rect x="680" y="80" width="94" height="130" rx="8" fill="var(--gold-t)" stroke="var(--gold)"/>
+        <text x="692" y="104" font-weight="700" fill="var(--ink)">Gérer</text>
+        <text x="692" y="124" fill="var(--ink2)">Franck,</text>
+        <text x="692" y="140" fill="var(--ink2)">seul éditeur</text>
+        <text x="692" y="164" font-size="11" fill="var(--mute)">jalons, risques,</text>
+        <text x="692" y="179" font-size="11" fill="var(--mute)">épopées, rang</text>
+        <rect x="786" y="80" width="94" height="130" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="798" y="104" font-weight="700" fill="var(--ink)">Claude</text>
+        <text x="798" y="124" fill="var(--ink2)">conversation</text>
+        <text x="798" y="164" font-size="11" fill="var(--mute)">statut des</text>
+        <text x="798" y="179" font-size="11" fill="var(--mute)">actions de rétro</text>
+      </g>
+
+      <!-- base (cylinder) -->
+      <g>
+        <path d="M680,262 v170 a100,16 0 0 0 200,0 v-170" fill="var(--card)" stroke="var(--navy)" stroke-width="1.5"/>
+        <ellipse cx="780" cy="262" rx="100" ry="16" fill="var(--soft)" stroke="var(--navy)" stroke-width="1.5"/>
+        <text x="780" y="304" font-size="13" font-weight="800" text-anchor="middle" fill="var(--navy)">Base du portefeuille</text>
+        <text x="780" y="324" font-size="12" text-anchor="middle" fill="var(--ink2)">14 collections</text>
+        <text x="780" y="350" font-size="11" text-anchor="middle" fill="var(--mute)">items · jalons · risques</text>
+        <text x="780" y="366" font-size="11" text-anchor="middle" fill="var(--mute)">charges · sprints · MEP</text>
+        <text x="780" y="382" font-size="11" text-anchor="middle" fill="var(--mute)">stats Jira · instantanés…</text>
+      </g>
+
+      <!-- write arrows (accent) -->
+      <g stroke="var(--write)" stroke-width="3" fill="none" marker-end="url(#aw)">
+        <line x1="620" y1="320" x2="676" y2="320"/>
+        <line x1="727" y1="210" x2="727" y2="244"/>
+        <line x1="833" y1="210" x2="833" y2="244"/>
+      </g>
+      <text x="648" y="310" font-size="11" text-anchor="middle" font-weight="700" fill="var(--write)">écrit</text>
+      <text x="780" y="232" font-size="11" text-anchor="middle" font-weight="700" fill="var(--write)">écrit</text>
+
+      <!-- outputs -->
+      <g font-size="12">
+        <rect x="940" y="80" width="240" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="954" y="104" font-weight="700" fill="var(--ink)">Équipe · CDP · Direction</text>
+        <text x="954" y="123" fill="var(--ink2)">lecture, une fois la page partagée</text>
+        <rect x="940" y="230" width="240" height="160" rx="8" fill="var(--card)" stroke="var(--navy)" stroke-width="1.5"/>
+        <text x="954" y="256" font-size="13" font-weight="800" fill="var(--navy)">Page Portefeuille PLQ</text>
+        <text x="954" y="278" fill="var(--ink2)">vues Portefeuille · Projet · Sprint</text>
+        <text x="954" y="304" fill="var(--ink2)">calculés à l'ouverture :</text>
+        <text x="966" y="322" fill="var(--ink2)">santé, alertes, capacité</text>
+        <text x="954" y="348" fill="var(--ink2)">aucune donnée dans le code :</text>
+        <text x="966" y="366" fill="var(--ink2)">tout vient de la base</text>
+        <rect x="940" y="440" width="240" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="954" y="462" font-weight="700" fill="var(--ink)">Digest · 05_Pilotage</text>
+        <text x="954" y="481" fill="var(--ink2)">Digest_&lt;lundi&gt;.md</text>
+        <rect x="940" y="514" width="240" height="56" rx="8" fill="var(--green-t)" stroke="var(--green)"/>
+        <text x="954" y="536" font-weight="700" fill="var(--ink)">Teams · G1_Agent_Analystes</text>
+        <text x="954" y="555" fill="var(--ink2)">brouillon tant que Franck n'a pas validé</text>
+      </g>
+      <!-- read arrows -->
+      <g stroke="currentColor" stroke-width="1.2" fill="none" marker-end="url(#ar)" opacity=".7">
+        <line x1="880" y1="320" x2="938" y2="320"/>
+        <line x1="1060" y1="230" x2="1060" y2="144"/>
+        <path d="M620,507 L760,507 L760,468 L938,468"/>
+        <line x1="1060" y1="496" x2="1060" y2="510"/>
+      </g>
+      <text x="909" y="310" font-size="11" text-anchor="middle" fill="var(--mute)">lit</text>
+      <text x="1068" y="192" font-size="11" fill="var(--mute)">consultent</text>
+      <text x="850" y="460" font-size="11" text-anchor="middle" fill="var(--mute)">produit</text>
+
+      <!-- legend -->
+      <g font-size="11" fill="var(--mute)">
+        <line x1="340" y1="610" x2="380" y2="610" stroke="var(--write)" stroke-width="3" marker-end="url(#aw)"/>
+        <text x="388" y="614">écriture dans la base</text>
+        <line x1="540" y1="610" x2="580" y2="610" stroke="currentColor" stroke-width="1.2" opacity=".7" marker-end="url(#ar)"/>
+        <text x="588" y="614">lecture</text>
+        <rect x="660" y="603" width="34" height="14" rx="3" fill="var(--gold-t)" stroke="var(--gold)" stroke-dasharray="5 3"/>
+        <text x="702" y="614">agent : jugement, jamais écrit en base</text>
+        <text x="20" y="636">Aucune flèche ne repart vers une source : le portefeuille ne modifie jamais Smartsheet, Jira, Outlook, Miro ni un artefact.</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Trois chemins écrivent dans la base (la tâche du lundi, Gérer, la conversation Claude) ; tout le reste lit. La page n'a rien en dur : elle recalcule à chaque ouverture à partir de la base.</figcaption>
+  </figure>
+
+  <div class="two">
+    <section class="panel">
+      <h2>Ce que chaque source donne</h2>
+      <div class="tw"><table>
+        <thead><tr><th>Source</th><th>Donnée</th><th>Règle clé</th></tr></thead>
+        <tbody>
+          <tr><td>Smartsheet</td><td>Programme, L, sous-L, %, phase</td><td>Grain L seulement, jamais les entités</td></tr>
+          <tr><td>Jira · sprints</td><td>Dernier sprint clos, actif, suivant ; MEP</td><td>Jira fait foi pour le sprint</td></tr>
+          <tr><td>Jira · data</td><td>Points de la tâche parente ; sous-tâches par personne</td><td>Points = équipe ; charge d'une personne = ses sous-tâches</td></tr>
+          <tr><td>Jira · support</td><td>Bug, Story, Tâche liés à STG21</td><td>Compté par demande STG21, par extranet</td></tr>
+          <tr><td>Ledgers</td><td>MEP SDD et PLQ</td><td>Date du ledger ; statut Jira si lisible</td></tr>
+          <tr><td>Artefacts</td><td>Jalons, risques, attentes (feed)</td><td>Bloc JSON valide, sinon ignoré et signalé</td></tr>
+          <tr><td>Team + Outlook</td><td>Personnes, rôles, absences</td><td>Départs exclus (team_departs.json)</td></tr>
+          <tr><td>Miro</td><td>Actions de la rétro</td><td>Statut saisi après la rétro</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section class="panel">
+      <h2>Règles qui s'appliquent partout</h2>
+      <div class="tw"><table>
+        <thead><tr><th>Règle</th><th>Énoncé</th></tr></thead>
+        <tbody>
+          <tr><td>Fait</td><td>Dès « Prêt pour Preprod » ; « Annulé » n'est ni fait ni charge</td></tr>
+          <tr><td>Santé</td><td>Calculée, jamais déclarée ; fraîcheur &gt; 14 j = alerte</td></tr>
+          <tr><td>Sprint</td><td>Un projet y figure seulement s'il y a des tickets Jira</td></tr>
+          <tr><td>Instantané</td><td>Écrit chaque lundi avant tout recalcul ; jamais supprimé</td></tr>
+          <tr><td>Analyste</td><td>Agent au contexte neuf : ≤ 5 signaux prouvés, à juger « juste / faux »</td></tr>
+          <tr><td>Suppression</td><td>Jamais sans l'accord de Franck</td></tr>
+          <tr><td>Heures</td><td>Heure du Québec, jamais d'UTC brut</td></tr>
+          <tr><td>Recrutements</td><td>Rien n'entre dans la base ni dans un digest</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+  <p class="foot">Flux v3 · 28 oct. 2026 (agent analyste ajouté) · remplace Portefeuille_PLQ_Flux_v2.drawio · modèle canonique v2 · tâche du lundi v2</p>
+</div>
