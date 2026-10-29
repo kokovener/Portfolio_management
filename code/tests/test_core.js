@@ -44,7 +44,10 @@ ok('D8 health: attente 5+ working days late turns jaune; overdue jalon turns rou
   assert.strictEqual(Core.sante(base, ix.items['run.ti'], '2026-11-03').couleur, 'jaune'); // 26 oct -> 3 nov = 6 jo > 5
   assert.strictEqual(Core.sante(base, ix.items['run.ti'], '2026-11-03').motifs.length, 1);
   assert.strictEqual(Core.sante(base, ix.items['goutte21.l8d'], '2026-11-15').couleur, 'rouge');
-  assert.strictEqual(Core.sante(base, ix.items['goutte21.l8d'], '2026-11-11').couleur, 'rouge'); // updated 27 oct + 15 j
+  // R44 (D8 v4): staleness = 15 working days (one sprint), Smartsheet or Jira activity
+  assert.strictEqual(Core.fraicheur(base, ix.items['goutte21.l8d'], '2026-11-17').jo, 15);
+  assert(!Core.sante(base, ix.items['goutte21.l8d'], '2026-11-11').motifs.some((m) => /fraîcheur/.test(m)));
+  assert(Core.sante(base, ix.items['goutte21.l8d'], '2026-11-18').motifs.some((m) => /fraîcheur : 16 j ouvrés/.test(m)));
 });
 ok('D9 priority: score and ranks', () => {
   const r = Core.rangs(base);
@@ -56,23 +59,39 @@ ok('progress: source % wins, else done/total jalons', () => {
   assert.deepStrictEqual(Core.pct(base, ix.items['goutte21.l8d']), { valeur: 3, origine: 'source' });
   assert.deepStrictEqual(Core.pct(base, ix.items['saisie.codes-taxes']), { valeur: 25, origine: 'jalons' });
 });
-ok('alerts: jalon recul +10 jo, dependency ADR -> décision CDP and taxes -> L8D, no MEP/WIP alert today', () => {
+ok('alerts (R44): one recul chain ADR -> décision CDP (+10) -> L8D, no separate dependency lines, no MEP/WIP alert today', () => {
   const a = Core.alertes(base, T);
   const k = a.map((x) => x.kind);
-  assert(a.some((x) => x.kind === 'jalon' && /Décision CDP/.test(x.texte) && /\+10/.test(x.texte)));
-  assert(a.some((x) => x.kind === 'dependance' && x.item === 'saisie.codes-taxes'));
-  assert(a.some((x) => x.kind === 'dependance' && x.item === 'goutte21.l8d'));
-  assert(!k.includes('mep') && !k.includes('wip'));
+  const r = a.filter((x) => x.kind === 'recul'); assert.strictEqual(r.length, 1, r.map((x) => x.texte).join(' | '));
+  assert(/^Livrable ADR/.test(r[0].texte) && /Décision CDP[^→]*\+10 j o\./.test(r[0].texte) && /L8D/.test(r[0].texte), r[0].texte);
+  assert(!k.includes('dependance'));
+  assert(!k.includes('mep') && !k.includes('wip')); // no WIP rule any more (v8)
   assert(a.some((x) => x.kind === 'phase' && x.item === 'goutte21.l8')); // seed L8: smartsheet, no phase
 });
 ok('alerts: MEP planifiée within 7 days', () => {
   const b = Core.mergeDocs([seed, { meps: [{ id: 'jira.gou21-1', date: '2026-10-30', systeme: 'G2.1', statut: 'planifiee', source: { systeme: 'ledger', lu_le: '2026-10-27T07:00-04:00' } }] }]);
   assert(Core.alertes(b, T).some((x) => x.kind === 'mep'));
 });
-ok('WIP: Luc 1 / 2, Franck 1 / 3 this week', () => {
-  const w = Core.wipParPersonne(base, T);
-  assert.deepStrictEqual(w.map((x) => [x.personne, x.wip, x.limite]).sort(), [['team.personne-09', 1, 2], ['team.kowalczyk-franck', 1, 3]]);
+ok('alerts (R44): freshness grouped under the top stale parent; Jira activity in the sprint keeps an item fresh', () => {
+  const b = Core.mergeDocs([seed]); const d = '2026-12-31';
+  const f = Core.alertes(b, d).filter((x) => x.kind === 'fraicheur');
+  const items = f.map((x) => x.item); assert(!items.includes('goutte21.l8d') || !items.includes('goutte21.l8'), 'child folded into parent');
+  const b2 = Core.mergeDocs([seed, { stats_jira: [{ id: 'jira.stat.goutte21.l8d', item: 'goutte21.l8d', epics: ['GOU21-1'], tickets: { total: 1, faits: 0, en_cours: 1, a_faire: 0 }, sprint: { ref: 'jira.gou21-s20', tickets: 1, faits: 0, points: 1 }, source: { systeme: 'jira', lu_le: '2026-12-30T09:00-04:00' } }] }]);
+  assert.strictEqual(Core.fraicheur(b2, Core.index(b2).items['goutte21.l8d'], d).par, 'jira');
+  assert(!Core.alertes(b2, d).some((x) => x.kind === 'fraicheur' && x.item === 'goutte21.l8d'));
 });
+ok('alerts (R44): risk >= 15 listed; blocked tickets of the active sprint as keys only', () => {
+  const a = Core.alertes(base, T); assert(a.some((x) => x.kind === 'risque' && /= 16/.test(x.texte)));
+  const b = Core.mergeDocs([seed, { listes_jira: [{ id: 'jira.liste.bloques', nature: 'bloques', tickets: [{ cle: 'GOU21-1', titre: 'x', sprints: ['jira.gou21-s19'] }, { cle: 'GOU21-2', titre: 'y', sprints: ['jira.gou21-s20'] }], source: { systeme: 'jira', lu_le: '2026-10-27T09:00-04:00' } }] }]);
+  const bl = Core.alertes(b, T).filter((x) => x.kind === 'bloque'); assert.strictEqual(bl.length, 1); assert(/GOU21-1\.$/.test(bl[0].texte) && !/GOU21-2/.test(bl[0].texte), bl[0].texte);
+});
+ok('alerts (review): a dependency cycle between two moved-back milestones still gives one recul line', () => {
+  const s = { systeme: 'saisie', lu_le: '2026-10-27T10:00-04:00' };
+  const b = Core.mergeDocs([seed, { jalons: [{ id: 'x.a', item: 'run.ti', nom: 'A', date: '2026-12-15', date_initiale: '2026-12-01', statut: 'a_venir', source: s }, { id: 'x.b', item: 'run.ti', nom: 'B', date: '2026-12-16', date_initiale: '2026-12-02', statut: 'a_venir', source: s }],
+    dependances: [{ id: 'dep.ab', type: 'bloque', de: { kind: 'jalon', id: 'x.a' }, vers: { kind: 'jalon', id: 'x.b' }, source: s }, { id: 'dep.ba', type: 'bloque', de: { kind: 'jalon', id: 'x.b' }, vers: { kind: 'jalon', id: 'x.a' }, source: s }] }]);
+  const r = Core.alertes(b, T).filter((x) => x.kind === 'recul' && /— [AB] :/.test(x.texte)); assert.strictEqual(r.length, 1, r.map((x) => x.texte).join(' | '));
+});
+ok('D7 flux part dropped: no WIP computation left in the core', () => assert(!('wipParPersonne' in Core)));
 ok('sprint S20: dev capacity, reserve; without Jira tickets no item and no milestone (R04, Jira only)', () => {
   const s = Core.sprintVue(base, 'jira.gou21-s20', T);
   assert.strictEqual(s.dev.net, 10);
@@ -89,11 +108,11 @@ ok('sprint S19 (seed v2, Franck flow): items = items holding Jira tickets, team 
   const j = Core.jiraOf(b2, 'saisie.codes-taxes', 'jira.gou21-s19');
   assert.strictEqual(j.equipe, 46); assert.deepStrictEqual(j.parPersonne.map((p) => p.sousTaches), [6, 4]);
 });
-ok('charge par rôle: dev in j-p, architecte in WIP', () => {
+ok('charge par rôle: dev in j-p, no WIP role any more (v8)', () => {
   const c = Core.chargeParRole(base, T, 4);
   const dev = c.find((x) => x.role === 'dev'); const ar = c.find((x) => x.role === 'architecte');
   assert.strictEqual(dev.mode, 'jours'); assert.strictEqual(dev.demande, 14.5); assert.strictEqual(dev.capacite, 17); // 2 sprints x 10 j - 15 % run reserve
-  assert.strictEqual(ar.mode, 'wip'); assert.strictEqual(ar.pct, 50);
+  assert(!ar);
 });
 ok('ids: slug + uniqueness', () => {
   assert.strictEqual(Core.newId('saisie', 'Méthane P2 — été', []), 'saisie.methane-p2-ete');
@@ -119,5 +138,13 @@ ok('retro actions in sprint view: own sprint + open earlier ones, numeric sprint
   assert.deepStrictEqual(ids('jira.gou21-s10'), ['a9']);
   assert.deepStrictEqual(ids('jira.gou21-s19'), ['a19', 'a9']);
   assert.deepStrictEqual(ids('jira.gou21-s9'), ['a9', 'a9f']);
+});
+ok('nowTs / fmtTs: Québec offset on both sides of the DST switch (EDT -04:00 until 1 Nov. 2 a.m., EST -05:00 after), never Z', () => {
+  assert.strictEqual(Core.nowTs(new Date('2026-10-29T16:00Z')), '2026-10-29T12:00-04:00');
+  assert.strictEqual(Core.nowTs(new Date('2026-11-02T12:04Z')), '2026-11-02T07:04-05:00');
+  assert.strictEqual(Core.todayIso(new Date('2026-11-03T04:30Z')), '2026-11-02'); // 23h30 EST is still Monday
+  assert.strictEqual(Core.nowTs(new Date(Date.parse('2026-11-28T05:00Z') - 60000)).slice(0, 10), '2026-11-27'); // sprint end at local midnight
+  assert.strictEqual(Core.fmtTs('2026-11-02T07:04-05:00'), '2 nov. · 07h04 EST');
+  assert.strictEqual(Core.fmtTs('2026-10-29T12:00-04:00'), '29 oct. · 12h00 EDT');
 });
 console.log(`\n${n} tests OK`);

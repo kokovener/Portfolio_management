@@ -32,3 +32,23 @@ dist/retro/*/*
 # GitHub backup: local pseudonym map and build copy, never committed
 config/backup_pseudonymes.json
 dist/backup/
+# Passages (R36) and on-demand runs: same rule as Monday runs — base exports, raw reads (directory, team, calendar:
+# personal data) stay local; only statut.json and plan.json are committed (checkpoint 2026-10-29, finding #17)
+dist/passages/*/*
+!dist/passages/*/statut.json
+!dist/passages/*/plan.json
+# scratch copies of the published page and ad-hoc run dirs
+dist/publiee_*/
+dist/runs/*/*/base/
+dist/runs/*/*/base_in/
+dist/runs/*/*/w/
+dist/runs/*/*/publiee/
+dist/runs/*/*/base_avant.json
+dist/runs/*/*/lots.json
+dist/runs/*/d7/
+dist/runs/*/*_base_before/
+dist/runs/*/*/batch_all.json
+dist/runs/2026-10-28/r06d/versions.json
+# team records (names, roles) in run exports: local only (checkpoint 2026-10-29)
+dist/runs/**/personnes/
+dist/runs/*/suppressions/personnes__*

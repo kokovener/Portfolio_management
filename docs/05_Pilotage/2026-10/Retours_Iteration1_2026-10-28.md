@@ -10,7 +10,7 @@ Laisse vides les colonnes Impact et Statut : Claude les remplit au tri.
 | R03 | Portefeuille / support |  | on peut seulement se connecter a l espage G2.1 et non a STG. pour connaire les tickets qui viennent de support il faut chercher les tickets dans Goutte2.1 avec un lien externe vers STG21. tu as un exemple dans  https://jira-plq.atlassian.net/browse/GOU21-11137 |  | Adaptateur Jira : lien web vers STG21 (vérifié sur GOU21-11137) | Fait (v12) : 2 demandes ouvertes — STG21-226 Région · STG21-206 Producteur ; périmètre Bug · Story · Tâche (réponse Franck) |
 |R04|sprint / jalon | je vos les jalons de tous les projets| je devrais voir seulement ce qui est lié au sprint en cours ou au futur dans Jira. pour le sprint Jira est la source de vérité, c'ertain projet comme expertg1 ne sont pas dans le sprint et ne devrait pas apparaitre||Interface (filtre) puis Jira (épopées, R02) | Fait (v12) : un item n'entre dans le sprint que par ses tickets Jira |
 |R05| sprint / capacité | je vois seulement Luc et moi | je devrais voir tout le monde Jira est la source||Adaptateur Jira (assignés du sprint) · modèle v2 (charge en points) | Fait (v12) : tableau par personne (assignés + équipe Scrum) |
-|R06| poetefeuille| goutte 2.1 est mal organisé | il faut que l on travaille ensemble pour comprendre comment améliorer la source dans smartsheet ||Source Smartsheet (hors portefeuille) | Atelier à planifier avec Franck |
+|R06| poetefeuille| goutte 2.1 est mal organisé | il faut que l on travaille ensemble pour comprendre comment améliorer la source dans smartsheet ||Source Smartsheet · adaptateur Smartsheet v2 · modèle v3 | Atelier fait (28 oct.) en 2 parties : `05_Pilotage/Atelier_R06_Smartsheet_v2.md` · page v15 (phases, pause) puis v16-v17 (prévu vs réel, gates, % Jira) · commits f762dd8, cdc0ec6 ; reste S4, S5 (dates à saisir, Franck) |
 |R07| portefeuille | tout est déplié pour les programmes | je veux que les niveaux soit en accordeon pour pouvoir déplier ou replier et voir les enfnats ||Interface | Fait (v10) |
 |R08| portefeuille / charge par rôle | bloc de charge | pas necessaire ici, seulement pour la partie sprint ||Interface | Fait (v10) |
 |R09| portefeuille / gantt | rank figé | je souhaite pouvoir réordonner des projets a l'intérieur d'une section||Modèle v2 (`item.rang`) · interface | Fait (v12) : ▲▼ au survol de la ligne |
@@ -30,7 +30,7 @@ Laisse vides les colonnes Impact et Statut : Claude les remplit au tri.
 | 1 | R04 (filtre) · R07 · R08 · R12 · R14 | Interface + données, sans toucher au modèle gelé — **livré v10, 28 oct.** (commits 960d64a, b4d889b) |
 | 2 | R02 · R03 · R04 (Jira) · R05 · R09 · R10 | Modèle v2 + adaptateur Jira v2 (Jira = vérité du sprint) — **livré v12, 28 oct.** ; tâche du lundi v2 |
 | 3 | R01 | Schéma de flux refait — **livré 28 oct.** |
-| Hors lot | R06 · R11 · R13 | Atelier · réponse · question |
+| Hors lot | R06 · R11 · R13 | Atelier (fait 28 oct.) · réponse · question |
 
 ## Arbitrages pris sans Franck
 
@@ -42,7 +42,7 @@ Laisse vides les colonnes Impact et Statut : Claude les remplit au tri.
 | T4 | R14 : l'adaptateur lit le dernier sprint clos en plus de l'actif et du prochain ; la vue arrive toujours sur le sprint actif |
 | T5 | R07 : programmes ouverts, sous-niveaux repliés par défaut ; l'état plié/déplié est mémorisé par navigateur |
 | T6 | R12 : un lien non web reste affiché, grisé avec ⚠ et la raison, au lieu d'être un bouton mort |
-| T7 | R02 : épopées initiales posées par Claude, à corriger dans Gérer : 9199 → Codes de taxes · 9604 → L8D · 9934, 9781, 8354 → L0 · 5466 → Run extranets |
+| T7 | R02 : épopées initiales posées par Claude, à corriger dans Gérer : 9199 → Codes de taxes · 9604 → L8D (**erreur : c'est « grilles de taxes », déplacée le 28 oct., atelier R06 C11**) · 9934, 9781, 8354 → L0 · 5466 → Run extranets |
 | T8 | R04 : le repli « voie Scrum » du lot 1 est retiré — sans ticket Jira dans le sprint, un item (et ses jalons) n'y figure pas |
 | T9 | R05 : un assigné hors Team_G2.1 (Personne_15) apparaît sous son nom, marqué « hors équipe » |
 

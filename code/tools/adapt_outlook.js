@@ -2,6 +2,8 @@
 /* Outlook adapter (step 3d): Team_G2.1 -> personnes, Microsoft 365 free/busy -> absences.
  *
  * Usage: node tools/adapt_outlook.js <team_raw.json> <outlook_raw.json> <base_before_dir> <out_dir> <schema.json>
+ *        node tools/adapt_outlook.js --equipe <team_raw.json> <base_before_dir> <out_dir> <schema.json>
+ *          (R36 cadence: team only — personnes written, absences neither read nor touched)
  *   team_raw.json     tools/read_team.py output (Team_G2.1_vN.xlsx rows + directory resolution)
  *   outlook_raw.json  find_meeting_availability transcription, one call per working day (see fiche)
  *   base_before_dir   ArtifactData export: <dir>/personnes/*.json, <dir>/absences/*.json + versions.json
@@ -38,7 +40,6 @@ const ROLES = [
   [/analyste d.affaires/i, 'ba', 'flux'], [/analyste fonctionnel/i, 'af', 'hors'], [/^UX/i, 'ux', 'hors'],
   [/^Directeur/i, 'direction', 'hors'], [/^expert/i, 'expert', 'hors']
 ];
-const WIP_D7 = { architecte: 2, ba: 2, pm: 3 }; const WIP_DEFAULT = 3;
 
 const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 function lev(a, b) { // edit distance, small strings only
@@ -80,7 +81,7 @@ function personnes(team, base, signals, departs) {
     if (out.some((o) => o.rec.id === id)) { signals.push({ kind: 'collision', row: r.ligne, texte: `Ligne ${r.ligne} ${nomSrc} : id ${id} déjà pris par une autre ligne — non écrite` }); return; }
     const p = prev[id];
     const rec = { id, nom, role: hit[1], voie: hit[2], source: { systeme: 'saisie', ref: `${team.fichier} · ${team.feuille} ligne ${r.ligne}`, lu_le: team.read_at, par: 'adaptateur-outlook' } };
-    if (hit[2] === 'flux') rec.wip_limite = p && p.wip_limite ? p.wip_limite : (WIP_D7[hit[1]] || WIP_DEFAULT);
+    // wip_limite dropped with the D7 flux part (Franck 2026-10-28, R23 R24 R28)
     if (p && (p.role !== rec.role || p.voie !== rec.voie)) signals.push({ kind: 'personne_ecart', row: id, texte: `${id} : base ${p.role}/${p.voie} → source ${rec.role}/${rec.voie}` });
     out.push({ rec, prev: p, ligne: r });
     if (r.annuaire) byMail[r.annuaire.mail.toLowerCase()] = id;
@@ -148,25 +149,26 @@ function absences(raw, byMail, base, signals) {
 function adapt(team, raw, base, versions, departs) {
   const signals = []; const rows = [];
   const P = personnes(team, base, signals, departs);
-  const A = absences(raw, P.byMail, base, signals);
+  const A = raw ? absences(raw, P.byMail, base, signals) : []; // raw null = team-only mode (R36)
   const prevA = Object.fromEntries(base.absences.map((a) => [a.id, a]));
   A.filter((a, i) => A.findIndex((x) => x.id === a.id) !== i).forEach((a) => signals.push({ kind: 'collision', row: a.id, texte: `${a.id} : deux périodes lues pour le même id` }));
-  const today = raw.read_at.slice(0, 10); const lastDay = raw.days[raw.days.length - 1].date;
-  base.absences.filter((a) => a.source && a.source.systeme === 'outlook' && !A.some((x) => x.id === a.id || (x.personne === a.personne && x.debut <= a.fin && x.fin >= a.debut)) && a.fin >= today && a.debut <= lastDay)
+  const today = raw ? raw.read_at.slice(0, 10) : null; const lastDay = raw ? raw.days[raw.days.length - 1].date : null;
+  if (raw) base.absences.filter((a) => a.source && a.source.systeme === 'outlook' && !A.some((x) => x.id === a.id || (x.personne === a.personne && x.debut <= a.fin && x.fin >= a.debut)) && a.fin >= today && a.debut <= lastDay)
     .forEach((a) => signals.push({ kind: 'absence_non_relue', row: a.id, texte: `${a.id} (${a.debut} → ${a.fin}) en base, plus vue dans Outlook (ou jour non concluant) — conservée ; à retirer dans Gérer si annulée` }));
-  P.list.forEach(({ rec, prev, ligne }) => rows.push({ kind: 'personne', id: rec.id, decision: prev ? 'mise à jour' : 'créée', lu: { ligne: ligne.ligne, nom: `${ligne.prenom} ${ligne.nom}`, role: ligne.role, annuaire: ligne.annuaire ? ligne.annuaire.displayName : '(absent)' }, base: { nom: rec.nom, role: rec.role, voie: rec.voie, wip_limite: rec.wip_limite }, avant: prev ? { nom: prev.nom, role: prev.role, voie: prev.voie, wip_limite: prev.wip_limite } : null }));
+  P.list.forEach(({ rec, prev, ligne }) => rows.push({ kind: 'personne', id: rec.id, decision: prev ? 'mise à jour' : 'créée', lu: { ligne: ligne.ligne, nom: `${ligne.prenom} ${ligne.nom}`, role: ligne.role, annuaire: ligne.annuaire ? ligne.annuaire.displayName : '(absent)' }, base: { nom: rec.nom, role: rec.role, voie: rec.voie }, avant: prev ? { nom: prev.nom, role: prev.role, voie: prev.voie } : null }));
   A.forEach((a) => rows.push({ kind: 'absence', id: a.id, decision: prevA[a.id] ? 'mise à jour' : 'créée', lu: a.source.ref, base: { personne: a.personne, debut: a.debut, fin: a.fin, jours_ouvres: a.jours_ouvres, libelle: a.libelle } }));
-  const doc = { modele: '1', source: { systeme: 'outlook', ref: `${team.fichier} + disponibilités Microsoft 365 ${raw.days[0].date} → ${lastDay}`, lu_le: raw.read_at, par: 'adaptateur-outlook' }, personnes: P.list.map((x) => x.rec), absences: A };
+  const doc = raw ? { modele: '1', source: { systeme: 'outlook', ref: `${team.fichier} + disponibilités Microsoft 365 ${raw.days[0].date} → ${lastDay}`, lu_le: raw.read_at, par: 'adaptateur-outlook' }, personnes: P.list.map((x) => x.rec), absences: A }
+    : { modele: '1', source: { systeme: 'saisie', ref: `${team.fichier} (mode équipe)`, lu_le: team.read_at, par: 'adaptateur-outlook' }, personnes: P.list.map((x) => x.rec) };
   // No write when only the read time changed: versions stay put and the rerun proof is "0 writes".
   const strip = (r) => r && JSON.stringify(Object.assign({}, r, { source: Object.assign({}, r.source, { lu_le: null }) }), Object.keys(r).concat(Object.keys(r.source || {})).sort());
   const prevAll = { personnes: Object.fromEntries(base.personnes.map((p) => [p.id, p])), absences: prevA };
   const writes = [];
-  ['personnes', 'absences'].forEach((c) => doc[c].forEach((r) => {
+  ['personnes', 'absences'].forEach((c) => (doc[c] || []).forEach((r) => {
     const row = rows.find((x) => x.id === r.id);
     if (strip(prevAll[c][r.id]) === strip(r)) { if (row) row.decision = 'inchangé (non réécrit)'; return; }
     const w = { op: 'set', collection: c, doc_id: r.id, data: r }; const v = versions[`${c}/${r.id}`]; if (v) w.if_version = v; writes.push(w);
   }));
-  return { doc, writes, report: { lu_le: raw.read_at, personnes: doc.personnes.length, absences: A.length, jours: A.reduce((n, a) => n + a.jours_ouvres, 0), ecrits: writes.length, rows, signals } };
+  return { doc, writes, report: { mode: raw ? 'complet' : 'equipe', lu_le: raw ? raw.read_at : team.read_at, personnes: doc.personnes.length, absences: A.length, jours: A.reduce((n, a) => n + a.jours_ouvres, 0), ecrits: writes.length, rows, signals } };
 }
 
 function validate(docPath, schemaPath) {
@@ -178,9 +180,11 @@ function validate(docPath, schemaPath) {
 const readDir = (dir) => (fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'))) : []);
 
 if (require.main === module) {
-  const [, , teamP, rawP, baseDir, outDir, schemaP] = process.argv;
-  if (!schemaP) { console.error('usage: adapt_outlook.js <team_raw.json> <outlook_raw.json> <base_before_dir> <out_dir> <schema.json>'); process.exit(2); }
-  const team = JSON.parse(fs.readFileSync(teamP, 'utf8')); const raw = JSON.parse(fs.readFileSync(rawP, 'utf8'));
+  const equipe = process.argv[2] === '--equipe';
+  const args = equipe ? [process.argv[3], null].concat(process.argv.slice(4)) : process.argv.slice(2);
+  const [teamP, rawP, baseDir, outDir, schemaP] = args;
+  if (!schemaP) { console.error('usage: adapt_outlook.js <team_raw.json> <outlook_raw.json> <base_before_dir> <out_dir> <schema.json>\n       adapt_outlook.js --equipe <team_raw.json> <base_before_dir> <out_dir> <schema.json>'); process.exit(2); }
+  const team = JSON.parse(fs.readFileSync(teamP, 'utf8')); const raw = rawP ? JSON.parse(fs.readFileSync(rawP, 'utf8')) : null;
   const base = { personnes: readDir(path.join(baseDir, 'personnes')), absences: readDir(path.join(baseDir, 'absences')) };
   const vp = path.join(baseDir, 'versions.json'); const versions = fs.existsSync(vp) ? JSON.parse(fs.readFileSync(vp, 'utf8')) : {};
   const dp = path.join(__dirname, '..', 'config', 'team_departs.json');

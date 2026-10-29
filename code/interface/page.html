@@ -8,19 +8,24 @@
   --gold:#ddb76b;--gold-t:#f6ecd6;--gold-ink:#7d6a35;--green:#aeba5c;--green-t:#eef1da;--green-ink:#6b7730;
   --ok:#5b9e5b;--warn:#d8932f;--bad:#c2473b;--bad-t:#fdecea;--today:#c2410c;--idle:#cfcfd6;
   --on-tile:#fff;--on-terroir:#00405e;--shadow:0 1px 2px rgba(0,64,94,.06);
+  --plan:#c2e4ef;--plan-b:#8ed0e2;--plan-ink:#00405e;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#2c343d;--line2:#232a32;
-  --navy:#9fd3ea;--blue:#3d9fd1;--blue-h:#6bb8e0;--cyan:#5cc2dd;--mist:#1d3442;--mist-b:#2a4b5e;
-  --gold:#c9a55c;--gold-t:#3a3221;--gold-ink:#e6cf98;--green:#97a34c;--green-t:#2b3120;--green-ink:#cdd79a;
-  --ok:#6db36d;--warn:#e0a24a;--bad:#e06a5e;--bad-t:#3b2220;--today:#ff8a4c;--idle:#56606b;
-  --on-tile:#fff;--on-terroir:#10202a;--shadow:none;}}
+  /* R25: PLQ dark — deep brand navy grounds (navy-900 family), cyan-500 accent, terroir blocks kept at brand value */
+  --bg:#001b29;--card:#002536;--ink:#e8f1f6;--ink2:#b9cfdb;--mute:#86a3b4;--line:#0f3a52;--line2:#082f44;
+  --navy:#8ed0e2;--blue:#2fa8c7;--blue-h:#54bcd6;--cyan:#54bcd6;--mist:#0a3a54;--mist-b:#145a7c;
+  --gold:#ddb76b;--gold-t:#2f2a1a;--gold-ink:#ecd6a6;--green:#aeba5c;--green-t:#232a14;--green-ink:#cfd79b;
+  --ok:#72b872;--warn:#e6a54f;--bad:#ef7b6f;--bad-t:#3a1d1a;--today:#ff8a4c;--idle:#3f5a6a;
+  --on-tile:#fff;--on-terroir:#002536;--shadow:0 1px 2px rgba(0,0,0,.35);
+  --plan:#0f4a68;--plan-b:#2a7aa0;--plan-ink:#e8f1f6;}}
 :root[data-theme="dark"]{
-  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#2c343d;--line2:#232a32;
-  --navy:#9fd3ea;--blue:#3d9fd1;--blue-h:#6bb8e0;--cyan:#5cc2dd;--mist:#1d3442;--mist-b:#2a4b5e;
-  --gold:#c9a55c;--gold-t:#3a3221;--gold-ink:#e6cf98;--green:#97a34c;--green-t:#2b3120;--green-ink:#cdd79a;
-  --ok:#6db36d;--warn:#e0a24a;--bad:#e06a5e;--bad-t:#3b2220;--today:#ff8a4c;--idle:#56606b;
-  --on-tile:#fff;--on-terroir:#10202a;--shadow:none;}
+  /* R25: PLQ dark — deep brand navy grounds (navy-900 family), cyan-500 accent, terroir blocks kept at brand value */
+  --bg:#001b29;--card:#002536;--ink:#e8f1f6;--ink2:#b9cfdb;--mute:#86a3b4;--line:#0f3a52;--line2:#082f44;
+  --navy:#8ed0e2;--blue:#2fa8c7;--blue-h:#54bcd6;--cyan:#54bcd6;--mist:#0a3a54;--mist-b:#145a7c;
+  --gold:#ddb76b;--gold-t:#2f2a1a;--gold-ink:#ecd6a6;--green:#aeba5c;--green-t:#232a14;--green-ink:#cfd79b;
+  --ok:#72b872;--warn:#e6a54f;--bad:#ef7b6f;--bad-t:#3a1d1a;--today:#ff8a4c;--idle:#3f5a6a;
+  --on-tile:#fff;--on-terroir:#002536;--shadow:0 1px 2px rgba(0,0,0,.35);
+  --plan:#0f4a68;--plan-b:#2a7aa0;--plan-ink:#e8f1f6;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Montserrat,system-ui,sans-serif;font-size:14px;line-height:1.4}
 a{color:var(--blue)}a:hover{color:var(--blue-h)}
@@ -36,49 +41,60 @@ h1{margin:0;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02
 .tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
 .tab{padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px;color:var(--ink2);background:transparent;border:1px solid transparent;cursor:pointer}
 .tab.on{background:var(--navy);color:var(--card)}
-.btn{padding:9px 15px;border-radius:999px;font-weight:600;font-size:13px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+.btn{padding:9px 15px;border-radius:999px;font-weight:600;font-size:13px;border:1px solid #0070a8;background:#0070a8;color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
 .btn:hover{filter:brightness(.92);color:#fff}.btn:active{transform:scale(.97)}
-.btn.ghost{background:transparent;color:var(--blue)}.btn.ghost:hover{background:var(--mist)}
+.btn.ghost{background:transparent;color:var(--blue);border-color:var(--blue)}.btn.ghost:hover{background:var(--mist)}
 .btn.sm{padding:5px 10px;font-size:12px}
 .btn:focus-visible,.tab:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
 .chip{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--mist);color:var(--navy);white-space:nowrap}
 .tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--line2);color:var(--ink2);white-space:nowrap;display:inline-block}
 .tag.ok{background:var(--green-t);color:var(--green-ink)}.tag.warn{background:var(--gold-t);color:var(--gold-ink)}.tag.bad{background:var(--bad-t);color:var(--bad)}.tag.blue{background:var(--mist);color:var(--navy)}
-.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.tiles.t3c{grid-template-columns:repeat(3,minmax(0,1fr))}
 .tile{border-radius:8px;padding:16px 18px;color:var(--on-tile);display:flex;flex-direction:column;gap:4px;min-height:92px;justify-content:flex-end}
 .tile b{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em}.tile span{font-size:12px;font-weight:500}
-.t1{background:#0070a8}.t2{background:#1f8fb0}.t3{background:var(--gold);color:var(--on-terroir)}.t4{background:var(--green);color:var(--on-terroir)}
+.t1{background:#0070a8}.t2{background:#005982}.t3{background:var(--gold);color:var(--on-terroir)}.t4{background:var(--green);color:var(--on-terroir)}
 .main2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
 .side{display:flex;flex-direction:column;gap:16px;min-width:0}
 .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .rag{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
 .rag.vert{background:var(--ok)}.rag.jaune{background:var(--warn)}.rag.rouge{background:var(--bad)}.rag.idle{background:var(--idle)}
 /* timeline */
-.tl{min-width:920px}
+.tl{min-width:920px}.tl.wide{min-width:1500px}.tl.wide .trk{background-image:repeating-linear-gradient(to right,var(--line2) 0 1px,transparent 1px calc(100%/26))}
 .tlr{display:grid;grid-template-columns:270px minmax(0,1fr);align-items:stretch;border-bottom:1px solid var(--line2)}
 .lab{padding:5px 10px;min-height:44px;display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap}
 .lab .tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
 .lab a,.lab .nm{font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis}
 .lab small{color:var(--mute);font-size:11px;overflow:hidden;text-overflow:ellipsis}
-.trk{position:relative;min-height:40px;background-image:repeating-linear-gradient(to right,var(--line2) 0 1px,transparent 1px calc(100%/13))}
+.trk{position:relative;min-height:44px;background-image:repeating-linear-gradient(to right,var(--line2) 0 1px,transparent 1px calc(100%/13))}
 .grp{padding:12px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);border-bottom:1px solid var(--line)}
 .wk{display:flex;font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}.wk span{flex:1;text-align:center;padding:6px 0}
 .wk span.now{color:var(--today);font-weight:700}
 .sp{position:absolute;top:6px;bottom:6px;font-size:11px;font-weight:600;color:var(--navy);background:var(--mist);border:1px solid var(--mist-b);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;padding:0 4px}
 .sp.conge{background:var(--gold-t);border-color:var(--gold);color:var(--gold-ink)}
-.bar{position:absolute;top:11px;height:18px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
+.bar{position:absolute;top:12px;height:20px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden}
 .b-dev{background:#0070a8}.b-ana{background:#1f8fb0}.b-flow{background:var(--green);color:var(--on-terroir)}
+/* R26: solid bars — planned = brand tint bar, actual = brand-blue strip under it, open end = perforated edge (no fade) */
+.b-plan{top:6px;height:22px;background:var(--plan);color:var(--plan-ink);box-shadow:inset 0 0 0 1px var(--plan-b)}.b-derive{background:transparent;box-shadow:none;outline:1.5px dashed var(--plan-b);outline-offset:-1.5px}.b-real{top:31px;height:6px;padding:0;border-radius:3px;background:var(--blue)}.b-real.b-late{background:var(--bad)}
 .b-run{background:repeating-linear-gradient(135deg,var(--idle) 0 4px,transparent 4px 8px);color:var(--ink2);border:1px solid var(--idle)}
-.b-idea{background:transparent;border:1px dashed var(--mute);color:var(--ink2)}.b-open{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent)}
-.ms{position:absolute;top:13px;width:14px;height:14px;margin-left:-7px;transform:rotate(45deg);background:var(--navy);border:2px solid var(--card);cursor:default}
+.b-idea{background:transparent;border:1px dashed var(--mute);color:var(--ink2)}.b-open{border-top-right-radius:0;border-bottom-right-radius:0}.b-open::after{content:'';position:absolute;right:0;top:0;bottom:0;width:8px;background:repeating-linear-gradient(90deg,transparent 0 2px,var(--card) 2px 4px)}
+.ms{position:absolute;top:10px;width:14px;height:14px;margin-left:-7px;transform:rotate(45deg);background:var(--navy);border:2px solid var(--card);cursor:default}
 .ms.warn{background:var(--warn)}.ms.bad{background:var(--bad)}.ms.done{background:var(--ok)}
+.fer{position:absolute;top:0;bottom:0;background:var(--gold);opacity:.22;min-width:3px;cursor:help;z-index:0}.fer:hover{opacity:.45}
 .now-line{position:absolute;top:0;bottom:0;width:2px;background:var(--today);opacity:.75;pointer-events:none}
 .legend{font-size:12px;color:var(--mute)}
+.goal{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:12px 16px}.goal p{margin:4px 0 0;font-size:16px;font-weight:600;color:var(--navy)}.goal ul{margin:6px 0 0;padding-left:20px;font-size:14px;font-weight:600;color:var(--navy)}
+.fr{font-size:10px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--mute);padding:1px 6px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;cursor:help}.fr.bad{color:var(--bad);border-color:var(--bad)}
+.mepg{display:flex;align-items:center;gap:6px;font-size:13px;padding:4px 0;border-top:1px solid var(--line2);cursor:pointer}
+.raglg{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px;color:var(--ink2);padding:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.srclnk{color:var(--blue);text-decoration:underline;word-break:break-all}
+.raglg.in{background:transparent;border:none;border-top:1px solid var(--line2);border-radius:0;padding:8px 0 0;margin-top:8px;font-size:11px}
+.raglg>span{display:inline-flex;align-items:center;gap:6px}.raglg .muted{margin-left:auto}
 .tg{width:18px;height:18px;flex:none;border:none;background:transparent;color:var(--mute);cursor:pointer;padding:0;font-size:11px;line-height:18px;border-radius:4px}
 .tg:hover{background:var(--line2);color:var(--navy)}.tg.sp0{cursor:default;visibility:hidden}
 .grp .tg{margin-right:4px}.grp{display:flex;align-items:center;cursor:pointer}
 .lnk-off{opacity:.6;cursor:not-allowed}
-.mv{margin-left:auto;display:none;flex:none}.lab:hover .mv,.lab:focus-within .mv{display:flex}
+.dh{width:16px;height:22px;flex:none;border:none;background:transparent;color:var(--mute);cursor:grab;padding:0;font-size:14px;line-height:22px;border-radius:4px;opacity:.45}.dh:hover,.dh:focus-visible{opacity:1;background:var(--line2);color:var(--navy)}.dh.sp0{visibility:hidden}
+.tlr.drop-before{box-shadow:inset 0 2px 0 var(--blue)}.tlr.drop-after{box-shadow:inset 0 -2px 0 var(--blue)}.tlr.dragging{opacity:.4}
 .jbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--line2);margin:6px 0 4px}.jbar span{display:block;height:100%}
 .ptab{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.ptab th{text-align:left;color:var(--mute);font-weight:600;padding:4px 6px;border-bottom:1px solid var(--line)}
 .ptab td{padding:5px 6px;border-bottom:1px solid var(--line2)}.ptab td.n{text-align:right;font-variant-numeric:tabular-nums}.ptab tr.hors td{color:var(--mute);font-style:italic}
@@ -120,7 +136,7 @@ form.g{display:flex;flex-direction:column;gap:10px;margin-top:10px}
 .err-list{margin:6px 0 0;padding-left:18px;font-size:12px;color:var(--bad)}
 details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-wrap;margin:6px 0 0}
 @media (max-width:1100px){.main2{grid-template-columns:minmax(0,1fr)}}
-@media (max-width:760px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.f3{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}.kv{grid-template-columns:100px 1fr}}
+@media (max-width:760px){.tiles,.tiles.t3c{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.f3{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}.kv{grid-template-columns:100px 1fr}}
 </style>
 
 <div id="app" class="wrap"><p class="muted">Chargement du portefeuille…</p></div>
@@ -138,6 +154,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   'use strict';
   const C = window.PortfolioCore;
   const SCHEMA = window.PORTFOLIO_SCHEMA;
+  const CADENCE = window.PORTFOLIO_CADENCE || { blocs: [] };
   const ROLE_FR = { pm: 'PM', architecte: 'Architecte', ba: 'BA', af: 'AF', ux: 'UX', dev: 'Dev', qa: 'QA', coordo: 'Coordo', expert: 'Expert', claude: 'Claude', super_utilisateur: 'Super-utilisateurs', direction: 'Direction', cdp: 'CDP' };
   const ETAPES = [['idee', 'Idée'], ['qualifie', 'Qualifié'], ['planifie', 'Planifié'], ['actif', 'Actif'], ['termine', 'Terminé']];
   const STATUT_J = { fait: ['fait', 'ok'], en_cours: ['en cours', 'blue'], a_venir: ['à venir', ''], a_risque: ['à risque', 'warn'], depasse: ['dépassé', 'bad'] };
@@ -147,7 +164,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
 
   const S = {
     base: C.emptyBase(), ix: C.index(C.emptyBase()), today: C.todayIso(), view: 'portefeuille', itemId: null, creating: false,
-    sprintId: null, canEdit: false, db: null, status: 'chargement', diag: [], filters: { voie: 'toutes', etape: 'ap' },
+    sprintId: null, canEdit: false, ownerEdit: false, visitor: false, full: C.emptyBase(), db: null, status: 'chargement', diag: [], filters: { voie: 'toutes', etape: 'ap', horizon: 'avenir' },
     gerer: { tab: 'item', id: null }, loadedAt: null, errors: [], toggled: loadToggled()
   };
 
@@ -155,7 +172,8 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   function loadToggled() { try { return new Set(JSON.parse(localStorage.getItem('plq.toggled') || '[]')); } catch (e) { return new Set(); } }
   function saveToggled() { try { localStorage.setItem('plq.toggled', JSON.stringify([...S.toggled])); } catch (e) { /* ignore */ } }
   // Groups (programmes) are open by default; items with children are closed by default.
-  function isOpen(id) { return id.startsWith('grp:') ? !S.toggled.has(id) : S.toggled.has(id); }
+  // R15/R19: MEP themes are closed by default except Goutte 2.1
+  function isOpen(id) { return id.startsWith('grp:') || id === 'mep:g21' ? !S.toggled.has(id) : S.toggled.has(id); }
 
   // ---------- utils ----------
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -163,9 +181,14 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   const itemNom = (id) => (S.ix.items[id] || { nom: id || '—' }).nom;
   const initials = (n) => String(n || '?').split(/[\s-]+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   const prov = (src) => src ? `${SYS_FR[src.systeme] || src.systeme}${src.ref ? ' · ' + src.ref : ''} · lu ${C.fmtTs(src.lu_le)}${src.par ? ' · ' + src.par : ''}` : '—';
+  // R39: web URLs inside a provenance become links (new tab); the rest stays text. Input is escaped first.
+  const linkify = (h) => h.replace(/https?:\/\/[^\s<"]+/g, (u) => `<a class="srclnk" href="${u}" target="_blank" rel="noopener noreferrer">${u} ↗</a>`);
+  const provHtml = (src) => linkify(esc(prov(src)));
   const isSaisie = (r) => r && r.source && r.source.systeme === 'saisie';
   function toast(msg, err) { const t = $('#toast'); t.className = 'toast' + (err ? ' err' : ''); t.textContent = msg; clearTimeout(toast.h); toast.h = setTimeout(() => { t.className = ''; t.textContent = ''; }, err ? 7000 : 3500); }
   function santeOf(item) { return C.sante(S.base, item, S.today); }
+  // R06: a phase deduced from children is shown as such (model v3 phase_deduite)
+  function phaseLbl(i) { return i.phase_source ? i.phase_source + (i.phase_deduite ? ' (déduite)' : '') : ''; }
   function ragCls(item) { return ['idee', 'qualifie'].includes(item.etape) ? 'idle' : santeOf(item).couleur; }
 
   // ---------- db access (shape-tolerant: the snapshot API is read defensively) ----------
@@ -189,11 +212,13 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     await Promise.all(C.COLLECTIONS.map(async (c) => {
       try { base[c] = await readCollection(c); diag.push(`${c}: ${base[c].length}`); } catch (e) { diag.push(`${c}: ERREUR ${e && (e.code || e.message)}`); }
     }));
-    S.base = base; S.ix = C.index(base); S.loadedAt = C.nowTs(); S.status = 'ok';
+    S.full = base; applyView(); S.loadedAt = C.nowTs(); S.status = 'ok';
     S.diag = [`lu en ${Math.round(performance.now() - t0)} ms · canEdit=${S.canEdit}`].concat(diag.sort());
     if (!S.sprintId || !S.ix.sprints[S.sprintId]) { const a = C.sprintAt(base, S.today) || base.sprints[0]; S.sprintId = a ? a.id : null; }
     render();
   }
+  // R37/R38: visitors (and the owner in visitor view) see the public base — hidden items filtered out (display only, D20 v3)
+  function applyView() { S.base = S.canEdit ? S.full : C.publicBase(S.full); S.ix = C.index(S.base); }
   async function write(col, rec) {
     const errs = C.validate(SCHEMA, C.DEF_OF[col], rec);
     if (rec.sante) errs.push('sante : calculée, jamais saisie (D8)');
@@ -206,11 +231,17 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   }
 
   // R09: move an item among its displayed siblings; ranks 1..n are written on the siblings whose rank changes.
-  async function move(id, d) {
-    const it = S.ix.items[id]; if (!it || !S.canEdit) return;
-    const sib = S.base.items.filter((i) => (i.parent || null) === (it.parent || null) && i.type !== 'programme' && !['idee', 'qualifie'].includes(i.etape) && (it.parent || i.type !== 'programme')).sort(C.bySiblingOrder);
-    const k = sib.findIndex((i) => i.id === id); const j = k + d; if (k < 0 || j < 0 || j >= sib.length) return;
-    [sib[k], sib[j]] = [sib[j], sib[k]];
+  function siblingsOf(it) { return S.base.items.filter((i) => (i.parent || null) === (it.parent || null) && i.type !== 'programme' && !['idee', 'qualifie'].includes(i.etape) && (it.parent || i.type !== 'programme')).sort(C.bySiblingOrder); }
+  // R17: drag and drop (handle at the start of the row) — drop before / after a sibling; ↑ ↓ on the handle as keyboard path
+  function move(id, d) {
+    const it = S.ix.items[id]; if (!it) return; const sib = siblingsOf(it); const k = sib.findIndex((i) => i.id === id); const j = k + d;
+    if (k < 0 || j < 0 || j >= sib.length) return; return reorder(id, sib[j].id, d > 0);
+  }
+  async function reorder(id, targetId, after) {
+    const it = S.ix.items[id]; if (!it || !S.canEdit || id === targetId) return;
+    const sib = siblingsOf(it); if (!sib.some((i) => i.id === targetId)) { toast('Déplacement possible seulement dans la même section', true); return; }
+    const rest = sib.filter((i) => i.id !== id); const t = rest.findIndex((i) => i.id === targetId);
+    rest.splice(after ? t + 1 : t, 0, it); sib.splice(0, sib.length, ...rest);
     const changed = sib.map((i, n) => Object.assign({}, i, { rang: n + 1 })).filter((i, n) => S.ix.items[i.id].rang !== n + 1);
     for (const rec of changed) {
       delete rec.sante; const errs = C.validate(SCHEMA, 'item', rec);
@@ -220,6 +251,20 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     toast(`Ordre enregistré · ${changed.length} item${changed.length > 1 ? 's' : ''}`); await load();
   }
 
+  // R36: freshness of a page block (cadence.json): "lu il y a …" and "périmé" beyond its target
+  function freshTag(ref) {
+    const f = C.fraicheurBloc(S.base, CADENCE, ref, S.today); if (!f) return '';
+    const age = (ts) => { const n = C.daysBetween(ts.slice(0, 10), S.today); return n <= 0 ? 'auj.' : n === 1 ? 'hier' : `il y a ${n} j`; };
+    const tip = f.entrees.map((e) => `${e.a} : ${e.lu_le ? 'lu ' + C.fmtTs(e.lu_le) + (e.cible ? ` · cible ${e.cible.jours_ouvres ? e.cible.jours_ouvres + ' j ouvré' : e.cible.jours + ' j'}` : ' · à la demande') : 'jamais lu'}${e.perime ? ' · PÉRIMÉ' : ''}`).join('\n');
+    return ` <span class="fr${f.perime ? ' bad' : ''}" title="${esc(f.ref + ' · ' + f.nom + '\n' + tip)}">${f.lu_le ? 'lu ' + age(f.lu_le) : 'jamais lu'}${f.perime ? ' · périmé' : ''}</span>`;
+  }
+  // R16: health legend always visible under the header (D8 rules in plain words)
+  // R42: on the sprint view the legend sits inside the « Items dans le sprint » card (compact), not under the header
+  function ragLegend(compact) {
+    const L = [['rouge', 'Rouge', 'jalon dépassé · risque ≥ 15 · ni Smartsheet ni Jira depuis > 15 j ouvrés'], ['jaune', 'Orange', 'risque ≥ 10 · attente d\u2019un tiers > 5 j ouvrés'],
+      ['vert', 'Vert', 'rien à signaler'], ['idle', 'Gris', 'candidat ou en pause']];
+    return `<div class="raglg${compact ? ' in' : ''}" role="note" aria-label="Légende de la santé">${L.map(([c, n, t]) => `<span><span class="rag ${c}"></span><b>${n}</b> ${t}</span>`).join('')}<span class="muted">santé calculée, survol d'une pastille = motif</span></div>`;
+  }
   // ---------- header ----------
   function header() {
     const inst = S.base.instantanes.slice().sort((a, b) => b.pris_le.localeCompare(a.pris_le))[0];
@@ -231,13 +276,17 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       <h1>Portefeuille PLQ</h1></div>
       <div class="tabs" role="tablist">${nav}</div>
       <div class="row"><span class="muted">${esc(fresh)}${fresh ? ' · ' : ''}base lue ${esc(C.fmtTs(S.loadedAt))}</span>
-      ${S.canEdit ? '<button class="btn" type="button" data-act="new-item">+ Ajouter un projet</button>' : '<span class="tag">lecture seule</span>'}</div></div>`;
+      ${S.ownerEdit ? `<button class="btn ghost" type="button" data-act="visitor" aria-pressed="${S.visitor}" title="Voir la page comme l\u2019équipe : sans Gérer, sans items masqués">${S.visitor ? 'Revenir en vue propriétaire' : 'Vue visiteur'}</button>` : ''}
+      ${S.canEdit ? '<button class="btn" type="button" data-act="new-item">+ Ajouter un projet</button>' : `<span class="tag">${S.visitor ? 'vue visiteur' : 'lecture seule'}</span>`}</div></div>
+      ${S.view === 'sprint' ? '' : ragLegend()}`;
   }
 
   // ---------- portfolio view ----------
-  const H_DAYS = 91;
-  function hStart() { return C.mondayOf(S.today); }
-  function pos(date) { return Math.max(0, Math.min(100, 100 * C.daysBetween(hStart(), date) / H_DAYS)); }
+  // R18: horizon = 13 weeks ahead (default) or the past 13 weeks + 13 ahead
+  const past = () => S.filters.horizon === 'passe';
+  function hDays() { return past() ? 182 : 91; }
+  function hStart() { return past() ? C.addDays(C.mondayOf(S.today), -91) : C.mondayOf(S.today); }
+  function pos(date) { return Math.max(0, Math.min(100, 100 * C.daysBetween(hStart(), date) / hDays())); }
   function visible(i) {
     const f = S.filters;
     if (f.voie !== 'toutes' && i.voie !== f.voie) return false;
@@ -248,46 +297,77 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   function msHtml(list) {
     const groups = {};
     list.forEach((j) => { const k = j.date; (groups[k] = groups[k] || []).push(j); });
-    return Object.keys(groups).filter((k) => k >= hStart() && k <= C.addDays(hStart(), H_DAYS)).map((k) => {
+    return Object.keys(groups).filter((k) => k >= hStart() && k <= C.addDays(hStart(), hDays())).map((k) => {
       const js = groups[k];
       const bad = js.some((j) => j.statut !== 'fait' && (j.statut === 'depasse' || j.date < S.today));
       const warn = js.some((j) => j.statut === 'a_risque' || C.recul(j) >= C.SEUILS.recul_jo);
       const done = js.every((j) => j.statut === 'fait');
-      const title = js.map((j) => `${j.nom} · ${C.fmtDate(j.date)} · ${(STATUT_J[j.statut] || [j.statut])[0]}${C.recul(j) ? ' · +' + C.recul(j) + ' j ouvrés' : ''}`).join('\n');
+      const title = js.map((j) => `${j.nom} · ${j.precision === 'mois' ? 'fin ' : ''}${C.fmtDate(j.date)} · ${(STATUT_J[j.statut] || [j.statut])[0]}${j.fait_le ? ' le ' + C.fmtDate(j.fait_le) : ''}${C.retardGate(j, S.today) ? ' · retard ' + C.retardGate(j, S.today) + ' j ouvrés' : ''}${C.recul(j) ? ' · recul +' + C.recul(j) + ' j ouvrés' : ''}${j.derive ? ' · cascade des livrables' : ''}`).join('\n');
       return `<div class="ms${bad ? ' bad' : warn ? ' warn' : done ? ' done' : ''}" style="left:${pos(k)}%" title="${esc(title)}"></div>`;
     }).join('');
   }
+  // R06 part 2: planned window (outline, Smartsheet or cascade) above the actual window (Jira sprints, solid).
+  const fd = (x) => C.fmtDate(x, x && x.slice(0, 4) !== S.today.slice(0, 4));
+  function span(a, b) { const h0 = hStart(); const h1 = C.addDays(h0, hDays()); if (!a || b < h0 || a > h1) return null; const l = pos(a < h0 ? h0 : a); const r = pos(b > h1 ? h1 : b); return { l, w: Math.max(1.2, r - l) }; }
   function barHtml(i) {
-    const h0 = hStart(); const h1 = C.addDays(h0, H_DAYS);
+    const h0 = hStart(); const h1 = C.addDays(h0, hDays());
     const cls = ['idee', 'qualifie'].includes(i.etape) ? 'b-idea' : i.type === 'run' ? 'b-run' : i.voie === 'flux' ? 'b-flow' : (i.phase_source && /dev/i.test(i.phase_source)) ? 'b-dev' : 'b-ana';
-    let a, b, open = false, label;
-    if (i.fenetre && i.fenetre.debut) { a = i.fenetre.debut; b = i.fenetre.fin || h1; open = !i.fenetre.fin; }
-    else if (i.type === 'run') { a = h0; b = h1; open = true; }
-    else return '';
-    if (b < h0 || a > h1) return '';
-    if (i.type === 'run') { const n = (i.support || []).reduce((k, x) => k + x.ouverts, 0); label = i.support ? `support · ${n} ouverts` : 'run · MEP au fil de l\'eau'; }
-    else label = i.contenu_sprint || i.phase_source || (i.etape === 'idee' ? 'fenêtre possible' : '');
-    const l = pos(a < h0 ? h0 : a); const r = pos(b > h1 ? h1 : b);
-    return `<div class="bar ${cls}${open ? ' b-open' : ''}" style="left:${l}%;width:${Math.max(1.2, r - l)}%" title="${esc(i.nom + ' · ' + C.fmtDate(a) + ' → ' + (i.fenetre && i.fenetre.fin === null ? 'non daté' : C.fmtDate(b)))}">${esc(label)}</div>`;
+    if (i.type === 'run') { const n = (i.support || []).reduce((k, x) => k + x.ouverts, 0); const sp = span(h0, h1); return `<div class="bar ${cls} b-open" style="left:${sp.l}%;width:${sp.w}%">${esc(i.support ? `support · ${n} ouverts` : 'run · MEP au fil de l\'eau')}</div>`; }
+    const pv = C.fenetrePrevue(S.base, i); const rl = C.fenetreReelle(S.base, i);
+    const label = i.contenu_sprint || phaseLbl(i) || (i.etape === 'idee' ? 'fenêtre possible' : '');
+    let html = '';
+    if (pv) {
+      const sp = span(pv.debut, pv.fin || h1);
+      if (sp) html += `<div class="bar b-plan${pv.fin ? '' : ' b-open'}${pv.origine === 'enfants' ? ' b-derive' : ''}" style="left:${sp.l}%;width:${sp.w}%" title="${esc(`Prévu${pv.origine === 'enfants' ? ' (cascade des livrables)' : ''} : ${fd(pv.debut)} → ${pv.fin ? fd(pv.fin) : 'non daté'}`)}">${esc(label)}</div>`;
+    }
+    if (rl) {
+      const end = rl.fin || (rl.jusqu_au && rl.jusqu_au > S.today ? rl.jusqu_au : S.today);
+      const sp = span(rl.debut, end);
+      const late = pv && pv.fin && (rl.fin || end) > pv.fin;
+      if (sp) html += `<div class="bar b-real${rl.fin ? '' : ' b-open'}${late ? ' b-late' : ''}" style="left:${sp.l}%;width:${sp.w}%" title="${esc(`Réel Jira (sprints) : ${fd(rl.debut)} → ${rl.fin ? fd(rl.fin) : 'en cours' + (rl.jusqu_au ? ', planifié jusqu\'au ' + fd(rl.jusqu_au) : '')}${late ? ' · dépasse la fin prévue' : ''}`)}"></div>`;
+    }
+    if (!html && i.fenetre && i.fenetre.debut) { const sp = span(i.fenetre.debut, i.fenetre.fin || h1); if (sp) html = `<div class="bar ${cls}" style="left:${sp.l}%;width:${sp.w}%">${esc(label)}</div>`; }
+    return html;
+  }
+  // Milestones on a row: own milestones + gates cascaded from deliverables when the row has none of its own.
+  function rowJalons(i) {
+    const own = C.jalonsOf(S.base, i.id);
+    const gates = own.some((j) => C.gateOf(j)) ? [] : C.gatesOf(S.base, i, S.today).filter((g) => g.derive);
+    return own.concat(gates);
   }
   function itemRow(i, depth, nKids) {
     const p = C.pct(S.base, i);
     const deps = S.base.dependances.filter((d) => C.refItem(S.ix, d.vers) === i.id);
     const age = i.updated_at ? C.daysBetween(i.updated_at.slice(0, 10), S.today) : null;
-    const bits = [i.phase_source, p ? `${C.fmtNum(p.valeur)} %` : null, deps.length ? `⛓ ${deps[0].type} ${C.refNom(S.base, S.ix, deps[0].de)}` : null,
-      age !== null && age > 7 ? `MAJ il y a ${age} j` : null, i.promu ? 'promu' : null].filter(Boolean).join(' · ');
+    const jp = C.jiraOf(S.base, i.id, null).pct;
+    const bits = [phaseLbl(i), p ? `${C.fmtNum(p.valeur)} %` : null, jp !== null ? `Jira ${C.fmtNum(jp)} % tickets` : null, deps.length ? `⛓ ${deps[0].type} ${C.refNom(S.base, S.ix, deps[0].de)}` : null,
+      age !== null && age > 7 ? `MAJ il y a ${age} j` : null].filter(Boolean).join(' · ');
     const nowL = pos(S.today);
-    return `<div class="tlr"><div class="lab" style="padding-left:${6 + 14 * depth}px">${nKids ? `<button class="tg" type="button" data-act="toggle" data-id="${esc(i.id)}" aria-expanded="${isOpen(i.id)}" title="${isOpen(i.id) ? 'Replier' : 'Déplier'} (${nKids} enfant${nKids > 1 ? 's' : ''})">${isOpen(i.id) ? '▾' : '▸'}</button>` : '<span class="tg sp0"></span>'}<span class="rag ${ragCls(i)}" title="${esc(santeOf(i).motifs.join('\n') || 'vert')}"></span>
-      <span class="tx"><a href="#" data-act="open-item" data-id="${esc(i.id)}" title="${esc(i.nom)}">${esc(i.nom)}</a><small title="${esc(bits)}">${esc(bits)}</small></span>${S.canEdit && i.type !== 'programme' ? `<span class="mv"><button class="tg" type="button" data-act="move" data-id="${esc(i.id)}" data-d="-1" title="Monter dans la section">▲</button><button class="tg" type="button" data-act="move" data-id="${esc(i.id)}" data-d="1" title="Descendre dans la section">▼</button></span>` : ''}</div>
-      <div class="trk">${barHtml(i)}${msHtml(C.jalonsOf(S.base, i.id))}<div class="now-line" style="left:${nowL}%"></div></div></div>`;
+    const dh = S.canEdit && i.type !== 'programme' ? `<button class="dh" type="button" draggable="true" data-act="drag" data-id="${esc(i.id)}" title="Glisser pour réordonner dans la section (ou ↑ ↓ au clavier)" aria-label="Réordonner ${esc(i.nom)}">⠿</button>` : (S.canEdit ? '<span class="dh sp0"></span>' : '');
+    return `<div class="tlr" data-row="${esc(i.id)}"><div class="lab" style="padding-left:${6 + 14 * depth}px">${dh}${nKids ? `<button class="tg" type="button" data-act="toggle" data-id="${esc(i.id)}" aria-expanded="${isOpen(i.id)}" title="${isOpen(i.id) ? 'Replier' : 'Déplier'} (${nKids} enfant${nKids > 1 ? 's' : ''})">${isOpen(i.id) ? '▾' : '▸'}</button>` : '<span class="tg sp0"></span>'}<span class="rag ${ragCls(i)}" title="${esc(santeOf(i).motifs.join('\n') || 'vert')}"></span>
+      <span class="tx"><a href="#" data-act="open-item" data-id="${esc(i.id)}" title="${esc(i.nom)}">${i.visible === false ? '<span class="tag warn" title="Masqué pour les visiteurs et le digest (R37)">masqué</span> ' : ''}${esc(i.nom)}</a><small title="${esc(bits)}">${esc(bits)}</small></span></div>
+      <div class="trk">${ferBands()}${barHtml(i)}${msHtml(rowJalons(i))}<div class="now-line" style="left:${nowL}%"></div></div></div>`;
   }
+  // R45: collective absences (holidays, closures; one record per day) merged into runs of consecutive working days with
+  // the same label. A one-day run = thin vertical band across the whole grid (hover = label); longer runs keep a bar.
+  function congesRuns() {
+    const h0 = hStart(); const h1 = C.addDays(h0, hDays());
+    const days = S.base.absences.filter((a) => a.personne === null && a.fin >= h0 && a.debut <= h1).sort((a, b) => a.debut.localeCompare(b.debut));
+    const runs = [];
+    days.forEach((a) => { const r = runs[runs.length - 1]; const lab = a.libelle || 'congés';
+      if (r && r.libelle === lab && C.workingDaysBetween(r.fin, a.debut) <= 1) { r.fin = a.fin > r.fin ? a.fin : r.fin; r.jours += C.weekdaysInRange(a.debut, a.fin); }
+      else runs.push({ debut: a.debut, fin: a.fin, libelle: lab, jours: C.weekdaysInRange(a.debut, a.fin), src: a.source }); });
+    runs.forEach((r) => { const s = r.src || {}; r.title = `${r.libelle} · ${C.fmtDate(r.debut)}${r.fin !== r.debut ? ' → ' + C.fmtDate(r.fin) : ''} · ${s.systeme === 'calcul' ? 'férié (config)' : s.systeme === 'outlook' ? 'fermeture (calendrier de Franck)' : SYS_FR[s.systeme] || ''}`; });
+    return runs;
+  }
+  function ferBands() { return congesRuns().filter((r) => r.jours <= 1).map((r) => `<div class="fer" style="left:${pos(r.debut)}%;width:${pos(C.addDays(r.fin, 1)) - pos(r.debut)}%" title="${esc(r.title)}"></div>`).join(''); }
   function timeline() {
     const h0 = hStart(); const items = S.base.items.filter(visible);
-    const weeks = []; for (let k = 0; k < 13; k++) weeks.push(C.addDays(h0, 7 * k));
-    const spr = S.base.sprints.filter((s) => s.fin >= h0 && s.debut <= C.addDays(h0, H_DAYS)).map((s) =>
+    const weeks = []; for (let k = 0; k < hDays() / 7; k++) weeks.push(C.addDays(h0, 7 * k));
+    const spr = S.base.sprints.filter((s) => s.fin >= h0 && s.debut <= C.addDays(h0, hDays())).map((s) =>
       `<div class="sp" style="left:${pos(s.debut)}%;width:${pos(C.addDays(s.fin, 1)) - pos(s.debut)}%" title="${esc(s.nom)}">${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)}–${C.fmtDate(s.fin)}</div>`).join('') +
-      S.base.absences.filter((a) => a.personne === null && a.fin >= h0).map((a) =>
-        `<div class="sp conge" style="left:${pos(a.debut)}%;width:${pos(C.addDays(a.fin, 1)) - pos(a.debut)}%">${esc(a.libelle || 'congés')}</div>`).join('');
+      congesRuns().filter((r) => r.jours > 1).map((r) =>
+        `<div class="sp conge" style="left:${pos(r.debut)}%;width:${pos(C.addDays(r.fin, 1)) - pos(r.debut)}%" title="${esc(r.title)}">${esc(r.libelle)}</div>`).join('') + ferBands();
     let html = `<div class="tlr"><div class="lab"><small>Sprint GOU21</small></div><div class="trk" style="background:none">${spr || '<span class="muted" style="padding:10px;display:block">aucun sprint lu</span>'}</div></div>
       <div class="tlr"><div class="lab"><small>Semaine du</small></div><div class="wk">${weeks.map((w) => `<span class="${w === C.mondayOf(S.today) ? 'now' : ''}">${C.fmtDate(w)}</span>`).join('')}</div></div>`;
     const kids = (pid) => items.filter((i) => i.parent === pid && !['idee', 'qualifie'].includes(i.etape)).sort(C.bySiblingOrder);
@@ -300,12 +380,18 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const hors = items.filter((i) => !i.parent && i.type !== 'programme' && !['idee', 'qualifie'].includes(i.etape)).sort(C.bySiblingOrder);
     if (hors.length) html += grp('hors', 'Hors programme') + (isOpen('grp:hors') ? hors.map((i) => { const k = kids(i.id).length; return itemRow(i, 0, k) + (k && isOpen(i.id) ? walk(i.id, 1) : ''); }).join('') : '');
     const cand = items.filter((i) => ['idee', 'qualifie'].includes(i.etape));
-    if (cand.length) html += grp('cand', 'Candidats — à qualifier') + (isOpen('grp:cand') ? cand.map((i) => itemRow(i, 0, 0)).join('') : '');
-    const meps = S.base.meps.filter((m) => m.date >= h0);
-    html += `<div class="grp">MEP planifiées · versions Jira · ledger</div><div class="tlr"><div class="lab"><span class="tx"><span class="nm">MEP</span><small>${S.base.meps.length} lues · ${meps.filter((m) => m.date >= S.today).length} à venir</small></span></div>
-      <div class="trk">${meps.map((m) => `<div class="ms${m.statut === 'planifiee' && m.date >= S.today && m.date <= C.addDays(S.today, 7) ? ' warn' : ['prete', 'completee'].includes(m.statut) ? ' done' : ''}" style="left:${pos(m.date)}%" title="${esc(`${m.systeme} · ${m.libelle || ''} · ${C.fmtDate(m.date)} · ${m.ticket || 'sans ticket'} · ${STATUT_MEP[m.statut][0]}`)}"></div>`).join('')}
-      <div class="now-line" style="left:${pos(S.today)}%"></div></div></div>`;
-    return `<div class="card" style="padding:4px 0 10px;overflow-x:auto"><div class="tl">${html}</div></div>`;
+    if (cand.length) html += grp('cand', 'Candidats et en pause') + (isOpen('grp:cand') ? cand.map((i) => itemRow(i, 0, 0)).join('') : '');
+    // R19: one row per MEP theme, foldable (same rule as the sprint view, R15)
+    const meps = S.base.meps.filter((m) => m.date >= h0 && m.date <= C.addDays(h0, hDays()));
+    const msCls = (m) => m.statut === 'planifiee' && m.date >= S.today && m.date <= C.addDays(S.today, 7) ? ' warn' : ['prete', 'completee'].includes(m.statut) ? ' done' : '';
+    html += `<div class="grp">MEP planifiées · versions Jira · ledger · ${meps.length} sur l'horizon${freshTag('B3')}</div>`;
+    C.mepParTheme(meps).forEach((t) => {
+      const open = isOpen('mep:' + t.k); const avenir = t.meps.filter((m) => m.date >= S.today).length;
+      html += `<div class="tlr"><div class="lab"><button class="tg" type="button" data-act="toggle" data-id="mep:${t.k}" aria-expanded="${open}" title="${open ? 'Replier' : 'Déplier'}">${open ? '▾' : '▸'}</button><span class="tx"><span class="nm">${esc(t.nom)}</span><small>${t.meps.length} MEP · ${avenir} à venir</small></span></div>
+      <div class="trk">${open ? (t.meps.length ? t.meps.map((m) => `<div class="ms${msCls(m)}" style="left:${pos(m.date)}%" title="${esc(`${m.systeme} · ${m.libelle || ''} · ${C.fmtDate(m.date)} · ${m.ticket || 'sans ticket'} · ${STATUT_MEP[m.statut][0]}`)}"></div>`).join('') : '<span class="muted" style="padding:12px 10px;display:block">aucune MEP sur l\u2019horizon</span>') : ''}
+      ${ferBands()}<div class="now-line" style="left:${pos(S.today)}%"></div></div></div>`;
+    });
+    return `<div class="card" style="padding:4px 0 10px;overflow-x:auto"><div class="tl${past() ? ' wide' : ''}">${html}</div></div>`;
   }
   function isDesc(i, pid) { let p = i.parent; let k = 0; while (p && k++ < 10) { if (p === pid) return true; p = (S.ix.items[p] || {}).parent; } return false; }
   function viewPortefeuille() {
@@ -314,26 +400,25 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const progs = S.base.items.filter((i) => i.type === 'programme').length;
     const j30 = S.base.jalons.filter((j) => j.statut !== 'fait' && j.date >= S.today && j.date <= C.addDays(S.today, 30)).length;
     const kinds = {}; al.forEach((a) => { kinds[a.kind] = (kinds[a.kind] || 0) + 1; });
-    const KFR = { fraicheur: 'fraîcheur', phase: 'phase', wip: 'WIP', jalon: 'jalon', dependance: 'dépendance', mep: 'MEP' };
-    const wip = C.wipParPersonne(S.base, S.today)[0];
+    const KFR = { recul: 'recul', jalon: 'jalon dépassé', bloque: 'bloqués', risque: 'risque ≥ 15', attente: 'attente', mep: 'MEP', fraicheur: 'fraîcheur', phase: 'phase' };
+    const KORD = Object.keys(KFR); al.sort((x, y) => KORD.indexOf(x.kind) - KORD.indexOf(y.kind)); // R44: same order as the digest
     const risques = S.base.risques.filter((r) => r.ouvert !== false).sort((a, b) => C.risqueScore(b) - C.risqueScore(a)).slice(0, 5);
     const runs = S.base.items.filter((i) => i.type === 'run' && i.support);
     const supp = runs.flatMap((i) => i.support.map((s) => Object.assign({ src: i.source }, s))).sort((a, b) => b.ouverts - a.ouverts);
     const cnt = {}; ETAPES.forEach(([k]) => { cnt[k] = 0; });
     S.base.items.filter((i) => i.type !== 'programme').forEach((i) => { if (i.etape !== 'termine' || (i.updated_at && C.daysBetween(i.updated_at.slice(0, 10), S.today) <= 90)) cnt[i.etape]++; });
     return `
-    <div class="tiles">
+    <div class="tiles t3c">
       <div class="tile t1"><b>${actifs}</b><span>projets actifs · ${progs} programme${progs > 1 ? 's' : ''}</span></div>
       <div class="tile t2"><b>${j30}</b><span>jalons dans les 30 prochains jours</span></div>
       <div class="tile t3"><b>${al.length}</b><span>alertes${al.length ? ' : ' + Object.keys(kinds).map((k) => `${kinds[k]} ${KFR[k]}`).join(' · ') : ''}</span></div>
-      <div class="tile t4"><b>${wip ? `${wip.wip} / ${wip.limite}` : '—'}</b><span>${wip ? `${esc(wip.nom.split(' ')[0])} (${ROLE_FR[wip.role] || wip.role}) : WIP le plus chargé` : 'aucun WIP saisi cette semaine'}</span></div>
     </div>
     <div class="row">
       <label class="chip">Voie <select data-act="filter" data-f="voie" aria-label="Voie"><option value="toutes">toutes</option><option value="scrum"${S.filters.voie === 'scrum' ? ' selected' : ''}>Scrum</option><option value="flux"${S.filters.voie === 'flux' ? ' selected' : ''}>Flux</option></select></label>
       <label class="chip">Étape <select data-act="filter" data-f="etape" aria-label="Étape"><option value="ap">Actif + Planifié + candidats</option><option value="nt"${S.filters.etape === 'nt' ? ' selected' : ''}>Tout sauf Terminé</option><option value="all"${S.filters.etape === 'all' ? ' selected' : ''}>Toutes</option></select></label>
-      <span class="chip">Horizon : 13 semaines</span>
+      <label class="chip">Horizon <select data-act="filter" data-f="horizon" aria-label="Horizon"><option value="avenir">13 semaines à venir</option><option value="passe"${past() ? ' selected' : ''}>+ 13 semaines passées</option></select></label>
       <button class="btn ghost sm" type="button" data-act="expand-all">Tout déplier</button><button class="btn ghost sm" type="button" data-act="collapse-all">Tout replier</button>
-      <span class="legend" style="margin-left:auto">Barre = fenêtre · losange = jalon · hachuré = run · ligne orange = aujourd'hui · pastille = santé calculée (D8)</span>
+      <span class="legend">Smartsheet${freshTag('B4')} · réel Jira${freshTag('B5')}</span><span class="legend" style="margin-left:auto">Barre teintée = prévu (Smartsheet ; pointillés = cascade des livrables) · trait bleu = réel Jira (rouge = dépasse le prévu) · bord ajouré = non daté · losange = jalon · hachuré = run · ligne orange = aujourd'hui</span>
     </div>
     <div class="main2">
       ${timeline()}
@@ -342,9 +427,10 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
           ${risques.length ? risques.map((r) => { const s = C.risqueScore(r); return `<div class="lrow risk"><div class="score ${s >= 15 ? 's-bad' : s >= 10 ? 's-warn' : 's-low'}">${s}</div><div>${esc(r.titre)}<br><small class="muted">${esc(r.item ? itemNom(r.item) : 'Portefeuille')} · P${r.probabilite} · I${r.impact}</small></div></div>`; }).join('') : '<p class="empty">Aucun risque ouvert.</p>'}</div>
         <div class="card alert"><span class="eyebrow" style="color:var(--warn)">Alertes · calculées à l'affichage</span>
           ${al.length ? `<ul class="al">${al.map((a) => `<li><b>${KFR[a.kind]}</b> — ${esc(a.texte)}</li>`).join('')}</ul>` : '<p class="empty">Aucune alerte.</p>'}</div>
-        <div class="card"><span class="eyebrow">Support extranets · tickets GOU21 liés à STG21</span>
-          ${supp.length ? `<div style="display:grid;grid-template-columns:1fr 36px 56px;gap:4px 8px;font-size:12px;margin-top:8px;align-items:center">${supp.map((s) => `<span>${esc(s.extranet)}</span><b>${s.ouverts}</b><span class="tag${s.tendance > 0 ? ' warn' : s.tendance < 0 ? ' ok' : ''}">${s.tendance == null ? '' : s.tendance > 0 ? '↑ ' + s.tendance : s.tendance < 0 ? '↓ ' + (-s.tendance) : '='}</span>`).join('')}</div>
-          <p class="prov" style="margin:8px 0 0">${esc(prov(supp[0].src))}</p>` : '<p class="empty">Aucun ticket GOU21 ouvert lié à STG21.</p>'}</div>
+        <div class="card"><span class="eyebrow">Support extranets · tickets GOU21 liés à STG21</span>${freshTag('B2')}
+          ${supp.length ? `<div style="display:grid;grid-template-columns:1fr 56px 64px 64px;gap:4px 8px;font-size:12px;margin-top:8px;align-items:center"><small class="muted">Extranet</small><small class="muted">ouverts</small><small class="muted">plus vieux</small><small class="muted" title="Écart du nombre d'ouverts depuis le lundi">vs lundi</small>${supp.map((s) => `<span>${esc(s.extranet)}</span><b>${s.ouverts}</b><span class="muted">${s.plus_vieux_j != null ? s.plus_vieux_j + ' j' : '—'}</span><span class="tag${s.tendance > 0 ? ' warn' : s.tendance < 0 ? ' ok' : ''}" title="${esc(s.tendance_vs ? 'Ouverts comparés à la 1re lecture de la semaine du lundi ' + C.fmtDate(s.tendance_vs) : 'Pas encore de lundi de référence')}">${s.tendance == null ? '—' : s.tendance > 0 ? '↑ ' + s.tendance : s.tendance < 0 ? '↓ ' + (-s.tendance) : 'stable'}</span>`).join('')}</div>
+          ${supportList()}
+          <p class="prov" style="margin:8px 0 0">${provHtml(supp[0].src)}</p>` : '<p class="empty">Aucun ticket GOU21 ouvert lié à STG21.</p>'}</div>
       </div>
     </div>
     <div class="card"><div class="between"><span class="eyebrow">Entonnoir d'admission</span><span class="muted">Priorité = valeur + urgence − effort (D9) · risque affiché à côté</span></div>
@@ -367,7 +453,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       <div class="card top" style="max-width:720px"><span class="eyebrow">Gérer · nouveau projet (saisie)</span>${itemForm(null)}${errorsHtml()}</div>`;
     const it = S.ix.items[S.itemId];
     if (!it) return '<div class="card"><p class="empty">Aucun projet sélectionné. Choisir un projet dans la vue Portefeuille.</p></div>';
-    const san = santeOf(it); const p = C.pct(S.base, it); const js = C.jalonsOf(S.base, it.id);
+    const san = santeOf(it); const p = C.pct(S.base, it); const js = rowJalons(it).sort((x, y) => x.date.localeCompare(y.date));
     const rang = C.rangs(S.base)[it.id]; const rn = C.risqueMaxNote(S.base, it.id);
     const nx = C.prochainJalon(S.base, it.id); const { amont, aval } = depsLines(it);
     const risques = S.base.risques.filter((r) => r.item === it.id); const att = S.base.attentes.filter((a) => a.item === it.id);
@@ -379,13 +465,13 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const parent = it.parent ? S.ix.items[it.parent] : null;
     const stepIdx = ETAPES.findIndex(([k]) => k === it.etape);
     const editBtn = (col, r) => S.canEdit && isSaisie(r) ? ` <button class="btn ghost sm" type="button" data-act="edit" data-col="${col}" data-id="${esc(r.id)}">modifier</button>` : '';
-    const srcTag = (r) => `<span class="prov" title="${esc(prov(r.source))}">${esc(SYS_FR[r.source.systeme] || r.source.systeme)}</span>`;
+    const srcTag = (r) => r.source ? `<span class="prov" title="${esc(prov(r.source))}">${esc(SYS_FR[r.source.systeme] || r.source.systeme)}</span>` : '<span class="prov">cascade</span>';
     return `
     <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › ${parent ? `<a href="#" data-act="open-item" data-id="${esc(parent.id)}">${esc(parent.nom)}</a>` : 'Hors programme'} › <span style="color:var(--ink);font-weight:600">${esc(it.nom)}</span></div>
     <div class="between" style="align-items:center">
-      <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="eyebrow">${esc(it.type)} · voie ${esc(it.voie)}${it.promu ? ' · item promu' : ''}</span>
-        <h1><span class="rag ${ragCls(it)}"></span>${esc(it.nom)}</h1>
-        <span class="muted">Source : ${esc(prov(it.source))} · santé calculée : <b>${san.couleur}</b>${san.motifs.length ? ' (' + esc(san.motifs.join(' ; ')) + ')' : ''}</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="eyebrow">${esc(natureLbl(it, parent))}</span>
+        <h1><span class="rag ${ragCls(it)}"></span>${esc(it.nom)}${it.visible === false ? ' <span class="tag warn" title="Masqué pour les visiteurs et le digest (R37)">masqué</span>' : ''}</h1>
+        <span class="muted">Source : ${provHtml(it.source)} · santé calculée : <b>${san.couleur}</b>${san.motifs.length ? ' (' + esc(san.motifs.join(' ; ')) + ')' : ''}</span></div>
       <div class="row">${spAct ? `<button class="btn ghost" type="button" data-act="open-sprint" data-id="${esc(spAct.id)}">Voir le sprint ${esc(spAct.nom.replace(/^G2\.1 - /, ''))}</button>` : ''}
         ${(it.liens || []).map(lienHtml).join('')}</div>
     </div>
@@ -397,7 +483,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
             <dt>Responsable</dt><dd>${esc(it.responsable || '—')}</dd>
             <dt>Type · parent</dt><dd>${esc(it.type)} · ${esc(parent ? parent.nom : 'hors programme')}</dd>
             <dt>Priorité</dt><dd>${it.priorite ? `P${rang || '?'} — valeur ${it.priorite.valeur} · urgence ${it.priorite.urgence} · effort ${it.priorite.effort} · risque ${rn ?? '—'} <small class="muted">(score ${C.prioriteScore(it.priorite)})</small>` : 'non évaluée'}</dd>
-            <dt>Fenêtre</dt><dd>${it.fenetre && it.fenetre.debut ? `${C.fmtDate(it.fenetre.debut)} → ${it.fenetre.fin ? C.fmtDate(it.fenetre.fin, true) : 'non datée'}` : 'non saisie'}</dd>
+            ${(() => { const pv = C.fenetrePrevue(S.base, it); const rl = C.fenetreReelle(S.base, it); return `<dt>Prévu</dt><dd>${pv ? `${C.fmtDate(pv.debut)} → ${pv.fin ? C.fmtDate(pv.fin, true) : 'non daté'}${pv.origine === 'enfants' ? ' <small class="muted">(cascade des livrables)</small>' : ''}` : 'non saisi (Smartsheet : Début prévu / Fin prévue)'}</dd><dt>Réel Jira</dt><dd>${rl ? `${C.fmtDate(rl.debut)} → ${rl.fin ? C.fmtDate(rl.fin, true) : 'en cours' + (rl.jusqu_au ? ' (planifié jusqu’au ' + C.fmtDate(rl.jusqu_au) + ')' : '')}${pv && pv.fin && (rl.fin || S.today) > pv.fin ? ' <span class="tag bad">dépasse le prévu</span>' : ''}` : '—'}</dd>`; })()}
             <dt>Prochain jalon</dt><dd>${nx ? `<b>${esc(nx.nom)} — ${C.fmtDate(nx.date)}</b> (${C.daysBetween(S.today, nx.date) >= 0 ? 'dans ' + C.daysBetween(S.today, nx.date) + ' j' : 'dépassé'})` : '—'}</dd>
             <dt>Dépend de</dt><dd>${amont.length ? amont.map((d) => `${esc(C.refNom(S.base, S.ix, d.de))} <span class="tag${C.predecesseurRecule(S.base, S.ix, d.de) ? ' warn' : ''}">${d.type}</span>`).join('<br>') : '—'}</dd>
             <dt>Alimente</dt><dd>${aval.length ? aval.map((d) => `${esc(C.refNom(S.base, S.ix, d.vers))} <span class="tag">${d.type}</span>`).join('<br>') : '—'}</dd>
@@ -408,7 +494,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
         <div class="card"><div class="between"><span class="eyebrow">Jalons · ${js.length} (dont ${js.filter((j) => j.statut === 'fait').length} faits)</span>
           <span class="muted">progression ${p ? C.fmtNum(p.valeur) + ' % ' + (p.origine === 'source' ? '(lue à la source)' : '= faits / total') : '—'}</span></div>
           ${js.length ? js.map((j) => { const st = STATUT_J[j.statut] || [j.statut, '']; const rc = C.recul(j); const late = j.statut !== 'fait' && j.date < S.today;
-            return `<div class="lrow jal"><div class="dot ${j.statut}"></div><div>${esc(j.nom)} ${srcTag(j)}${editBtn('jalons', j)}</div><span>${C.fmtDate(j.date)}${rc ? ` <small class="muted">(init. ${C.fmtDate(j.date_initiale)}, +${rc} j o.)</small>` : ''}</span><span class="tag ${late ? 'bad' : st[1]}">${late ? 'dépassé' : st[0]}${j.fait_le && j.fait_le < j.date ? ' · ' + C.workingDaysBetween(j.fait_le, j.date) + ' j o. d\'avance' : ''}</span></div>`; }).join('') : '<p class="empty">Aucun jalon. Smartsheet n\'en fournit pas au grain L : les saisir dans Gérer.</p>'}
+            return `<div class="lrow jal"><div class="dot ${j.statut}"></div><div>${esc(j.nom)} ${srcTag(j)}${editBtn('jalons', j)}</div><span>${j.precision === 'mois' ? 'fin ' : ''}${C.fmtDate(j.date)}${rc ? ` <small class="muted">(init. ${C.fmtDate(j.date_initiale)}, +${rc} j o.)</small>` : ''}</span><span class="tag ${late ? 'bad' : st[1]}">${late ? 'dépassé' : st[0]}${j.fait_le && j.fait_le < j.date ? ' · ' + C.workingDaysBetween(j.fait_le, j.date) + ' j o. d\'avance' : ''}${j.statut === 'fait' && C.retardGate(j, S.today) ? ' · ' + C.retardGate(j, S.today) + ' j o. de retard' : ''}</span></div>`; }).join('') : '<p class="empty">Aucun jalon. Goutte 2.1 : remplir « Date prévue » des gates BA-3, AC-4, QA-2, QA-3 dans Jalons_Entites (ligne cochée Portefeuille) ; sinon les saisir dans Gérer.</p>'}
         </div>
         <div class="two">
           <div class="card"><span class="eyebrow">Risques · ${risques.length}</span>
@@ -428,14 +514,13 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   }
 
   // R10: "Data Jira" — the item's epics (Gérer), ticket progress, active-sprint content and points per person;
-  // load entered by hand (WIP, ETP) stays below.
+  // (load entered by hand — WIP, ETP — dropped 2026-10-28, Franck R23 R24 R28)
   function dataJira(it, charges, abs) {
     const sp = C.sprintAt(S.base, S.today);
     const J = C.jiraOf(S.base, it.id, sp && sp.id); const st = J.stat; const ep = it.epics_jira || [];
-    const saisies = charges.filter((c) => c.mode !== 'points');
     const editBtn = (col, r) => S.canEdit && isSaisie(r) ? ` <button class="btn ghost sm" type="button" data-act="edit" data-col="${col}" data-id="${esc(r.id)}">modifier</button>` : '';
     const t = st && st.tickets; const w = (n) => t && t.total ? (100 * n / t.total) + '%' : '0';
-    return `<div class="card"><div class="between"><span class="eyebrow">Data Jira</span>${st ? `<span class="prov" title="${esc(prov(st.source))}">Jira · lu ${esc(C.fmtTs(st.source.lu_le))}</span>` : ''}</div>
+    return `<div class="card"><div class="between"><span class="eyebrow">Data Jira${freshTag('B1')}</span>${st ? `<span class="prov" title="${esc(prov(st.source))}">Jira · lu ${esc(C.fmtTs(st.source.lu_le))}</span>` : ''}</div>
       <div class="row" style="margin-top:6px">${ep.length ? ep.map((k) => `<a class="tag blue" href="${JIRA_URL}${esc(k)}" target="_blank" rel="noopener noreferrer">${esc(k)} ↗</a>`).join('') : `<span class="muted">Aucune épopée liée${S.canEdit ? ' — la saisir dans Gérer (champ « Épopées Jira »)' : ''}.</span>`}</div>
       ${st ? `<div class="jbar" title="${t.faits} faits · ${t.en_cours} en cours · ${t.a_faire} à faire"><span style="width:${w(t.faits)};background:var(--ok)"></span><span style="width:${w(t.en_cours)};background:var(--blue)"></span></div>
         <div class="between" style="font-size:12px"><span><b>${C.fmtNum(J.pct)} %</b> des tickets faits <small class="muted">(dès « Prêt pour Preprod », annulés exclus)</small></span><span class="muted">${t.faits} faits · ${t.en_cours} en cours · ${t.a_faire} à faire · ${t.total} au total</span></div>
@@ -443,7 +528,6 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
           ${J.parPersonne.length ? `<dt>Sous-tâches</dt><dd class="muted">par personne : à faire / total</dd>` : ''}
           ${J.parPersonne.map((p) => `<dt>${esc(p.nom)}</dt><dd>${p.sousTaches - p.faites} / ${p.sousTaches}${p.enCours ? ` · ${p.enCours} en cours` : ''}</dd>`).join('')}</dl>` : ''}`
         : ep.length ? '<p class="empty">Épopées liées, pas encore lues : la lecture Jira du lundi les comptera.</p>' : ''}
-      ${saisies.length ? `<span class="eyebrow" style="display:block;margin-top:12px">Charge saisie</span><dl class="kv">${saisies.map((c) => `<dt>${esc(c.personne ? (S.ix.personnes[c.personne] || { nom: c.personne }).nom.split(' ')[0] : ROLE_FR[c.role])}</dt><dd>${esc(ROLE_FR[c.role] || c.role)} · ${c.mode === 'wip' ? 'WIP ' + c.valeur : c.mode === 'etp' ? C.fmtNum(c.valeur) + ' ETP' : C.fmtNum(c.valeur) + ' j-p'} · ${c.periode.type === 'sprint' ? esc((S.ix.sprints[c.periode.ref] || { nom: c.periode.ref }).nom) : 'sem. ' + C.fmtDate(c.periode.ref)}${editBtn('charges', c)}</dd>`).join('')}</dl>` : ''}
       <dl class="kv"><dt>Absences</dt><dd>${abs.length ? abs.map((a) => `${esc(a.personne ? (S.ix.personnes[a.personne] || { nom: a.personne }).nom : a.libelle || 'collective')} ${C.fmtDate(a.debut)}–${C.fmtDate(a.fin)}`).join('<br>') : 'aucune détectée (6 semaines)'}</dd></dl></div>`;
   }
 
@@ -451,21 +535,32 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   function opt(v, l, cur) { return `<option value="${esc(v)}"${String(cur) === String(v) ? ' selected' : ''}>${esc(l)}</option>`; }
   function notes(name, cur) { return `<select name="${name}">${opt('', '—', cur == null ? '' : cur)}${[1, 2, 3, 4, 5].map((n) => opt(n, n, cur)).join('')}</select>`; }
   function errorsHtml() { return S.errors.length ? `<ul class="err-list">${S.errors.map((e) => `<li>${esc(e)}</li>`).join('')}</ul>` : ''; }
+  // R31: plain-language nature of an item (type · how it is followed · why it is in the portfolio)
+  function natureLbl(it, parent) {
+    const t = { programme: 'Programme', projet: 'Projet', run: 'Run (exploitation)' }[it.type] || it.type;
+    const v = it.voie === 'scrum' ? 'suivi en sprints Jira' : 'suivi au fil de l\u2019eau, sans sprint';
+    const p = it.promu ? (parent ? `sous-livraison de ${parent.nom.split(' ')[0]}` : 'sous-livraison suivie au portefeuille') : null;
+    return [t, v, p].filter(Boolean).join(' · ');
+  }
   function itemForm(it) {
     const x = it || { type: 'projet', voie: 'flux', etape: 'idee', promu: false };
+    // R30 (model v5): étape and voie of an item tied to a Smartsheet row are read, not entered
+    const lu = !!(x.source && x.source.systeme === 'smartsheet');
+    const ro = (name, label, val, html) => lu ? `<div class="field"><label>${label}<input value="${esc(val)}" disabled title="Lu dans Smartsheet"><input type="hidden" name="${name}" value="${esc(x[name])}"></label><small class="muted">lu dans Smartsheet</small></div>` : html;
     const parents = S.base.items.filter((i) => (i.type === 'programme' || i.type === 'projet') && (!it || i.id !== it.id));
     const pr = x.priorite || {};
     return `<form class="g" data-form="item">
       <div class="field"><label>Nom<input name="nom" required value="${esc(x.nom || '')}"></label></div>
       <div class="f3"><div class="field"><label>Type<select name="type">${['programme', 'projet', 'run'].map((v) => opt(v, v, x.type)).join('')}</select></label></div>
-        <div class="field"><label>Voie<select name="voie">${opt('scrum', 'Scrum', x.voie)}${opt('flux', 'Flux', x.voie)}</select></label></div>
-        <div class="field"><label>Étape<select name="etape">${ETAPES.map(([v, l]) => opt(v, l, x.etape)).join('')}</select></label></div></div>
+        ${ro('voie', 'Suivi', x.voie === 'scrum' ? 'Sprints Jira' : 'Au fil de l\u2019eau', `<div class="field"><label>Suivi<select name="voie">${opt('scrum', 'Sprints Jira (scrum)', x.voie)}${opt('flux', 'Au fil de l\u2019eau (flux)', x.voie)}</select></label></div>`)}
+        ${ro('etape', 'Étape', (ETAPES.find(([k]) => k === x.etape) || [0, x.etape])[1], `<div class="field"><label>Étape<select name="etape">${ETAPES.map(([v, l]) => opt(v, l, x.etape)).join('')}</select></label></div>`)}</div>
       <div class="f2"><div class="field"><label>Parent<select name="parent">${opt('', 'hors programme', x.parent || '')}${parents.map((p) => opt(p.id, p.nom, x.parent || '')).join('')}</select></label></div>
         <div class="field"><label>Responsable<input name="responsable" value="${esc(x.responsable || '')}"></label></div></div>
       <div class="f3"><div class="field"><label>Valeur${notes('valeur', pr.valeur)}</label></div><div class="field"><label>Urgence${notes('urgence', pr.urgence)}</label></div><div class="field"><label>Effort${notes('effort', pr.effort)}</label></div></div>
       <div class="f2"><div class="field"><label>Fenêtre — début<input type="date" name="debut" value="${esc((x.fenetre || {}).debut || '')}"></label></div>
         <div class="field"><label>Fenêtre — fin (vide = non datée)<input type="date" name="fin" value="${esc((x.fenetre || {}).fin || '')}"></label></div></div>
-      <label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" name="promu"${x.promu ? ' checked' : ''}> item promu (sous le grain L, D4)</label>
+      <label style="font-size:12px;display:flex;gap:6px;align-items:center"><input type="checkbox" name="promu"${x.promu ? ' checked' : ''}> sous-livraison suivie au portefeuille (sous son L)</label>
+      <label style="font-size:12px;display:flex;gap:6px;align-items:center" title="Décoché : masqué pour les visiteurs et le digest Teams ; filtre d'affichage, pas un droit"><input type="checkbox" name="visible"${x.visible === false ? '' : ' checked'}> visible dans le portefeuille (R37)</label>
       <div class="field"><label>Note du lundi<textarea name="note_lundi" rows="2">${esc(x.note_lundi || '')}</textarea></label></div>
       <div class="field"><label>Épopées Jira GOU21 (clés séparées par des virgules)<input name="epics_jira" placeholder="GOU21-9199, GOU21-9604" value="${esc((x.epics_jira || []).join(', '))}"></label></div>
       <div class="field"><label>Liens (une ligne : libellé | url)<textarea name="liens" rows="2">${esc((x.liens || []).map((l) => `${l.libelle} | ${l.url}`).join('\n'))}</textarea></label></div>
@@ -473,15 +568,15 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     </form>`;
   }
   function gerer(it) {
-    const g = S.gerer; const tabs = [['item', 'Item'], ['jalons', '+ Jalon'], ['risques', '+ Risque'], ['attentes', '+ Attente'], ['dependances', '+ Dépendance'], ['charges', 'Charge flux']];
+    const g = S.gerer; const tabs = [['item', 'Item'], ['jalons', '+ Jalon'], ['risques', '+ Risque'], ['attentes', '+ Attente'], ['dependances', '+ Dépendance']];
     const rec = g.id ? (S.base[g.tab] || []).find((r) => r.id === g.id) : null;
     let body = '';
     if (g.tab === 'item') {
       body = itemForm(it) + `<dl class="ro"><dt>Santé</dt><dd>${santeOf(it).couleur} · calculée (D8)</dd>
-        ${typeof it.pct_avancement === 'number' ? `<dt>% avancement</dt><dd>${C.fmtNum(it.pct_avancement)} % · ${esc(prov(it.source))}</dd>` : ''}
-        ${it.phase_source ? `<dt>Phase source</dt><dd>${esc(it.phase_source)} · ${esc(prov(it.source))}</dd>` : ''}
-        ${it.contenu_sprint ? `<dt>Contenu sprint</dt><dd>${esc(it.contenu_sprint)} · ${esc(prov(it.source))}</dd>` : ''}
-        ${it.support ? `<dt>Support</dt><dd>${it.support.length} extranets · ${esc(prov(it.source))}</dd>` : ''}
+        ${typeof it.pct_avancement === 'number' ? `<dt>% avancement</dt><dd>${C.fmtNum(it.pct_avancement)} % · ${provHtml(it.source)}</dd>` : ''}
+        ${it.phase_source ? `<dt>Phase source</dt><dd>${esc(phaseLbl(it))}${it.phase_deduite ? ' (phase vide dans la feuille : la moins avancée des enfants actifs)' : ''} · ${provHtml(it.source)}</dd>` : ''}
+        ${it.contenu_sprint ? `<dt>Contenu sprint</dt><dd>${esc(it.contenu_sprint)} · ${provHtml(it.source)}</dd>` : ''}
+        ${it.support ? `<dt>Support</dt><dd>${it.support.length} extranets · ${provHtml(it.source)}</dd>` : ''}
         <dt>Mis à jour</dt><dd>${esc(C.fmtTs(it.updated_at))}</dd></dl>`;
     } else if (g.tab === 'jalons') {
       const j = rec || {};
@@ -516,14 +611,6 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
         <div class="field"><label>Autre extrémité<select name="autre">${all.filter((a) => !own.includes(a[0])).map((a) => opt(a[0], a[1], '')).join('')}</select></label></div>
         <div class="field"><label>Note<input name="note"></label></div>
         <div class="row"><button class="btn" type="submit">Ajouter la dépendance</button></div></form>`;
-    } else if (g.tab === 'charges') {
-      const c = rec || {};
-      body = `<form class="g" data-form="charges"><div class="f2"><div class="field"><label>Personne<select name="personne">${S.base.personnes.filter((p) => p.voie === 'flux').map((p) => opt(p.id, `${p.nom} (${ROLE_FR[p.role] || p.role})`, c.personne || '')).join('')}</select></label></div>
-        <div class="field"><label>Mode (voie flux)<select name="mode">${opt('wip', 'WIP', c.mode || 'wip')}${opt('etp', 'ETP', c.mode)}</select></label></div></div>
-        <div class="f2"><div class="field"><label>Valeur<input type="number" name="valeur" min="0" step="0.1" required value="${esc(c.valeur ?? 1)}"></label></div>
-        <div class="field"><label>Semaine du (lundi)<input type="date" name="semaine" required value="${esc(c.periode ? c.periode.ref : C.mondayOf(S.today))}"></label></div></div>
-        <p class="muted" style="margin:0">Jours-personne Scrum : calculés (Jira + absences), non saisissables.</p>
-        <div class="row"><button class="btn" type="submit">${rec ? 'Mettre à jour' : 'Ajouter la charge'}</button></div></form>`;
     }
     return `<div class="card top"><span class="eyebrow">Gérer · champs du portefeuille</span>
       <div class="gtabs">${tabs.map(([k, l]) => `<button type="button" class="${g.tab === k ? 'on' : ''}" data-act="gtab" data-t="${k}">${l}</button>`).join('')}</div>
@@ -544,6 +631,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       const rec = Object.assign({}, cur || {}, { nom: v('nom'), type: v('type'), voie: v('voie'), etape: v('etape'), parent: v('parent') || null, promu: !!f.get('promu'), updated_at: keepTs ? cur.updated_at : C.nowTs() });
       if (!cur) { rec.id = C.newId('saisie', rec.nom, ids('items')); rec.source = src(); }
       ['responsable', 'note_lundi'].forEach((k) => { if (v(k)) rec[k] = v(k); else delete rec[k]; });
+      if (f.get('visible')) delete rec.visible; else rec.visible = false; // R37: absent = visible
       if (v('valeur') && v('urgence') && v('effort')) { const p = { valeur: +v('valeur'), urgence: +v('urgence'), effort: +v('effort') }; p.score = C.prioriteScore(p); rec.priorite = p; } else delete rec.priorite;
       if (v('debut')) rec.fenetre = { debut: v('debut'), fin: v('fin') || null }; else delete rec.fenetre;
       const ep = v('epics_jira').toUpperCase().split(/[\s,;]+/).filter(Boolean);
@@ -573,73 +661,121 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       const de = v('sens') === 'de' ? mine : autre; const vers = v('sens') === 'de' ? autre : mine;
       rec = { id: C.newId('dep', `${de.id}-${vers.id}`, ids('dependances')), type: v('type'), de, vers, source: src() };
       if (v('note')) rec.note = v('note');
-    } else if (kind === 'charges') {
-      const p = S.ix.personnes[v('personne')];
-      rec = Object.assign({}, cur || { id: C.newId(`saisie.${C.slug(it.id)}.c`, `${v('personne')}-${v('semaine')}`, ids('charges')), item: it.id },
-        { periode: { type: 'semaine', ref: C.mondayOf(v('semaine')) }, role: p ? (p.role in ROLE_FR && !['direction', 'cdp'].includes(p.role) ? p.role : 'expert') : 'expert', personne: v('personne'), mode: v('mode'), valeur: +v('valeur'), source: src() });
-    } else if (kind === 'personnes') {
-      const p = S.ix.personnes[v('personne')]; if (!p) return;
-      rec = Object.assign({}, p, { wip_limite: +v('wip_limite') });
-    } else if (kind === 'absences') {
-      rec = { id: C.newId('saisie.abs', `${v('libelle')}-${v('debut')}`, ids('absences')), personne: null, debut: v('debut'), fin: v('fin'), jours_ouvres: C.weekdaysInRange(v('debut'), v('fin')), libelle: v('libelle'), source: src() };
     }
-    if (rec && await write(kind, rec)) { S.gerer = { tab: ['personnes', 'absences'].includes(kind) ? S.gerer.tab : kind, id: null }; render(); }
+    if (rec && await write(kind, rec)) { S.gerer = { tab: kind, id: null }; render(); }
   }
 
   // ---------- sprint view ----------
+  // R34: tickets ready for the sprint / for grooming, whole GOU21 backlog, in Jira backlog order (Franck)
+  // R27 bis (Franck): tickets « Bloqué » in this sprint, parents with their blocked sub-tasks, age from the Jira wait
+  function blockedCard(s) {
+    const L = (S.base.listes_jira || []).find((x) => x.id === 'jira.liste.bloques');
+    const all = L ? L.tickets.filter((t) => (t.sprints || []).includes(s.id)) : [];
+    const head = `<div class="between"><span class="eyebrow" style="color:var(--bad)">Bloqués dans le sprint · ${all.length}</span>${freshTag('B1')}</div>`;
+    if (!L) return `<div class="card alert">${head}<p class="empty">Liste non lue : le passage quotidien de 9 h la lit dans Jira.</p></div>`;
+    if (!all.length) return `<div class="card">${head}<p class="empty">Aucun ticket bloqué dans ce sprint.</p></div>`;
+    const tops = all.filter((t) => !t.sous_tache || !all.some((p) => p.cle === t.parent));
+    const since = (k) => { const a = S.base.attentes.find((x) => x.id === `jira.att.${k.toLowerCase()}` && !x.recue_le); return a ? C.workingDaysBetween(a.attendue_le, S.today) : null; };
+    const line = (t, sub) => { const d = since(t.cle);
+      return `<div class="lrow" style="grid-template-columns:96px minmax(0,1fr) 150px 90px;${sub ? 'padding-left:24px;font-size:12px' : ''}"><a class="tag ${sub ? '' : 'bad'}" href="${JIRA_URL}${esc(t.cle)}" target="_blank" rel="noopener noreferrer" style="justify-self:start">${esc(t.cle)}</a><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(t.titre)}">${esc(t.titre)}${!sub && t.item ? ` <small class="muted">· ${esc(itemNom(t.item))}</small>` : ''}</span><small class="muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.assigne || 'non assigné')}</small><span class="tag${d > 5 ? ' warn' : ''}" style="white-space:nowrap;justify-self:end">${d === null ? (sub ? 'sous-tâche' : '—') : d <= 0 ? 'depuis auj.' : `${d} j o.`}</span></div>`; };
+    return `<div class="card alert">${head}${tops.map((t) => line(t, false) + all.filter((x) => x.sous_tache && x.parent === t.cle).map((x) => line(x, true)).join('')).join('')}
+      <p class="muted" style="margin:8px 0 0">Statut Jira « Bloqué ». Durée = jours ouvrés depuis le premier passage qui l'a vu bloqué (attente du projet).</p></div>`;
+  }
+  // R32: names of the open support tickets on the portfolio card, grouped by STG21 request (one request may be split
+  // into several GOU21 tickets, e.g. FE + BE), sprint shown when planned
+  function supportList() {
+    const L = (S.base.listes_jira || []).find((x) => x.id === 'jira.liste.support'); if (!L || !L.tickets.length) return '';
+    const byReq = {}; L.tickets.forEach((t) => (t.stg21 || ['—']).forEach((k) => (byReq[k] = byReq[k] || []).push(t)));
+    const nom = (id) => ((S.ix.sprints[id] || { nom: id }).nom || id).replace(/^G2\.1 - /, '');
+    return `<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">${Object.keys(byReq).sort().map((k) => `<div style="font-size:12px"><a class="tag" href="https://plq-supportg2.atlassian.net/browse/${esc(k)}" target="_blank" rel="noopener noreferrer">${esc(k)}</a> <small class="muted">${esc(byReq[k][0].extranet || '')}</small>
+      ${byReq[k].map((t) => `<div class="row" style="gap:6px;margin-top:3px;flex-wrap:nowrap"><a href="${JIRA_URL}${esc(t.cle)}" target="_blank" rel="noopener noreferrer" style="white-space:nowrap">${esc(t.cle)}</a><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(t.titre)}">${esc(t.titre)}</span>${(t.sprints || []).length ? `<span class="tag blue">${esc(t.sprints.map(nom).join(', '))}</span>` : '<span class="tag">sans sprint</span>'}</div>`).join('')}</div>`).join('')}</div>`;
+  }
+  // R33: support tickets (GOU21 linked to STG21) planned in this sprint, from the Jira support list (model v7)
+  const STG_URL = 'https://plq-supportg2.atlassian.net/browse/';
+  function supportCard(s) {
+    const L = (S.base.listes_jira || []).find((x) => x.id === 'jira.liste.support');
+    const head = `<div class="between"><span class="eyebrow">Support dans le sprint · STG21</span>${freshTag('B2')}</div>`;
+    if (!L) return `<div class="card">${head}<p class="empty">Liste non lue : le passage quotidien de 9 h la lit dans Jira.</p></div>`;
+    const ici = L.tickets.filter((t) => (t.sprints || []).includes(s.id)); const hors = L.tickets.filter((t) => !(t.sprints || []).length);
+    const ailleurs = L.tickets.filter((t) => (t.sprints || []).length && !(t.sprints || []).includes(s.id));
+    const CAT = { new: ['à faire', ''], indeterminate: ['en cours', 'blue'], done: ['fait', 'ok'] };
+    const row = (t) => `<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) auto auto"><a class="tag blue" href="${JIRA_URL}${esc(t.cle)}" target="_blank" rel="noopener noreferrer">${esc(t.cle)}</a><span style="min-width:0" title="${esc(t.titre)}">${esc(t.titre)} <small class="muted">· ${esc(t.extranet || '—')}</small></span><span>${(t.stg21 || []).map((k) => `<a class="tag" href="${STG_URL}${esc(k)}" target="_blank" rel="noopener noreferrer">${esc(k)}</a>`).join(' ')}</span><span class="tag ${(CAT[t.categorie] || ['', ''])[1]}">${(CAT[t.categorie] || [t.categorie || '—'])[0]}</span></div>`;
+    const nom = (id) => ((S.ix.sprints[id] || { nom: id }).nom || id).replace(/^G2\.1 - /, '');
+    return `<div class="card">${head}
+      ${ici.length ? ici.map(row).join('') : '<p class="empty">Aucun ticket de support dans ce sprint.</p>'}
+      ${hors.length || ailleurs.length ? `<p class="muted" style="margin:8px 0 0">Ailleurs : ${[hors.length ? `${hors.length} ouvert${hors.length > 1 ? 's' : ''} sans sprint (${hors.map((t) => esc(t.cle)).join(', ')})` : null, ailleurs.length ? `${ailleurs.length} dans ${[...new Set(ailleurs.flatMap((t) => t.sprints))].map(nom).join(', ')}` : null].filter(Boolean).join(' · ')}</p>` : ''}</div>`;
+  }
+  function prepCard(s) {
+    const L = (S.base.listes_jira || []).find((x) => x.id === 'jira.liste.preparation');
+    if (!L) return `<div class="card top"><span class="eyebrow">Préparation · backlog GOU21</span><p class="empty">Liste non lue : le passage quotidien de 9 h la lira dans Jira.</p></div>`;
+    const t = L.tickets.slice().sort((a, b) => (a.rang || 0) - (b.rang || 0));
+    const isS = (x) => /sprint/i.test(x.statut || '');
+    const grp = (lab, xs) => { const pts = xs.reduce((n, x) => n + (x.points || 0), 0); const sans = xs.filter((x) => typeof x.points !== 'number').length;
+      return `<div class="between" style="margin-top:10px"><b>${lab} · ${xs.length}</b><span class="muted">${C.fmtNum(pts)} pts${sans ? ` · ${sans} sans points` : ''}</span></div>`; };
+    const row = (x) => `<div class="lrow" style="grid-template-columns:auto minmax(0,1fr) auto auto"><a class="tag blue" href="${JIRA_URL}${esc(x.cle)}" target="_blank" rel="noopener noreferrer">${esc(x.cle)}</a><span style="min-width:0" title="${esc(x.titre)}">${esc(x.titre)}${x.item ? ` <small class="muted">· ${esc(itemNom(x.item))}</small>` : ''}</span><span class="tag ${isS(x) ? 'ok' : ''}">${isS(x) ? 'prêt sprint' : 'prêt grooming'}</span><span class="muted" style="white-space:nowrap">${typeof x.points === 'number' ? C.fmtNum(x.points) + ' pts' : 'sans pts'}${(x.sprints || []).includes(s.id) ? ' · <span class="tag blue">dans ' + esc(s.nom.replace(/^G2\.1 - /, '')) + '</span>' : ''}</span></div>`;
+    return `<div class="card top"><div class="between"><span class="eyebrow">Préparation · backlog GOU21 · ordre Jira</span>${freshTag('B1')}</div>
+      ${grp('Prêt pour sprint', t.filter(isS))}${grp('Prêt pour grooming', t.filter((x) => !isS(x)))}
+      <div style="margin-top:8px">${t.map(row).join('') || '<p class="empty">Aucun ticket prêt.</p>'}</div></div>`;
+  }
   function viewSprint() {
     const sv = S.sprintId ? C.sprintVue(S.base, S.sprintId, S.today) : null;
     if (!sv) return '<div class="card"><p class="empty">Aucun sprint lu (adaptateur Jira GOU21, étape 3).</p></div>';
     const s = sv.sprint; const sprints = S.base.sprints.slice().sort((a, b) => a.debut.localeCompare(b.debut));
-    const flux = S.base.personnes.filter((p) => p.voie === 'flux');
     const devAbs = S.base.absences.filter((a) => a.debut <= s.fin && a.fin >= s.debut && a.personne && (S.ix.personnes[a.personne] || {}).role === 'dev').length;
+    // R35: the view adapts to the sprint state (futur = preparation, clos = review)
+    const fut = s.etat === 'futur'; const clos = s.etat === 'clos';
+    const prev = sprints[sprints.findIndex((x) => x.id === s.id) - 1] || null;
+    const goalsOf = (x) => String((x && x.objectif) || '').split(/\n+/).map((y) => y.trim()).filter(Boolean);
+    // R35 V7 (Franck): retro actions defined for the previous sprint are kept, like its goals
+    const actions = sv.actions.concat(prev ? S.base.actions_retro.filter((a) => a.sprint === prev.id && !sv.actions.some((b) => b.id === a.id)) : [])
+      .map((a) => (prev && a.sprint === prev.id ? Object.assign({ precedent: true }, a) : a));
     return `
     <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › Sprints GOU21 › <span style="color:var(--ink);font-weight:600">${esc(s.nom)}</span></div>
     <div class="between" style="align-items:center">
       <div style="display:flex;flex-direction:column;gap:4px"><span class="eyebrow">Sprint GOU21 · ${esc(SYS_FR[s.source.systeme])} · Jira fait foi</span>
         <h1>${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)} → ${C.fmtDate(s.fin, true)}</h1>
-        <span class="muted">${s.objectif ? 'Objectif : ' + esc(s.objectif) + ' · ' : 'Objectif non lu · '}${sv.jours_ouvres} jours ouvrés · état ${esc(s.etat)} · ${esc(prov(s.source))}</span></div>
+        <span class="muted">${sv.jours_ouvres} jours ouvrés · état ${esc(s.etat)} · ${provHtml(s.source)}</span></div>
       <div class="tabs">${sprints.map((x) => `<button class="tab${x.id === s.id ? ' on' : ''}" type="button" data-act="open-sprint" data-id="${esc(x.id)}" title="${esc(x.etat)}">${esc(x.nom.replace(/^G2\.1 - /, ''))}<small style="font-weight:500;opacity:.75"> · ${x.etat === 'clos' ? 'précédent' : x.etat === 'actif' ? 'courant' : 'suivant'}</small></button>`).join('')}</div>
     </div>
-    <div class="tiles">
+    ${(() => { // R21: sprint goal as a full-width band under the title (Jira « But du sprint », one line per goal)
+      const goals = goalsOf(s); const pg = prev && !clos ? goalsOf(prev) : [];
+      return `<div class="goal"><span class="eyebrow">Objectif du sprint · Jira</span>${goals.length ? (goals.length > 1 ? `<ul>${goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : `<p>${esc(goals[0])}</p>`) : '<p class="empty">Aucun objectif saisi dans Jira (champ « But du sprint » du sprint).</p>'}${pg.length ? `<small class="muted">Sprint précédent (${esc(prev.nom.replace(/^G2\.1 - /, ''))}) : ${esc(pg.join(' · '))}</small>` : ''}</div>`; })()}
+    <div class="tiles t3c">
       <div class="tile t1"><b>${sv.items.length}</b><span>items dans ce sprint (Jira) · ${sv.jira.tickets} tâches parentes · ${C.fmtNum(sv.jira.points)} pts équipe${sv.jira.sansPoints ? ` (${sv.jira.sansPoints} sans points)` : ''} · ${sv.jira.sousTaches} sous-tâches</span></div>
-      <div class="tile t2"><b>${sv.jalons.length}</b><span>jalons tombent dans le sprint</span></div>
       <div class="tile t3"><b>${C.fmtNum(sv.dev.net)} / ${C.fmtNum(sv.dev.brut)}</b><span>jours-personne dev disponibles (${sv.dev.n} dev · ${devAbs} absence${devAbs > 1 ? 's' : ''})</span></div>
       <div class="tile t4"><b>${C.fmtNum(sv.reserve_pct)} %</b><span>réservé au run · ${C.fmtNum(sv.reserve_j)} j-p</span></div>
     </div>
     <div class="main2">
       <div class="side">
-        <div class="card"><span class="eyebrow">Capacité · sous-tâches par personne · Jira</span>
+        ${fut ? prepCard(s) : ''}
+        <div class="card"><span class="eyebrow">${fut ? 'Déjà planifié dans ce sprint · Jira' : 'Items dans le sprint · qui, sur quoi'}</span>
+          ${sv.items.length ? sv.items.map((i) => { const ps = [...(sv.personnesParItem[i.id] || [])]; const sa = santeOf(i);
+            return `<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto auto auto"><div style="min-width:0"><a href="#" data-act="open-item" data-id="${esc(i.id)}" style="font-weight:600;text-decoration:none">${esc(i.nom)}</a><br><small class="muted">${esc([sv.jira.parItem[i.id] ? `${sv.jira.parItem[i.id].tickets} tâches · ${C.fmtNum(sv.jira.parItem[i.id].points)} pts équipe · ${sv.jira.parItem[i.id].sousTaches} sous-tâches` : null, i.contenu_sprint].filter(Boolean).join(' · ') || '—')}</small></div><span class="tag ${i.voie === 'scrum' ? 'blue' : ''}">${i.voie === 'scrum' ? 'Scrum · GOU21' : 'Flux'}</span><div>${ps.map((p) => { const nm = p.startsWith('nom:') ? p.slice(4) : (S.ix.personnes[p] || { nom: p }).nom; return `<span class="av" title="${esc(nm)}">${esc(initials(nm))}</span>`; }).join('') || '<small class="muted">—</small>'}</div><span><span class="rag ${sa.couleur}"></span> ${sa.couleur}</span></div>`; }).join('') : '<p class="empty">Aucun item.</p>'}
+          ${sv.jira.horsItem.tickets ? `<div class="lrow" style="grid-template-columns:1fr"><small class="muted">Hors item du portefeuille (épopées non liées, comptées au programme) : ${sv.jira.horsItem.tickets} tâches · ${C.fmtNum(sv.jira.horsItem.points)} pts</small></div>` : ''}
+          ${ragLegend(true)}</div>
+        ${blockedCard(s)}
+        ${fut ? `<div class="card"><span class="eyebrow">Capacité prévue · jours disponibles par personne</span>${freshTag('B7')}
+          <table class="ptab"><thead><tr><th>Personne</th><th>Rôle</th><th style="text-align:right">Dispo (j)</th></tr></thead><tbody>
+            ${sv.personnes.filter((p) => p.connu).map((p) => `<tr><td>${esc(p.nom)}</td><td>${esc(ROLE_FR[p.role] || p.role || '—')}</td><td class="n">${p.capacite == null ? '—' : C.fmtNum(p.capacite)}</td></tr>`).join('')}
+          </tbody></table><p class="muted" style="margin:8px 0 0">Jours ouvrés du sprint − fériés et fermetures − absences Outlook (relues le lundi de début de sprint).</p></div>` : `<div class="card"><span class="eyebrow">${clos ? 'Bilan · sous-tâches par personne · Jira' : 'Capacité · sous-tâches par personne · Jira'}</span>${freshTag('B1')}
           ${sv.personnes.length ? `<table class="ptab"><thead><tr><th>Personne</th><th>Rôle</th><th style="text-align:right">Sous-tâches</th><th style="text-align:right">À faire</th><th style="text-align:right">En cours</th><th style="text-align:right">Faites</th><th style="text-align:right">Dispo (j)</th></tr></thead><tbody>
             ${sv.personnes.map((p) => `<tr><td>${esc(p.nom)}${p.connu ? '' : ' <span class="tag warn" title="Assigné Jira absent de Team_G2.1">hors équipe</span>'}</td><td>${esc(ROLE_FR[p.role] || p.role || '—')}</td><td class="n"><b>${p.sousTaches || '—'}</b></td><td class="n">${p.aFaire || '—'}</td><td class="n">${p.enCours || '—'}</td><td class="n">${p.faites || '—'}</td><td class="n">${p.capacite == null ? '—' : C.fmtNum(p.capacite)}</td></tr>`).join('')}
           </tbody></table>` : '<p class="empty">Aucune sous-tâche Jira lue pour ce sprint.</p>'}
           ${sv.roles.map((r) => `<div class="lrow role"><span>${ROLE_FR[r.role] || r.role} (${r.n})</span><div class="track"><div class="fill${r.pct > 100 ? ' bad' : r.pct >= 95 ? ' warn' : ''}" style="width:${Math.min(100, r.pct || 0)}%"></div></div><span>${C.fmtNum(r.demande)} / ${C.fmtNum(r.capacite)} j <span class="tag ${r.pct > 100 ? 'bad' : r.pct >= 95 ? 'warn' : 'ok'}">${r.pct == null ? '—' : r.pct + ' %'}</span></span></div>`).join('')}
-          <p class="muted" style="margin:8px 0 0">Flux Jira : la tâche parente est groomée par l'équipe, qui lui donne ses points (mesure d'équipe) ; chaque personne porte des sous-tâches (QA, FE, BE, UX, archi). Charge par personne = nombre de sous-tâches, jamais de points. Faite = dès « Prêt pour Preprod » ; annulées exclues. Dispo : jours ouvrés − absences Outlook.</p></div>
-        <div class="card"><span class="eyebrow">Items dans le sprint · qui, sur quoi</span>
-          ${sv.items.length ? sv.items.map((i) => { const ps = [...(sv.personnesParItem[i.id] || [])]; const sa = santeOf(i);
-            return `<div class="lrow" style="grid-template-columns:minmax(0,1fr) auto auto auto"><div style="min-width:0"><a href="#" data-act="open-item" data-id="${esc(i.id)}" style="font-weight:600;text-decoration:none">${esc(i.nom)}</a><br><small class="muted">${esc([sv.jira.parItem[i.id] ? `${sv.jira.parItem[i.id].tickets} tâches · ${C.fmtNum(sv.jira.parItem[i.id].points)} pts équipe · ${sv.jira.parItem[i.id].sousTaches} sous-tâches` : null, i.contenu_sprint].filter(Boolean).join(' · ') || '—')}</small></div><span class="tag ${i.voie === 'scrum' ? 'blue' : ''}">${i.voie === 'scrum' ? 'Scrum · GOU21' : 'Flux'}</span><div>${ps.map((p) => { const nm = p.startsWith('nom:') ? p.slice(4) : (S.ix.personnes[p] || { nom: p }).nom; return `<span class="av" title="${esc(nm)}">${esc(initials(nm))}</span>`; }).join('') || '<small class="muted">—</small>'}</div><span><span class="rag ${sa.couleur}"></span> ${sa.couleur}</span></div>`; }).join('') : '<p class="empty">Aucun item.</p>'}
-          ${sv.jira.horsItem.tickets ? `<div class="lrow" style="grid-template-columns:1fr"><small class="muted">Hors item du portefeuille (épopées non liées, comptées au programme) : ${sv.jira.horsItem.tickets} tâches · ${C.fmtNum(sv.jira.horsItem.points)} pts</small></div>` : ''}</div>
+          <p class="muted" style="margin:8px 0 0">Flux Jira : la tâche parente est groomée par l'équipe, qui lui donne ses points (mesure d'équipe) ; chaque personne porte des sous-tâches (QA, FE, BE, UX, archi). Charge par personne = nombre de sous-tâches, jamais de points. Faite = dès « Prêt pour Preprod » ; annulées exclues. Dispo : jours ouvrés − fériés − absences Outlook.</p></div>`}
+        ${supportCard(s)}
       </div>
       <div class="side">
-        <div class="card"><span class="eyebrow">Jalons dans le sprint · items du sprint</span>
-          ${sv.jalons.length ? sv.jalons.map((j) => { const st = STATUT_J[j.statut] || [j.statut, '']; return `<div class="lrow" style="grid-template-columns:56px 1fr auto"><b>${C.fmtDate(j.date)}</b><div>${esc(j.nom)} — <a href="#" data-act="open-item" data-id="${esc(j.item)}">${esc(itemNom(j.item))}</a></div><span class="tag ${st[1]}">${st[0]}</span></div>`; }).join('') : '<p class="empty">Aucun jalon.</p>'}</div>
-        <div class="card"><span class="eyebrow">Absences</span>
-          ${sv.absences.length ? sv.absences.map((a) => `<div class="between" style="font-size:13px;padding:3px 0"><span>${esc(a.personne ? (S.ix.personnes[a.personne] || { nom: a.personne }).nom : (a.libelle || 'collective'))}</span><span class="muted">${C.fmtDate(a.debut)}–${C.fmtDate(a.fin)} · ${C.fmtNum(a.jours_ouvres)} j · ${esc(SYS_FR[a.source.systeme])}</span></div>`).join('') : '<p class="empty">Aucune absence lue (Outlook, étape 3) ni saisie.</p>'}</div>
-        <div class="card top"><span class="eyebrow">Run · ce sprint</span>
-          <div class="between" style="font-size:13px;margin-top:8px"><span>Support extranets ouverts</span><b>${sv.support_ouverts}</b></div>
+        <div class="card top"><span class="eyebrow">Actions de la rétro · Miro</span>${freshTag('B8')}
+          ${actions.length ? actions.map((a) => `<div class="row" style="font-size:13px;padding:3px 0"><span class="tag ${a.statut === 'fait' ? 'ok' : a.statut === 'en_cours' ? 'warn' : ''}">${a.statut.replace('_', ' ')}</span><span>${esc(a.texte)}${a.owner ? ` · <small class="muted">${esc(a.owner)}</small>` : ''}${a.precedent ? ' <span class="tag">sprint précédent</span>' : ''}</span>${S.canEdit ? `<button class="btn ghost sm" type="button" style="margin-left:auto" data-act="retro" data-id="${esc(a.id)}" data-st="${a.statut === 'fait' ? 'a_faire' : 'fait'}" title="Statut écrit dans la base du portefeuille, jamais dans Miro">${a.statut === 'fait' ? 'Rouvrir' : 'Faite'}</button>` : ''}</div>`).join('') : '<p class="empty">Aucune action pour ce sprint (cadre « Actions » du dernier board de rétro Miro).</p>'}</div>
+        <div class="card"><span class="eyebrow">Absences</span>${freshTag('B7')}
+          ${sv.absences.length ? sv.absences.map((a) => `<div class="between" style="font-size:13px;padding:3px 0"><span>${esc(a.personne ? (S.ix.personnes[a.personne] || { nom: a.personne }).nom : (a.libelle || 'collective'))}</span><span class="muted">${C.fmtDate(a.debut)}–${C.fmtDate(a.fin)} · ${C.fmtNum(a.jours_ouvres)} j · ${esc(SYS_FR[a.source.systeme])}</span></div>`).join('') : '<p class="empty">Aucune absence ni férié dans ce sprint (Outlook « absent du bureau », fériés du Québec, fermetures du calendrier de Franck).</p>'}</div>
+        <div class="card top"><span class="eyebrow">Run · ce sprint</span>${freshTag('B3')}
+          ${fut ? '' : `<div class="between" style="font-size:13px;margin-top:8px"><span>Support extranets ouverts</span><b>${sv.support_ouverts}</b></div>`}
           <div class="between" style="font-size:13px"><span>Réserve dev</span><b>${C.fmtNum(sv.reserve_pct)} % · ${C.fmtNum(sv.reserve_j)} j</b></div>
-          <span class="eyebrow" style="display:block;margin-top:12px">MEP du sprint</span>
-          ${sv.meps.length ? sv.meps.map((m) => `<div class="between" style="font-size:13px;padding:3px 0"><span>${C.fmtDate(m.date)} · ${esc(m.systeme)} · ${esc(m.ticket || 'sans ticket')}</span><span class="tag ${STATUT_MEP[m.statut][1]}">${STATUT_MEP[m.statut][0]}</span></div>`).join('') : '<p class="empty">Aucune MEP lue dans ce sprint.</p>'}</div>
-        <div class="card"><span class="eyebrow">Actions de la rétro · Miro</span>
-          ${sv.actions.length ? sv.actions.map((a) => `<div class="row" style="font-size:13px;padding:3px 0"><span class="tag ${a.statut === 'fait' ? 'ok' : a.statut === 'en_cours' ? 'warn' : ''}">${a.statut.replace('_', ' ')}</span><span>${esc(a.texte)}${a.owner ? ` · <small class="muted">${esc(a.owner)}</small>` : ''}</span></div>`).join('') : '<p class="empty">Aucune action pour ce sprint (cadre « Actions » du dernier board de rétro Miro).</p>'}</div>
-        ${S.canEdit ? `<div class="card top"><span class="eyebrow">Gérer · équipe</span>
-          <form class="g" data-form="personnes"><div class="f2"><div class="field"><label>Personne (voie flux)<select name="personne">${flux.map((p) => opt(p.id, `${p.nom} — limite ${p.wip_limite || 3}`, '')).join('')}</select></label></div>
-            <div class="field"><label>Limite WIP<input type="number" name="wip_limite" min="1" step="1" required value="2"></label></div></div>
-            <div class="row"><button class="btn ghost" type="submit">Enregistrer la limite</button></div></form>
-          <form class="g" data-form="absences"><div class="field"><label>Absence collective (congés, fermeture)<input name="libelle" required placeholder="Congés des Fêtes"></label></div>
-            <div class="f2"><div class="field"><label>Début<input type="date" name="debut" required></label></div><div class="field"><label>Fin<input type="date" name="fin" required></label></div></div>
-            <div class="row"><button class="btn ghost" type="submit">Ajouter l'absence</button></div></form>${errorsHtml()}
-          <p class="muted" style="margin:10px 0 0">Nom, rôle et absences individuelles viennent de Team_G2.1 et d'Outlook : lecture seule.</p></div>` : ''}
+          <span class="eyebrow" style="display:block;margin-top:12px">MEP du sprint · ${sv.meps.length}</span>
+          ${C.mepParTheme(sv.meps).map((t) => { const open = isOpen('mep:' + t.k);
+            return `<div class="mepg"><button class="tg" type="button" data-act="toggle" data-id="mep:${t.k}" aria-expanded="${open}">${open ? '▾' : '▸'}</button><b>${esc(t.nom)}</b> <span class="muted">${t.meps.length}</span></div>${open ? (t.meps.length ? t.meps.map((m) => `<div class="between" style="font-size:13px;padding:3px 0 3px 24px"><span title="${esc(m.libelle || '')}">${C.fmtDate(m.date)} · ${esc(m.systeme)} · ${esc(m.ticket || 'sans ticket')}</span><span class="tag ${STATUT_MEP[m.statut][1]}">${STATUT_MEP[m.statut][0]}</span></div>`).join('') : '<p class="empty" style="padding-left:24px">Aucune MEP de ce thème dans le sprint.</p>') : ''}`; }).join('')}</div>
       </div>
     </div>`;
   }
@@ -656,8 +792,8 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-act]'); if (!t || t.tagName === 'SELECT') return;
     const a = t.dataset.act;
-    if (['view', 'open-item', 'open-sprint', 'gtab', 'edit', 'new-item', 'toggle', 'expand-all', 'collapse-all', 'move'].includes(a)) e.preventDefault();
-    if (a === 'move') { e.stopPropagation(); move(t.dataset.id, +t.dataset.d); return; }
+    if (['view', 'open-item', 'open-sprint', 'gtab', 'edit', 'new-item', 'toggle', 'expand-all', 'collapse-all'].includes(a)) e.preventDefault();
+    if (a === 'drag') { e.preventDefault(); return; }
     if (a === 'toggle') { const id = t.dataset.id; if (S.toggled.has(id)) S.toggled.delete(id); else S.toggled.add(id); saveToggled(); render(); return; }
     if (a === 'expand-all' || a === 'collapse-all') {
       S.toggled = new Set(a === 'expand-all' ? S.base.items.map((i) => i.id) : ['grp:hors', 'grp:cand'].concat(S.base.items.filter((i) => i.type === 'programme').map((i) => 'grp:' + i.id)));
@@ -669,8 +805,40 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     else if (a === 'gtab') { S.gerer = { tab: t.dataset.t, id: null }; S.errors = []; }
     else if (a === 'edit') { S.gerer = { tab: t.dataset.col, id: t.dataset.id }; S.errors = []; }
     else if (a === 'new-item') { S.view = 'projet'; S.creating = true; S.errors = []; }
+    // R38: owner previews the page as a visitor (no Gérer, no buttons, hidden items filtered); second click returns
+    else if (a === 'visitor') { e.preventDefault(); S.visitor = !S.visitor; S.canEdit = S.ownerEdit && !S.visitor; S.creating = false; applyView(); if (S.itemId && !S.ix.items[S.itemId]) { S.view = 'portefeuille'; S.itemId = null; } }
+    // R40: owner marks a retro action done / reopens it; only `statut` changes (same rule as skill maj-actions-retro)
+    else if (a === 'retro') {
+      e.preventDefault(); if (!S.canEdit || !S.db) { toast('Lecture seule', true); return; }
+      const cur = S.base.actions_retro.find((x) => x.id === t.dataset.id); if (!cur) return;
+      t.disabled = true; write('actions_retro', Object.assign({}, cur, { statut: t.dataset.st })); return;
+    }
     else return;
     render(); window.scrollTo(0, 0);
+  });
+  // R17 drag and drop of portfolio rows (same section only)
+  const clearDrop = () => document.querySelectorAll('.drop-before,.drop-after,.dragging').forEach((x) => x.classList.remove('drop-before', 'drop-after', 'dragging'));
+  document.addEventListener('dragstart', (e) => {
+    const h = e.target.closest && e.target.closest('[data-act="drag"]'); if (!h) return;
+    S.drag = h.dataset.id; const row = h.closest('.tlr'); if (row) row.classList.add('dragging');
+    try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', S.drag); } catch (err) { /* ignore */ }
+  });
+  document.addEventListener('dragover', (e) => {
+    if (!S.drag) return; const row = e.target.closest && e.target.closest('.tlr[data-row]'); if (!row || row.dataset.row === S.drag) return;
+    const a = S.ix.items[S.drag]; const b = S.ix.items[row.dataset.row]; if (!a || !b || (a.parent || null) !== (b.parent || null)) return;
+    e.preventDefault(); const r = row.getBoundingClientRect(); const after = e.clientY > r.top + r.height / 2;
+    document.querySelectorAll('.drop-before,.drop-after').forEach((x) => x.classList.remove('drop-before', 'drop-after'));
+    row.classList.add(after ? 'drop-after' : 'drop-before');
+  });
+  document.addEventListener('drop', (e) => {
+    if (!S.drag) return; const row = e.target.closest && e.target.closest('.tlr[data-row]'); const id = S.drag;
+    const after = !!(row && row.classList.contains('drop-after')); S.drag = null; clearDrop();
+    if (row && row.dataset.row !== id) { e.preventDefault(); reorder(id, row.dataset.row, after); }
+  });
+  document.addEventListener('dragend', () => { S.drag = null; clearDrop(); });
+  document.addEventListener('keydown', (e) => {
+    const h = e.target.closest && e.target.closest('[data-act="drag"]'); if (!h || !['ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    e.preventDefault(); const id = h.dataset.id; Promise.resolve(move(id, e.key === 'ArrowUp' ? -1 : 1)).then(() => { const n = document.querySelector(`[data-act="drag"][data-id="${id}"]`); if (n) n.focus(); });
   });
   document.addEventListener('change', (e) => {
     const t = e.target; if (t.dataset && t.dataset.act === 'filter') { S.filters[t.dataset.f] = t.value; render(); }
@@ -687,7 +855,8 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const use = window.claude && typeof window.claude.use === 'function' ? window.claude.use.bind(window.claude) : null;
     if (!use) { S.status = 'indisponible'; S.diag = ['window.claude absent']; render(); return; }
     const [db, user] = await Promise.all([use('db').catch(() => null), use('user').catch(() => null)]);
-    try { S.canEdit = user ? !!(await user.canEdit()) : false; } catch (e) { S.canEdit = false; }
+    try { S.ownerEdit = user ? !!(await user.canEdit()) : false; } catch (e) { S.ownerEdit = false; }
+    S.canEdit = S.ownerEdit;
     if (!db) { S.status = 'indisponible'; S.diag = ['use("db") = null']; render(); return; }
     // Deep link: #projet/<id> or #sprint/<id> (used by the Monday digest at step 4)
     const m = (location.hash || '').match(/^#(projet|sprint)\/(.+)$/);

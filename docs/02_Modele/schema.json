@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plq.local/portefeuille/schema/v2",
-  "title": "Portefeuille PLQ — modèle canonique v2",
-  "description": "Un document = un feed (bloc <script id=\"portfolio-feed\">), un adaptateur, ou la base complète. Toutes les collections sont optionnelles ; un document vide est valide. Dates : AAAA-MM-JJ ; horodatages : ISO 8601 avec décalage (EDT = -04:00).",
+  "title": "Portefeuille PLQ — modèle canonique v14",
+  "description": "Un document = un feed (bloc <script id=\"portfolio-feed\">), un adaptateur, ou la base complète. Toutes les collections sont optionnelles ; un document vide est valide. Dates : AAAA-MM-JJ ; horodatages : ISO 8601 avec décalage (heure du Québec : EDT -04:00, EST -05:00).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -14,9 +14,21 @@
       "type": "string",
       "enum": [
         "1",
-        "2"
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
       ],
-      "description": "Version du modèle canonique ; v2 est un sur-ensemble de v1 (un document v1 reste valide)"
+      "description": "Version du modèle canonique ; v14 : tendance du support vs le lundi (support[].lundis, tendance_vs) ; v13 ajoute item.visible (masquage, R37) ; v10 ajoute la liste des bloqués du sprint ; v8 retire le WIP saisi (D7 volet flux, Franck 2026-10-28) ; v7 ⊃ … ⊃ v1"
     },
     "source": {
       "$ref": "#/$defs/source",
@@ -105,6 +117,18 @@
       "items": {
         "$ref": "#/$defs/instantane"
       }
+    },
+    "lectures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lecture"
+      }
+    },
+    "listes_jira": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/liste_jira"
+      }
     }
   },
   "$defs": {
@@ -120,7 +144,7 @@
     "horodatage": {
       "type": "string",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?[+-]\\d{2}:\\d{2}$",
-      "description": "ISO 8601 avec décalage obligatoire (EDT = -04:00) ; le suffixe Z est refusé"
+      "description": "ISO 8601 avec décalage obligatoire (heure du Québec : EDT -04:00, EST -05:00) ; le suffixe Z est refusé"
     },
     "note_1_5": {
       "type": "integer",
@@ -323,7 +347,8 @@
               ],
               "description": "null = non datée (barre ouverte)"
             }
-          }
+          },
+          "description": "Fenêtre PRÉVUE. Goutte 2.1 : lue dans Smartsheet (Début prévu / Fin prévue, au mois : 1er → dernier jour) quand la ligne la porte (v4, R06) ; sinon saisie dans Gérer. Le réel est dans stat_jira.fenetre_reelle"
         },
         "pct_avancement": {
           "type": "number",
@@ -334,6 +359,10 @@
         "phase_source": {
           "type": "string",
           "description": "Phase telle que la source la nomme (ex. Smartsheet « AF / UX »)"
+        },
+        "phase_deduite": {
+          "type": "boolean",
+          "description": "v3 (R06) — true quand la ligne source n'a pas de phase et que l'adaptateur l'a déduite de ses enfants (la moins avancée des enfants actifs) ; lu, jamais saisi"
         },
         "promu": {
           "type": "boolean",
@@ -381,7 +410,33 @@
               },
               "tendance": {
                 "type": "integer",
-                "description": "Δ ouverts vs la lecture Jira d'un jour antérieur (le lundi précédent en régime normal)"
+                "description": "v14 (R43) — Δ ouverts vs la 1re lecture de la semaine en cours (le lundi : de la semaine précédente) ; absent tant qu'aucune référence"
+              },
+              "tendance_vs": {
+                "$ref": "#/$defs/date",
+                "description": "v14 — lundi de la semaine de référence (la lecture peut être d'un autre jour de cette semaine)"
+              },
+              "lundis": {
+                "type": "array",
+                "maxItems": 2,
+                "description": "v14 — nombre d'ouverts à la première lecture de chacune des 2 dernières semaines (référence de la tendance)",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "lundi",
+                    "ouverts"
+                  ],
+                  "properties": {
+                    "lundi": {
+                      "$ref": "#/$defs/date"
+                    },
+                    "ouverts": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
               }
             }
           }
@@ -425,6 +480,10 @@
           "type": "integer",
           "minimum": 1,
           "description": "v2 (R09) — ordre manuel parmi les items de même parent ; saisi dans Gérer ; absent = après les items rangés, par nom"
+        },
+        "visible": {
+          "type": "boolean",
+          "description": "v13 (R37) — false = masqué du portefeuille pour les visiteurs et du digest Teams (filtre d'affichage, pas un droit : D20 v3) ; absent = visible ; saisi dans Gérer, jamais lu d'une source"
         }
       }
     },
@@ -439,7 +498,7 @@
         "statut",
         "source"
       ],
-      "description": "D4 — on peut répondre oui / non à une date",
+      "description": "D4 — on peut répondre oui / non à une date · v4 : les gates d'un livrable Goutte 2.1 (id <item>.ba-3 | .ac-4 | .qa-2 | .qa-3) sont lues dans Jalons_Entites (Date prévue, case, Date check)",
       "properties": {
         "id": {
           "$ref": "#/$defs/id"
@@ -471,6 +530,14 @@
         },
         "fait_le": {
           "$ref": "#/$defs/date"
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "jour",
+            "mois"
+          ],
+          "description": "v4 (R06) — mois : date prévue saisie au mois, `date` = dernier jour du mois ; absent = jour"
         },
         "source": {
           "$ref": "#/$defs/source"
@@ -763,7 +830,7 @@
         "valeur",
         "source"
       ],
-      "description": "D7 — Scrum : points Jira de l'équipe par item et sprint (mode points) ; sous-tâches Jira par personne et sprint (mode taches) ; Flux : WIP. Aucune heure.",
+      "description": "D7 — Scrum : points Jira de l'équipe par item et sprint (mode points) ; sous-tâches Jira par personne et sprint (mode taches). Aucune heure. v8 : WIP et ETP saisis retirés (décision Franck 2026-10-28).",
       "properties": {
         "id": {
           "$ref": "#/$defs/id"
@@ -815,8 +882,6 @@
           "type": "string",
           "enum": [
             "jours_personne",
-            "wip",
-            "etp",
             "points",
             "taches"
           ]
@@ -947,11 +1012,6 @@
             "hors"
           ]
         },
-        "wip_limite": {
-          "type": "integer",
-          "minimum": 1,
-          "description": "D7 — Archi 2, BA 2, PM 3, défaut 3 (voie flux)"
-        },
         "source": {
           "$ref": "#/$defs/source"
         }
@@ -968,7 +1028,7 @@
         "jours_ouvres",
         "source"
       ],
-      "description": "Lue dans Outlook (6 semaines) ou saisie (congés collectifs) ; retirée de la capacité",
+      "description": "Lue dans Outlook (free/busy des personnes, fermetures du calendrier de Franck) ou calculée (fériés du Québec, config/feries.json, v11) ; retirée de la capacité",
       "properties": {
         "id": {
           "$ref": "#/$defs/id"
@@ -1178,6 +1238,223 @@
             "points_faits": {
               "type": "number",
               "minimum": 0
+            }
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "fenetre_reelle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "debut",
+            "fin",
+            "sprints",
+            "ouverts"
+          ],
+          "description": "v4 (R06) — fenêtre réelle lue dans Jira : début = premier sprint qui contient un ticket des épopées (annulés exclus) ; fin = fin du dernier sprint quand plus aucun ticket n'est ouvert, sinon null (en cours) ; jusqu_au = fin du dernier sprint planifié",
+          "properties": {
+            "debut": {
+              "$ref": "#/$defs/date"
+            },
+            "fin": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "jusqu_au": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sprints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ouverts": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "lecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "adaptateur",
+        "passage",
+        "lu_le",
+        "statut",
+        "source"
+      ],
+      "description": "v6 (R36 cadence) — état de la dernière lecture d'un adaptateur : un document par adaptateur (id lecture.<adaptateur>), réécrit à chaque passage ; sert à afficher la fraîcheur des blocs. Écrit par les tâches planifiées, jamais saisi dans Gérer",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "adaptateur": {
+          "type": "string",
+          "enum": [
+            "smartsheet",
+            "outlook",
+            "outlook_equipe",
+            "jira",
+            "jira_data",
+            "jira_data_reel",
+            "artefacts",
+            "miro"
+          ],
+          "description": "jira_data_reel = Jira data avec l'étape d (réel des épopées) ; outlook_equipe = Outlook en mode équipe"
+        },
+        "passage": {
+          "type": "string",
+          "enum": [
+            "lundi",
+            "quotidien",
+            "jeudi",
+            "demande",
+            "skill"
+          ]
+        },
+        "lu_le": {
+          "$ref": "#/$defs/horodatage"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "partiel",
+            "echec"
+          ]
+        },
+        "ecrits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cause": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "liste_jira": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "nature",
+        "tickets",
+        "source"
+      ],
+      "description": "v7 (R32 R33 R34) — liste de tickets Jira lue d'un bloc et réécrite entière à chaque lecture (un ticket sorti de la liste disparaît sans suppression de document) ; jamais saisie",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nature": {
+          "type": "string",
+          "enum": [
+            "support",
+            "preparation",
+            "bloques"
+          ]
+        },
+        "tickets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cle",
+              "titre"
+            ],
+            "properties": {
+              "cle": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$"
+              },
+              "titre": {
+                "type": "string"
+              },
+              "statut": {
+                "type": "string"
+              },
+              "categorie": {
+                "type": "string",
+                "enum": [
+                  "new",
+                  "indeterminate",
+                  "done"
+                ]
+              },
+              "type": {
+                "type": "string"
+              },
+              "points": {
+                "type": "number",
+                "minimum": 0
+              },
+              "epic": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$"
+              },
+              "item": {
+                "$ref": "#/$defs/id"
+              },
+              "sprints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rang": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "ordre du backlog Jira (Rank)"
+              },
+              "stg21": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$"
+                }
+              },
+              "extranet": {
+                "type": "string"
+              },
+              "cree_le": {
+                "$ref": "#/$defs/date"
+              },
+              "parent": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$",
+                "description": "v10 — tâche parente d'une sous-tâche"
+              },
+              "assigne": {
+                "type": "string",
+                "description": "v10 — nom Jira de l'assigné"
+              },
+              "sous_tache": {
+                "type": "boolean"
+              }
             }
           }
         },

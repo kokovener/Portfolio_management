@@ -89,7 +89,7 @@ const runArchi = (date, b, mutate) => {
   return A.adapt(regArchi, { read_at: raw.read_at, artefacts: { [ARCHI]: { dir: 'archi-test', html: h } } }, b, {}, opts);
 };
 const merge = (b, doc) => Core.mergeDocs([Object.assign({ modele: '1' }, b), doc]);
-const depAlert = (b) => Core.alertes(b, '2026-10-27').filter((a) => a.kind === 'dependance' && a.item === 'saisie.codes-taxes');
+const depAlert = (b) => Core.alertes(b, '2026-10-27').filter((a) => a.kind === 'recul' && /^Livrable ADR/.test(a.texte) && /entraîne[^]*Décision CDP/.test(a.texte)); // R44: the ADR recul line carries its dependency chain
 const base0 = Object.assign({}, base, { livrables: [] }); // architect feed never read yet
 let base1;
 ok('archi read 1 (ADR 14 nov.): livrables created, saisie dependance now resolves, no alert', () => {

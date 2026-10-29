@@ -7,14 +7,14 @@
   'use strict';
 
   const COLLECTIONS = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables', 'meps',
-    'actions_retro', 'charges', 'sprints', 'personnes', 'absences', 'stats_jira', 'instantanes'];
+    'actions_retro', 'charges', 'sprints', 'personnes', 'absences', 'stats_jira', 'instantanes', 'lectures', 'listes_jira'];
   // collection key -> schema $defs name
   const DEF_OF = {
     items: 'item', jalons: 'jalon', risques: 'risque', attentes: 'attente', dependances: 'dependance',
     livrables: 'livrable', meps: 'mep', actions_retro: 'action_retro', charges: 'charge',
-    sprints: 'sprint', personnes: 'personne', absences: 'absence', stats_jira: 'stat_jira', instantanes: 'instantane'
+    sprints: 'sprint', personnes: 'personne', absences: 'absence', stats_jira: 'stat_jira', instantanes: 'instantane', lectures: 'lecture', listes_jira: 'liste_jira'
   };
-  const SEUILS = { fraicheur_j: 14, recul_jo: 5, attente_jo: 5, risque_rouge: 15, risque_jaune: 10, mep_j: 7, wip_defaut: 3 };
+  const SEUILS = { fraicheur_jo: 15, recul_jo: 5, attente_jo: 5, risque_rouge: 15, risque_jaune: 10, mep_j: 7 };
   const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
   // ---------- dates (all local calendar dates, no time zone math on AAAA-MM-JJ) ----------
@@ -35,16 +35,26 @@
     return n;
   }
   function fmtDate(s, withYear) { if (!s) return '—'; const x = d(s); return `${x.getDate()} ${MOIS[x.getMonth()]}${withYear ? ' ' + x.getFullYear() : ''}`; }
-  // Timestamps are stored with an explicit offset; display in EDT wall time as written.
+  // Timestamps are stored with an explicit offset; display in their own wall time, zone label from the offset
+  // (-04:00 = EDT, -05:00 = EST: Québec switches on the first Sunday of November and the second Sunday of March).
   function fmtTs(ts) {
     if (!ts) return '—';
-    const m = String(ts).match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/);
+    const m = String(ts).match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::\d{2})?(?:([+-]\d{2}):\d{2})?/);
     if (!m) return String(ts);
-    return `${fmtDate(m[1])} · ${m[2]}h${m[3]} EDT`;
+    const zone = m[4] === '-05' ? 'EST' : 'EDT';
+    return `${fmtDate(m[1])} · ${m[2]}h${m[3]} ${zone}`;
   }
-  function nowTs(date) { // EDT offset per project rule (never Z)
+  // Québec wall time (America/Toronto) with its real offset, never Z: -04:00 in summer, -05:00 in winter.
+  const TZ_FMT = (typeof Intl !== 'undefined') ? new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }) : null;
+  function nowTs(date) {
     const dt = date || new Date();
-    const edt = new Date(dt.getTime() - 4 * 3600000);
+    if (TZ_FMT) {
+      const p = {}; TZ_FMT.formatToParts(dt).forEach((x) => { p[x.type] = x.value; });
+      const wall = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+      const off = Math.round((wall - Math.floor(dt.getTime() / 60000) * 60000) / 3600000); // -4 or -5
+      return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}${off < 0 ? '-' : '+'}${String(Math.abs(off)).padStart(2, '0')}:00`;
+    }
+    const edt = new Date(dt.getTime() - 4 * 3600000); // fallback without Intl: EDT
     return edt.toISOString().slice(0, 16) + '-04:00';
   }
   function todayIso(date) { return nowTs(date).slice(0, 10); }
@@ -125,8 +135,8 @@
       if (s >= SEUILS.risque_rouge) rouge.push(`risque ${s} ≥ 15 : ${r.titre}`);
       else if (s >= SEUILS.risque_jaune) jaune.push(`risque ${s} ≥ 10 : ${r.titre}`);
     });
-    const age = item.updated_at ? daysBetween(item.updated_at.slice(0, 10), today) : null;
-    if (age !== null && age > SEUILS.fraicheur_j) rouge.push(`fraîcheur : ${age} j sans mise à jour (seuil 14)`);
+    const fr = fraicheur(base, item, today);
+    if (fr && fr.jo > SEUILS.fraicheur_jo) rouge.push(`fraîcheur : ${fr.jo} j ouvrés sans mise à jour Smartsheet ni activité Jira (seuil 15)`);
     base.attentes.filter((a) => a.item === item.id && !a.recue_le).forEach((a) => {
       const retard = workingDaysBetween(a.attendue_le, today);
       if (retard > SEUILS.attente_jo) jaune.push(`attente ${a.tiers} : ${retard} j ouvrés de retard`);
@@ -135,26 +145,8 @@
     return { couleur, motifs: rouge.concat(jaune) };
   }
 
-  // ---------- charge / WIP (D7) ----------
+  // ---------- charge (D7 — flux / WIP part dropped 2026-10-28, Franck R23 R24 R28) ----------
   function sprintAt(base, date) { return base.sprints.find((s) => s.debut <= date && date <= s.fin) || null; }
-  function wipParPersonne(base, today) {
-    const lundi = mondayOf(today); const sp = sprintAt(base, today);
-    const out = {};
-    base.charges.filter((c) => c.mode === 'wip' && c.personne && (
-      (c.periode.type === 'semaine' && c.periode.ref === lundi) || (c.periode.type === 'sprint' && sp && c.periode.ref === sp.id)))
-      .forEach((c) => {
-        const o = out[c.personne] || (out[c.personne] = { items: new Set(), valeur: 0 });
-        o.items.add(c.item); o.valeur += c.valeur;
-      });
-    const ix = index(base);
-    return Object.keys(out).map((pid) => {
-      const p = ix.personnes[pid];
-      return {
-        personne: pid, nom: p ? p.nom : pid, role: p ? p.role : '?',
-        wip: out[pid].items.size, limite: (p && p.wip_limite) || SEUILS.wip_defaut, items: [...out[pid].items]
-      };
-    }).sort((a, b) => (b.wip / b.limite) - (a.wip / a.limite));
-  }
   function absJoursDansPeriode(base, personneId, a, b) {
     // Per weekday: each record contributes jours_ouvres / its weekdays (a half-day = 0.5); overlapping records
     // (personal + collective holiday, or two reads) are capped at 1 day so a day is never removed twice.
@@ -168,7 +160,7 @@
     }
     return n;
   }
-  // Load per role over [today, today + 4 weeks). Scrum = person-days; flux = WIP.
+  // Load per role over [today, today + 4 weeks), in person-days.
   function chargeParRole(base, today, semaines) {
     const fin = addDays(today, 7 * (semaines || 4) - 1);
     const roles = {};
@@ -176,7 +168,6 @@
     const sprints = base.sprints.filter((s) => s.debut <= fin && s.fin >= today).map((s) => s.id);
     base.charges.forEach((c) => {
       if (c.mode === 'jours_personne' && c.periode.type === 'sprint' && sprints.includes(c.periode.ref)) { const o = R(c.role); o.mode = o.mode || 'jours'; o.demande += c.valeur; }
-      if (c.mode === 'etp') { const o = R(c.role); o.mode = o.mode || 'jours'; o.demande += c.valeur * weekdaysInRange(today, fin); }
     });
     Object.values(roles).forEach((o) => {
       if (o.mode !== 'jours') return;
@@ -192,43 +183,78 @@
       });
       o.detail = `${fmtNum(o.demande)} / ${fmtNum(o.capacite)} j-p`;
     });
-    wipParPersonne(base, today).forEach((w) => {
-      const o = R(w.role); if (o.mode === 'jours') return; o.mode = 'wip'; o.demande += w.wip; o.capacite += w.limite; o.detail = `WIP ${o.demande} / ${o.capacite}`;
-    });
     return Object.values(roles).map((o) => Object.assign(o, { pct: o.capacite ? Math.round(100 * o.demande / o.capacite) : null }))
       .sort((a, b) => (b.pct || 0) - (a.pct || 0));
   }
   function fmtNum(n) { return String(Math.round(n * 10) / 10).replace('.', ','); }
 
-  // ---------- step-4 alerts (computed live for display) ----------
+  // ---------- R44 freshness (Kickoff D8 v4, model v14): last source update OR Jira activity, in working days ----------
+  // Jira activity = the item (or one of its descendants) has tickets of its epics in the sprint read by Jira data:
+  // dated by that read. Threshold 15 working days = one 3-week sprint (Franck, 2026-10-29).
+  function jiraActivite(base, item, depth) {
+    const st = (base.stats_jira || []).find((x) => x.item === item.id);
+    let best = st && st.sprint && st.sprint.tickets > 0 && st.source && st.source.lu_le ? st.source.lu_le.slice(0, 10) : null;
+    if ((depth || 0) < 6) base.items.filter((c) => c.parent === item.id).forEach((c) => { const x = jiraActivite(base, c, (depth || 0) + 1); if (x && (!best || x > best)) best = x; });
+    return best;
+  }
+  function fraicheur(base, item, today) {
+    const src = item.updated_at ? item.updated_at.slice(0, 10) : null; const jira = jiraActivite(base, item);
+    const last = [src, jira].filter(Boolean).sort().pop(); if (!last) return null;
+    return { jo: Math.max(0, workingDaysBetween(last, today)), depuis: last, par: last === jira && jira !== src ? 'jira' : 'source' };
+  }
+
+  // ---------- step-4 alerts (computed live for display; R44 2026-10-29: grouped, chained, complete) ----------
   function alertes(base, today) {
     const ix = index(base); const out = [];
-    base.items.filter((i) => i.etape === 'actif' || i.etape === 'planifie').forEach((i) => {
-      const age = i.updated_at ? daysBetween(i.updated_at.slice(0, 10), today) : null;
-      if (age !== null && age > SEUILS.fraicheur_j) out.push({ kind: 'fraicheur', item: i.id, texte: `${i.nom} : aucune mise à jour depuis ${age} jours (seuil 14).` });
+    const nom = (id) => (ix.items[id] || { nom: id }).nom;
+    // Freshness: one line per top-most stale item, its stale descendants in brackets
+    const stale = new Map();
+    base.items.filter((i) => i.etape === 'actif' || i.etape === 'planifie').forEach((i) => { const fr = fraicheur(base, i, today); if (fr && fr.jo > SEUILS.fraicheur_jo) stale.set(i.id, fr); });
+    const topOf = (id) => { let top = id; let p = (ix.items[id] || {}).parent; let k = 0; while (p && k++ < 10) { if (stale.has(p)) top = p; p = (ix.items[p] || {}).parent; } return top; };
+    const groups = new Map(); [...stale.keys()].forEach((id) => { const t = topOf(id); (groups.get(t) || groups.set(t, []).get(t)).push(id); });
+    groups.forEach((ids, top) => {
+      const kids = ids.filter((x) => x !== top); const fr = stale.get(top);
+      out.push({ kind: 'fraicheur', item: top, texte: `${nom(top)} : aucune mise à jour Smartsheet ni activité Jira depuis ${fr.jo} j ouvrés (seuil 15)${kids.length ? ` — avec ${kids.map(nom).join(', ')}` : ''}.` });
     });
     // Decision Franck 2026-10-27: a Smartsheet L with an empty phase is active but flagged
     base.items.filter((i) => i.source && i.source.systeme === 'smartsheet' && i.etape === 'actif' && !i.phase_source && i.type !== 'programme')
       .forEach((i) => out.push({ kind: 'phase', item: i.id, texte: `${i.nom} : phase non renseignée dans Smartsheet.` }));
-    wipParPersonne(base, today).filter((w) => w.wip > w.limite).forEach((w) => out.push({
-      kind: 'wip', item: null,
-      texte: `${w.nom} sur ${w.wip} items (limite ${w.limite}) : ${w.items.map((id) => (ix.items[id] || { nom: id }).nom).join(', ')}.`
-    }));
-    base.jalons.forEach((j) => {
-      const r = recul(j);
-      if (r >= SEUILS.recul_jo) out.push({ kind: 'jalon', item: j.item, texte: `${(ix.items[j.item] || { nom: j.item }).nom} — ${j.nom} : ${fmtDate(j.date_initiale)} → ${fmtDate(j.date)} (+${r} j ouvrés).` });
-      else if (j.statut !== 'fait' && (j.statut === 'depasse' || j.date < today)) out.push({ kind: 'jalon', item: j.item, texte: `${(ix.items[j.item] || { nom: j.item }).nom} — ${j.nom} : dépassé depuis le ${fmtDate(j.date)}`.replace(/\.?$/, '.') });
+    base.jalons.filter((j) => recul(j) < SEUILS.recul_jo && j.statut !== 'fait' && (j.statut === 'depasse' || j.date < today))
+      .forEach((j) => out.push({ kind: 'jalon', item: j.item, texte: `${nom(j.item)} — ${j.nom} : dépassé depuis le ${fmtDate(j.date).replace(/\.$/, '')}.` }));
+    // Recul chains (D16): one line per moved-back milestone / deliverable, with what it drags along the dependencies.
+    // A moved-back record reached from another one is shown inside that chain, not as a line of its own.
+    const reculs = base.jalons.map((j) => ({ kind: 'jalon', r: j })).concat(base.livrables.map((l) => ({ kind: 'livrable', r: l })))
+      .filter((x) => recul(x.r) >= SEUILS.recul_jo);
+    const key = (k, id) => `${k}:${id}`;
+    const succ = (k, id) => { // dependencies leaving a record, or its item (an item with a moved-back milestone counts as moved back)
+      const it = k === 'item' ? id : (k === 'jalon' ? (ix.jalons[id] || {}).item : (ix.livrables[id] || {}).item);
+      return base.dependances.filter((d) => (d.de.kind === k && d.de.id === id) || (it && d.de.kind === 'item' && d.de.id === it && k !== 'item'));
+    };
+    const chain = (k, id) => { const seen = new Set([key(k, id)]); const steps = []; const q = [[k, id]];
+      while (q.length) { const [ck, cid] = q.shift(); succ(ck, cid).forEach((d) => { const kk = key(d.vers.kind, d.vers.id); if (seen.has(kk)) return; seen.add(kk); steps.push(d); q.push([d.vers.kind, d.vers.id]); if (d.vers.kind !== 'item') { const it = refItem(ix, d.vers); if (it && !seen.has(key('item', it))) { seen.add(key('item', it)); q.push(['item', it]); } } }); }
+      return { seen, steps }; };
+    const chains = reculs.map((x) => Object.assign({ c: chain(x.kind, x.r.id) }, x));
+    const reached = new Set(); chains.forEach((x) => chains.forEach((y) => { if (y !== x && x.c.seen.has(key(y.kind, y.r.id))) reached.add(key(y.kind, y.r.id)); }));
+    // Heads first (not reached by another recul); a cycle has no head: its earliest record leads (review 29 oct.)
+    const ordered = chains.slice().sort((x, y) => reached.has(key(x.kind, x.r.id)) - reached.has(key(y.kind, y.r.id)) || String(x.r.date_initiale).localeCompare(String(y.r.date_initiale)) || x.r.id.localeCompare(y.r.id));
+    const covered = new Set();
+    ordered.filter((x) => { if (covered.has(key(x.kind, x.r.id))) return false; x.c.seen.forEach((k) => covered.add(k)); return true; }).forEach((x) => {
+      const lab = (ref) => { const rec = refRecord(base, ix, ref); const rc = rec && ref.kind !== 'item' ? recul(rec) : 0; return `${refNom(base, ix, ref)}${rc >= SEUILS.recul_jo ? `, +${rc} j o.` : ''}`; };
+      const who = x.kind === 'livrable' ? `Livrable ${x.r.nom}` : `${nom(x.r.item)} — ${x.r.nom}`;
+      const tail = x.c.steps.length ? ` → entraîne : ${x.c.steps.map((d) => `${lab(d.vers)} (${d.type})`).join(' → ')}` : '';
+      out.push({ kind: 'recul', item: x.kind === 'livrable' ? x.r.item || null : x.r.item, texte: `${who} : ${fmtDate(x.r.date_initiale)} → ${fmtDate(x.r.date)} (+${recul(x.r)} j ouvrés)${tail}.` });
     });
-    // A deliverable (architect feed) that moves back is a milestone of its owner: same recul rule
-    base.livrables.forEach((l) => {
-      const r = recul(l);
-      if (r >= SEUILS.recul_jo) out.push({ kind: 'jalon', item: l.item || null, texte: `Livrable ${l.nom} : ${fmtDate(l.date_initiale)} → ${fmtDate(l.date)} (+${r} j ouvrés).` });
-    });
-    base.dependances.forEach((dep) => {
-      if (predecesseurRecule(base, ix, dep.de)) {
-        out.push({ kind: 'dependance', item: refItem(ix, dep.vers), texte: `${dep.de.kind} « ${refNom(base, ix, dep.de)} » reculé → ${dep.vers.kind} « ${refNom(base, ix, dep.vers)} » en alerte (${dep.type}).` });
-      }
-    });
+    // R44: risks >= 15 and late waits (per item) are listed too, not only coloured
+    base.risques.filter((r) => r.ouvert !== false && risqueScore(r) >= SEUILS.risque_rouge)
+      .forEach((r) => out.push({ kind: 'risque', item: r.item, texte: `${r.item ? nom(r.item) : 'Portefeuille'} — ${r.titre} : P${r.probabilite} × I${r.impact} = ${risqueScore(r)}.` }));
+    // Waits read from Jira (status Bloqué) are the blocked tickets: shown by the « bloqué » line of the sprint, not here
+    const late = {}; base.attentes.filter((a) => !a.recue_le && !(a.source && a.source.systeme === 'jira')).forEach((a) => { const n = workingDaysBetween(a.attendue_le, today); if (n > SEUILS.attente_jo) (late[a.item] = late[a.item] || []).push({ a, n }); });
+    Object.keys(late).forEach((id) => { const l = late[id].sort((x, y) => y.n - x.n);
+      out.push({ kind: 'attente', item: id, texte: `${nom(id)} : ${l.length} attente${l.length > 1 ? 's' : ''} de plus de 5 j ouvrés (max ${l[0].n} j o. : ${l[0].a.tiers} — ${l[0].a.objet})${l.length > 1 ? ` · tiers : ${[...new Set(l.map((x) => x.a.tiers))].join(', ')}` : ''}.` }); });
+    // R44 (Franck): blocked tickets of the active sprint only, ticket keys only
+    const sp = sprintAt(base, today); const L = (base.listes_jira || []).find((x) => x.id === 'jira.liste.bloques');
+    if (sp && L) { const b = L.tickets.filter((x) => (x.sprints || []).includes(sp.id));
+      if (b.length) out.push({ kind: 'bloque', item: null, texte: `${String(sp.nom || sp.id).replace(/^G2\.1 - /, '')} : ${b.length} ticket${b.length > 1 ? 's' : ''} bloqué${b.length > 1 ? 's' : ''} — ${b.map((x) => x.cle).join(', ')}.` }); }
     base.meps.filter((m) => m.statut === 'planifiee' && m.date >= today && m.date <= addDays(today, SEUILS.mep_j))
       .forEach((m) => out.push({ kind: 'mep', item: m.item || null, texte: `${m.systeme} le ${fmtDate(m.date)} : pas encore « prête » (tickets de la version non tous prêts) à ${daysBetween(today, m.date)} jours${m.ticket ? ' (' + m.ticket + ')' : ''}.` }));
     return out;
@@ -245,8 +271,6 @@
     const devNet = Math.max(0, devBrut - devAbs);
     const reserve = Math.round(devNet * res) / 100;
     const charges = base.charges.filter((c) => c.periode.type === 'sprint' && c.periode.ref === s.id);
-    const lundis = []; for (let x = mondayOf(s.debut); x <= s.fin; x = addDays(x, 7)) lundis.push(x);
-    const chargesFlux = base.charges.filter((c) => c.mode === 'wip' && c.periode.type === 'semaine' && lundis.includes(c.periode.ref));
     // Feedback R04 (2026-10-28): Jira is the only truth of a sprint. An item belongs to it when Jira tickets of its
     // epics are in the sprint (charge mode points, model v2); nothing else (lane, hand-entered sprint content) adds it.
     // Its milestones dated in the sprint follow it. The programme itself is the "hors item" bucket (tickets of epics
@@ -289,9 +313,6 @@
       if (o.role === 'dev') o.capacite = Math.max(0, o.capacite - reserve);
       o.pct = o.capacite ? Math.round(100 * o.demande / o.capacite) : null;
     });
-    const wip = {};
-    chargesFlux.forEach((c) => { if (!c.personne) return; (wip[c.personne] = wip[c.personne] || new Set()).add(c.item); });
-    const wipRows = Object.keys(wip).map((pid) => { const p = ix.personnes[pid]; return { personne: pid, nom: p ? p.nom : pid, role: p ? p.role : '?', items: [...wip[pid]], limite: (p && p.wip_limite) || SEUILS.wip_defaut }; });
     const absences = base.absences.filter((a) => a.debut <= s.fin && a.fin >= s.debut);
     const meps = base.meps.filter((m) => m.date >= s.debut && m.date <= s.fin).sort((a, b) => a.date.localeCompare(b.date));
     // Actions come from the last retro board read (one board at a time); none tied to another sprint.
@@ -302,9 +323,113 @@
     const ouverts = base.items.filter((i) => i.type === 'run').reduce((n, i) => n + (i.support || []).reduce((k, x) => k + x.ouverts, 0), 0);
     return {
       sprint: s, jours_ouvres: jo, reserve_pct: res, reserve_j: reserve, dev: { brut: devBrut, absences: devAbs, net: devNet, n: devs.length },
-      items, personnesParItem, roles: Object.values(roles), wip: wipRows, jalons, absences, meps, actions, support_ouverts: ouverts,
+      items, personnesParItem, roles: Object.values(roles), jalons, absences, meps, actions, support_ouverts: ouverts,
       jira: { points: pointsOf(pts), tickets: ticketsOf(pts), sousTaches: pointsOf(taches), sansPoints: pts.reduce((n, c) => n + (c.sans_points || 0), 0), parItem: jiraParItem, horsItem: { points: pointsOf(horsItem), tickets: ticketsOf(horsItem) } }, personnes
     };
+  }
+
+  // ---------- model v4 (R06 workshop part 2): planned vs actual, gates, cascade ----------
+  // Portfolio gates of a Goutte 2.1 deliverable (decision Franck 2026-10-28): 4 of the 18 entity milestones.
+  const GATES = [['ba-3', 'BA-3 scope figé'], ['ac-4', 'AC-4 GO Dev'], ['qa-2', 'QA-2 UAT'], ['qa-3', 'QA-3 MEP']];
+  const gateOf = (j) => { const m = String(j.id).match(/\.(ba-3|ac-4|qa-2|qa-3)$/); return m ? m[1] : null; };
+  function childrenOf(base, id) { return base.items.filter((i) => i.parent === id && i.etape !== 'termine'); }
+  // Planned window: own (Smartsheet "Début prévu / Fin prévue" or Gérer) else cascade = earliest start, latest end of children.
+  function fenetrePrevue(base, item, depth) {
+    if (item.fenetre && item.fenetre.debut) return Object.assign({ origine: 'propre' }, item.fenetre);
+    if ((depth || 0) > 6) return null;
+    const ws = childrenOf(base, item.id).map((c) => fenetrePrevue(base, c, (depth || 0) + 1)).filter(Boolean);
+    if (!ws.length) return null;
+    const fins = ws.map((w) => w.fin);
+    return { debut: ws.map((w) => w.debut).sort()[0], fin: fins.includes(null) ? null : fins.sort().pop(), origine: 'enfants' };
+  }
+  // Actual window: union of the Jira sprints of the item's own epics (stat_jira.fenetre_reelle) and of its children's
+  // actual windows (a parent's real work includes its deliverables' work).
+  function fenetreReelle(base, item, depth) {
+    const st = (base.stats_jira || []).find((x) => x.item === item.id);
+    const own = st && st.fenetre_reelle ? st.fenetre_reelle : null;
+    const kids = (depth || 0) > 6 ? [] : childrenOf(base, item.id).map((c) => fenetreReelle(base, c, (depth || 0) + 1)).filter(Boolean);
+    if (own && !kids.length) return Object.assign({ origine: 'propre' }, own);
+    const ws = (own ? [own] : []).concat(kids);
+    if (!ws.length) return null;
+    const open = ws.some((w) => !w.fin);
+    return { debut: ws.map((w) => w.debut).sort()[0], fin: open ? null : ws.map((w) => w.fin).sort().pop(), jusqu_au: ws.map((w) => w.jusqu_au || w.fin).filter(Boolean).sort().pop() || null, origine: own ? 'propre+enfants' : 'enfants' };
+  }
+  // Gates shown on a row: own gate milestones, else per gate the latest child gate (done only when every child is done).
+  function gatesOf(base, item, today, depth) {
+    const own = jalonsOf(base, item.id).filter(gateOf);
+    if (own.length) return own.map((j) => Object.assign({ gate: gateOf(j), derive: false }, j));
+    if ((depth || 0) > 6) return [];
+    const kids = childrenOf(base, item.id).flatMap((c) => gatesOf(base, c, today, (depth || 0) + 1));
+    return GATES.map(([g, nom]) => {
+      const ks = kids.filter((k) => k.gate === g); if (!ks.length) return null;
+      const last = ks.slice().sort((a, b) => a.date.localeCompare(b.date)).pop();
+      const fait = ks.every((k) => k.statut === 'fait');
+      return { id: `${item.id}.${g}`, item: item.id, gate: g, nom: `${nom} (${ks.length} livrable${ks.length > 1 ? 's' : ''})`, date: last.date, statut: fait ? 'fait' : (ks.some((k) => k.statut !== 'fait' && k.date < today) ? 'depasse' : 'a_venir'), derive: true };
+    }).filter(Boolean);
+  }
+  // Delay of a gate in working days: done late (fait_le after date) or overdue today; 0 otherwise.
+  function retardGate(j, today) {
+    if (j.statut === 'fait') return j.fait_le && j.fait_le > j.date ? workingDaysBetween(j.date, j.fait_le) : 0;
+    return j.date < today ? workingDaysBetween(j.date, today) : 0;
+  }
+
+  // ---------- R15/R19: MEP themes (decision Franck 2026-10-28) ----------
+  // Extranet = system "Extranet …"; SDD = SDD-* ticket; infra (system "Infra …") = Autre; any other GOU21 ticket = Goutte 2.1
+  // (a G1 deployment carried by a GOU21 ticket included); everything else = Autre. Display order below.
+  const MEP_THEMES = [['g21', 'Goutte 2.1'], ['extranet', 'Extranet'], ['sdd', 'SDD'], ['autre', 'Autre']];
+  function mepTheme(m) {
+    const sys = String(m.systeme || ''); const t = String(m.ticket || '').toUpperCase();
+    if (/^extranet/i.test(sys)) return 'extranet';
+    if (/^SDD-/.test(t)) return 'sdd';
+    if (/^infra/i.test(sys)) return 'autre';
+    if (/^GOU21-/.test(t)) return 'g21';
+    return 'autre';
+  }
+  function mepParTheme(list) { return MEP_THEMES.map(([k, nom]) => ({ k, nom, meps: list.filter((m) => mepTheme(m) === k) })); }
+
+  // ---------- R36: freshness of a page block (config/cadence.json, model v6 lectures) ----------
+  // Latest read of an adapter: its own lecture doc or one of an adapter that covers it (jira_data_reel covers jira_data,
+  // full outlook covers outlook_equipe); without any lecture yet, the newest source.lu_le written by that adapter.
+  function derniereLecture(base, cad, a) {
+    const covers = [a].concat(Object.keys(cad.remplace || {}).filter((k) => (cad.remplace[k] || []).includes(a)));
+    const ls = (base.lectures || []).filter((l) => covers.includes(l.adaptateur) && l.statut !== 'echec').map((l) => l.lu_le).sort();
+    if (ls.length) return { lu_le: ls.pop(), origine: 'lecture' };
+    const par = (cad.par || {})[a]; if (!par) return null;
+    let best = null;
+    COLLECTIONS.forEach((c) => (base[c] || []).forEach((r) => { const s = r.source; if (s && s.par === par && s.lu_le && (!best || s.lu_le > best)) best = s.lu_le; }));
+    return best ? { lu_le: best, origine: 'données' } : null;
+  }
+  function fraicheurBloc(base, cad, ref, today) {
+    const b = ((cad && cad.blocs) || []).find((x) => x.ref === ref); if (!b) return null;
+    const entrees = b.adaptateurs.map((a) => {
+      const l = derniereLecture(base, cad, a); const c = (b.cible || {})[a] || null;
+      if (!l) return { a, lu_le: null, perime: !!c, cible: c };
+      const day = l.lu_le.slice(0, 10);
+      const age = c && c.jours_ouvres ? workingDaysBetween(day, today) : daysBetween(day, today);
+      const lim = c ? (c.jours_ouvres || c.jours) : null;
+      return { a, lu_le: l.lu_le, origine: l.origine, age, unite: c && c.jours_ouvres ? 'j ouvrés' : 'j', cible: c, perime: lim !== null && age > lim };
+    });
+    const lus = entrees.filter((e) => e.lu_le).map((e) => e.lu_le).sort();
+    return { ref, nom: b.nom, entrees, lu_le: entrees.some((e) => !e.lu_le) ? null : lus[0] || null, perime: entrees.some((e) => e.perime) };
+  }
+
+  // ---------- R37 (model v13): items hidden by the owner (item.visible === false) ----------
+  // Display filter, not a right (Kickoff D20 v3): the visitor view and the Teams digest use this public base.
+  // A hidden item hides its descendants and every record tied to them; ids are kept so nothing is rewritten.
+  function hiddenIds(base) {
+    const out = new Set(base.items.filter((i) => i.visible === false).map((i) => i.id)); let grew = true;
+    while (grew) { grew = false; base.items.forEach((i) => { if (!out.has(i.id) && i.parent && out.has(i.parent)) { out.add(i.id); grew = true; } }); }
+    return out;
+  }
+  function publicBase(base) {
+    const h = hiddenIds(base); if (!h.size) return base;
+    const ix = index(base); const b = Object.assign({}, base);
+    const off = (ref) => !!ref && h.has(refItem(ix, ref) || '');
+    b.items = base.items.filter((i) => !h.has(i.id));
+    ['jalons', 'risques', 'attentes', 'charges', 'stats_jira', 'livrables', 'meps'].forEach((c) => { b[c] = (base[c] || []).filter((r) => !h.has(r.item)); });
+    b.dependances = base.dependances.filter((d) => !off(d.de) && !off(d.vers));
+    b.listes_jira = (base.listes_jira || []).map((l) => Object.assign({}, l, { tickets: l.tickets.filter((t) => !h.has(t.item)) }));
+    return b;
   }
 
   // ---------- model v2 helpers ----------
@@ -393,8 +518,9 @@
   const Core = {
     COLLECTIONS, DEF_OF, SEUILS, d, iso, addDays, daysBetween, mondayOf, workingDaysBetween, weekdaysInRange, fmtDate, fmtTs, nowTs, todayIso,
     emptyBase, mergeDocs, byId, index, prioriteScore, risqueScore, rangs, risqueMaxNote, jalonsOf, pct, prochainJalon, recul,
-    refRecord, refNom, refItem, predecesseurRecule, sante, sprintAt, wipParPersonne, absJoursDansPeriode, chargeParRole, fmtNum, alertes, sprintVue,
-    sourcesOf, slug, newId, validate, bySiblingOrder, jiraOf
+    refRecord, refNom, refItem, predecesseurRecule, sante, fraicheur, jiraActivite, sprintAt, absJoursDansPeriode, chargeParRole, fmtNum, alertes, sprintVue,
+    sourcesOf, slug, newId, validate, bySiblingOrder, jiraOf, GATES, gateOf, fenetrePrevue, fenetreReelle, gatesOf, retardGate,
+    MEP_THEMES, mepTheme, mepParTheme, derniereLecture, fraicheurBloc, hiddenIds, publicBase
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = Core; else root.PortfolioCore = Core;
 })(typeof self !== 'undefined' ? self : this);

@@ -23,7 +23,7 @@ except ImportError:  # pragma: no cover
     sys.exit("pip install jsonschema --break-system-packages")
 
 COLLECTIONS = ["items", "jalons", "risques", "attentes", "dependances", "livrables", "meps",
-               "actions_retro", "charges", "sprints", "personnes", "absences", "stats_jira", "instantanes"]
+               "actions_retro", "charges", "sprints", "personnes", "absences", "stats_jira", "instantanes", "lectures", "listes_jira"]
 
 
 def load(path: Path) -> dict:

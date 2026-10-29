@@ -48,4 +48,14 @@ ok('unreleased versions without MEP ticket reported (3)', () => assert.strictEqu
 ok('ledger-only MEPs kept with source ledger (SDD, PLQ)', () => { assert.strictEqual(mp('jira.sdd-2981').source.systeme, 'ledger'); assert.strictEqual(mp('jira.plq-9437').source.systeme, 'ledger'); });
 ok('writes pinned when the doc exists', () => { const w = r.writes.find((x) => x.doc_id === 'jira.gou21-11325'); assert.strictEqual(w.if_version, 1); });
 ok('no Z timestamp, no sante written', () => { const s = JSON.stringify(r.doc); assert(!/T\d\d:\d\d(:\d\d)?(\.\d+)?Z/.test(s)); assert(!/"sante"/.test(s)); });
+ok('CLI: a ledger not written yet is skipped with signal ledger_absent; no ledger at all = refused (checkpoint 29 Oct.)', () => {
+  const { spawnSync } = require('child_process'); const os = require('os');
+  const tool = path.join(__dirname, '..', 'tools', 'adapt_jira.js'); const out = fs.mkdtempSync(path.join(os.tmpdir(), 'jira-'));
+  const missing = path.join(path.dirname(ledgerPs[0]), '2099-W01.md');
+  const a = spawnSync('node', [tool, rawP, baseDir, out, ...ledgerPs, missing], { encoding: 'utf8' });
+  assert.strictEqual(a.status, 0, a.stderr);
+  const sig = JSON.parse(fs.readFileSync(path.join(out, 'report.json'), 'utf8')).signals.filter((x) => x.kind === 'ledger_absent');
+  assert.deepStrictEqual(sig.map((x) => x.row), ['2099-W01.md']);
+  assert.strictEqual(spawnSync('node', [tool, rawP, baseDir, out, missing], { encoding: 'utf8' }).status, 2);
+});
 console.log(`\n${n} tests OK`);

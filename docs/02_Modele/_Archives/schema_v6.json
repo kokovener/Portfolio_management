@@ -1,0 +1,1321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plq.local/portefeuille/schema/v2",
+  "title": "Portefeuille PLQ — modèle canonique v6",
+  "description": "Un document = un feed (bloc <script id=\"portfolio-feed\">), un adaptateur, ou la base complète. Toutes les collections sont optionnelles ; un document vide est valide. Dates : AAAA-MM-JJ ; horodatages : ISO 8601 avec décalage (EDT = -04:00).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "modele",
+    "source"
+  ],
+  "properties": {
+    "modele": {
+      "type": "string",
+      "enum": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "6"
+      ],
+      "description": "Version du modèle canonique ; v6 ⊃ v5 = v4 ⊃ v3 ⊃ v2 ⊃ v1 (v5 = règle seule, sans document propre ; un document plus ancien reste valide)"
+    },
+    "source": {
+      "$ref": "#/$defs/source",
+      "description": "Qui a produit ce document (feed, adaptateur, saisie)"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    },
+    "jalons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/jalon"
+      }
+    },
+    "risques": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/risque"
+      }
+    },
+    "attentes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attente"
+      }
+    },
+    "dependances": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dependance"
+      }
+    },
+    "livrables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/livrable"
+      }
+    },
+    "meps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mep"
+      }
+    },
+    "actions_retro": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action_retro"
+      }
+    },
+    "charges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/charge"
+      }
+    },
+    "sprints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sprint"
+      }
+    },
+    "personnes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/personne"
+      }
+    },
+    "absences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/absence"
+      }
+    },
+    "stats_jira": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/stat_jira"
+      }
+    },
+    "instantanes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/instantane"
+      }
+    },
+    "lectures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lecture"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{1,79}$",
+      "description": "Identifiant stable, minuscules, sans espace ni accent. Convention : <source>.<ref> (ex. goutte21.l8d, jira.gou21-11325, feed.expertg1.j8, saisie.p2)"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "horodatage": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?[+-]\\d{2}:\\d{2}$",
+      "description": "ISO 8601 avec décalage obligatoire (EDT = -04:00) ; le suffixe Z est refusé"
+    },
+    "note_1_5": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "systeme_source": {
+      "type": "string",
+      "enum": [
+        "smartsheet",
+        "jira",
+        "jsm",
+        "artefact",
+        "outlook",
+        "miro",
+        "ledger",
+        "saisie",
+        "calcul"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "systeme",
+        "lu_le"
+      ],
+      "properties": {
+        "systeme": {
+          "$ref": "#/$defs/systeme_source"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Identifiant dans la source : id de sheet et de ligne, clé Jira, URL d'artefact, id de board, nom de fichier"
+        },
+        "lu_le": {
+          "$ref": "#/$defs/horodatage",
+          "description": "Moment de la lecture (ou de la saisie)"
+        },
+        "par": {
+          "type": "string",
+          "description": "Adaptateur, skill ou personne"
+        }
+      }
+    },
+    "ref_cible": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "item",
+            "jalon",
+            "livrable"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "nom",
+        "type",
+        "voie",
+        "etape",
+        "promu",
+        "source",
+        "updated_at"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nom": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "programme",
+            "projet",
+            "run"
+          ]
+        },
+        "parent": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Programme parent ; null = hors programme"
+        },
+        "voie": {
+          "type": "string",
+          "enum": [
+            "scrum",
+            "flux"
+          ],
+          "description": "D6"
+        },
+        "etape": {
+          "type": "string",
+          "enum": [
+            "idee",
+            "qualifie",
+            "planifie",
+            "actif",
+            "termine"
+          ],
+          "description": "D9"
+        },
+        "priorite": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "valeur",
+            "urgence",
+            "effort"
+          ],
+          "properties": {
+            "valeur": {
+              "$ref": "#/$defs/note_1_5"
+            },
+            "urgence": {
+              "$ref": "#/$defs/note_1_5"
+            },
+            "effort": {
+              "$ref": "#/$defs/note_1_5"
+            },
+            "score": {
+              "type": "integer",
+              "minimum": -3,
+              "maximum": 9,
+              "description": "Calculé = valeur + urgence − effort (D9). Jamais saisi."
+            }
+          }
+        },
+        "sante": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "couleur",
+            "motifs",
+            "calcule_le"
+          ],
+          "description": "D8 — calculée par le portefeuille. Admise seulement dans un document dont source.systeme = calcul (la base) ; refusée dans un feed, une sortie d'adaptateur ou une saisie",
+          "properties": {
+            "couleur": {
+              "type": "string",
+              "enum": [
+                "vert",
+                "jaune",
+                "rouge"
+              ]
+            },
+            "motifs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "calcule_le": {
+              "$ref": "#/$defs/horodatage"
+            }
+          }
+        },
+        "responsable": {
+          "type": "string",
+          "description": "Nom de la personne (id de personne si connue)"
+        },
+        "fenetre": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "debut": {
+              "$ref": "#/$defs/date"
+            },
+            "fin": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "null = non datée (barre ouverte)"
+            }
+          },
+          "description": "Fenêtre PRÉVUE. Goutte 2.1 : lue dans Smartsheet (Début prévu / Fin prévue, au mois : 1er → dernier jour) quand la ligne la porte (v4, R06) ; sinon saisie dans Gérer. Le réel est dans stat_jira.fenetre_reelle"
+        },
+        "pct_avancement": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Lu de la source (Smartsheet) ou calculé = jalons faits / jalons total ; jamais saisi"
+        },
+        "phase_source": {
+          "type": "string",
+          "description": "Phase telle que la source la nomme (ex. Smartsheet « AF / UX »)"
+        },
+        "phase_deduite": {
+          "type": "boolean",
+          "description": "v3 (R06) — true quand la ligne source n'a pas de phase et que l'adaptateur l'a déduite de ses enfants (la moins avancée des enfants actifs) ; lu, jamais saisi"
+        },
+        "promu": {
+          "type": "boolean",
+          "description": "D4 — item ajouté par Franck sous le grain L (entité, sujet transverse)"
+        },
+        "contenu_sprint": {
+          "type": "string",
+          "description": "Une ligne : ce que l'item fait dans le sprint courant"
+        },
+        "personnes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          },
+          "description": "Personnes engagées sur l'item dans la période courante"
+        },
+        "note_lundi": {
+          "type": "string"
+        },
+        "support": {
+          "type": "array",
+          "description": "Items run seulement (D17) : état du support par extranet. Source v2 : tickets GOU21 portant un lien web vers STG21 (adaptateur Jira) ; feed ou saisie sinon",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "extranet",
+              "ouverts"
+            ],
+            "properties": {
+              "extranet": {
+                "type": "string"
+              },
+              "ouverts": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "age_moyen_j": {
+                "type": "number",
+                "minimum": 0
+              },
+              "plus_vieux_j": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tendance": {
+                "type": "integer",
+                "description": "Δ ouverts vs la lecture Jira d'un jour antérieur (le lundi précédent en régime normal)"
+              }
+            }
+          }
+        },
+        "liens": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "libelle",
+              "url"
+            ],
+            "properties": {
+              "libelle": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/horodatage",
+          "description": "Dernier changement de fond (source ou saisie). Fraîcheur = aujourd'hui − updated_at (D8 : > 14 j = alerte)"
+        },
+        "epics_jira": {
+          "type": "array",
+          "description": "v2 (R02) — épopées Jira GOU21 rattachées à l'item ; saisies dans Gérer ; source des statistiques Jira (stat_jira) et du rattachement au sprint",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$"
+          }
+        },
+        "rang": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "v2 (R09) — ordre manuel parmi les items de même parent ; saisi dans Gérer ; absent = après les items rangés, par nom"
+        }
+      }
+    },
+    "jalon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "nom",
+        "date",
+        "statut",
+        "source"
+      ],
+      "description": "D4 — on peut répondre oui / non à une date · v4 : les gates d'un livrable Goutte 2.1 (id <item>.ba-3 | .ac-4 | .qa-2 | .qa-3) sont lues dans Jalons_Entites (Date prévue, case, Date check)",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "nom": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "$ref": "#/$defs/date",
+          "description": "Date cible courante"
+        },
+        "date_initiale": {
+          "$ref": "#/$defs/date",
+          "description": "Première date connue ; sert à mesurer le recul (règle : ≥ 5 j ouvrés)"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "fait",
+            "en_cours",
+            "a_venir",
+            "a_risque",
+            "depasse"
+          ]
+        },
+        "fait_le": {
+          "$ref": "#/$defs/date"
+        },
+        "precision": {
+          "type": "string",
+          "enum": [
+            "jour",
+            "mois"
+          ],
+          "description": "v4 (R06) — mois : date prévue saisie au mois, `date` = dernier jour du mois ; absent = jour"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "risque": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "titre",
+        "probabilite",
+        "impact",
+        "source"
+      ],
+      "description": "Échelle risk-scoring-standard PLQ : P et I de 1 à 5, score = P × I. Santé D8 : score ≥ 15 → rouge, ≥ 10 → jaune. Priorité PLQ : ≥ 15 haut, 8–14 moyen, ≤ 7 bas.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null = risque de portefeuille (transverse, gouvernance), non rattaché à un item"
+        },
+        "titre": {
+          "type": "string",
+          "minLength": 1
+        },
+        "probabilite": {
+          "$ref": "#/$defs/note_1_5"
+        },
+        "impact": {
+          "$ref": "#/$defs/note_1_5"
+        },
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25,
+          "description": "Calculé = probabilite × impact. Jamais saisi."
+        },
+        "mitigation": {
+          "type": "string"
+        },
+        "ouvert": {
+          "type": "boolean",
+          "default": true
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "attente": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "tiers",
+        "objet",
+        "attendue_le",
+        "source"
+      ],
+      "description": "Attente d'un tiers (D8 : > 5 j ouvrés après attendue_le = jaune). Compte comme demande sur le rôle visé.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "tiers": {
+          "type": "string",
+          "description": "Rôle ou personne (ex. DBA, Architecte, Luc)"
+        },
+        "objet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attendue_le": {
+          "$ref": "#/$defs/date"
+        },
+        "recue_le": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "dependance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "de",
+        "vers",
+        "source"
+      ],
+      "description": "D16 — « de » est le prédécesseur, « vers » le successeur. Un prédécesseur qui recule met « vers » en alerte.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "bloque",
+            "alimente",
+            "attend"
+          ]
+        },
+        "de": {
+          "$ref": "#/$defs/ref_cible"
+        },
+        "vers": {
+          "$ref": "#/$defs/ref_cible"
+        },
+        "note": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "livrable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "nom",
+        "statut",
+        "source"
+      ],
+      "description": "Livrable exposé par un feed (architecte) ; cible possible d'une dépendance. Jamais saisi dans le portefeuille.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nom": {
+          "type": "string",
+          "minLength": 1
+        },
+        "item": {
+          "$ref": "#/$defs/id",
+          "description": "Item auquel le livrable se rattache, si connu"
+        },
+        "date": {
+          "$ref": "#/$defs/date"
+        },
+        "date_initiale": {
+          "$ref": "#/$defs/date"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "fait",
+            "en_cours",
+            "a_venir",
+            "a_risque",
+            "depasse"
+          ]
+        },
+        "responsable": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "mep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "date",
+        "systeme",
+        "statut",
+        "source"
+      ],
+      "description": "D18 — une MEP est un jalon daté et un consommateur de capacité dev",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "date": {
+          "$ref": "#/$defs/date"
+        },
+        "ticket": {
+          "type": "string",
+          "description": "Clé Jira (GOU21-, SDD-, PLQ-) ou version"
+        },
+        "systeme": {
+          "type": "string",
+          "description": "G2.1, G1, Extranet <nom>, IIS…"
+        },
+        "libelle": {
+          "type": "string"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "planifiee",
+            "prete",
+            "completee",
+            "annulee"
+          ]
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "responsable": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "action_retro": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "board",
+        "texte",
+        "statut",
+        "source"
+      ],
+      "description": "D19 — lue dans le cadre « Actions du sprint suivant » du board Miro",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "board": {
+          "type": "string",
+          "description": "Id ou URL du board Miro"
+        },
+        "sprint": {
+          "$ref": "#/$defs/id"
+        },
+        "texte": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "a_faire",
+            "en_cours",
+            "fait"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "charge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "periode",
+        "role",
+        "mode",
+        "valeur",
+        "source"
+      ],
+      "description": "D7 — Scrum : points Jira de l'équipe par item et sprint (mode points) ; sous-tâches Jira par personne et sprint (mode taches) ; Flux : WIP. Aucune heure.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "periode": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "ref"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "sprint",
+                "semaine"
+              ]
+            },
+            "ref": {
+              "type": "string",
+              "description": "Id de sprint (jira.gou21-s20) ou lundi de la semaine (AAAA-MM-JJ)"
+            }
+          }
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "pm",
+            "architecte",
+            "ba",
+            "af",
+            "ux",
+            "dev",
+            "qa",
+            "coordo",
+            "expert",
+            "claude",
+            "super_utilisateur"
+          ]
+        },
+        "personne": {
+          "$ref": "#/$defs/id"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "jours_personne",
+            "wip",
+            "etp",
+            "points",
+            "taches"
+          ]
+        },
+        "valeur": {
+          "type": "number",
+          "minimum": 0
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "nom": {
+          "type": "string",
+          "description": "v2 — nom lu à la source quand la personne n'est pas dans l'équipe (Team_G2.1)"
+        },
+        "tickets": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "v2 — mode points : nombre de tickets derrière la valeur"
+        },
+        "sans_points": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "v2 — mode points : tickets (tâches parentes, bugs) sans Story Points"
+        },
+        "faites": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "v2 — mode taches : sous-tâches faites (dès « Prêt pour Preprod »)"
+        },
+        "en_cours": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "v2 — mode taches : sous-tâches en cours"
+        }
+      }
+    },
+    "sprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "nom",
+        "debut",
+        "fin",
+        "etat",
+        "source"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "debut": {
+          "$ref": "#/$defs/date"
+        },
+        "fin": {
+          "$ref": "#/$defs/date"
+        },
+        "objectif": {
+          "type": "string"
+        },
+        "etat": {
+          "type": "string",
+          "enum": [
+            "futur",
+            "actif",
+            "clos"
+          ]
+        },
+        "jours_ouvres": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reserve_run_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "D7 — 15 par défaut"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "personne": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "nom",
+        "role",
+        "voie",
+        "source"
+      ],
+      "description": "Lue dans Team_G2.1_vN.xlsx ; rien de Recrutements/",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "nom": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "pm",
+            "architecte",
+            "ba",
+            "af",
+            "ux",
+            "dev",
+            "qa",
+            "coordo",
+            "expert",
+            "direction",
+            "cdp",
+            "super_utilisateur"
+          ]
+        },
+        "voie": {
+          "type": "string",
+          "enum": [
+            "scrum",
+            "flux",
+            "hors"
+          ]
+        },
+        "wip_limite": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "D7 — Archi 2, BA 2, PM 3, défaut 3 (voie flux)"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "absence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "personne",
+        "debut",
+        "fin",
+        "jours_ouvres",
+        "source"
+      ],
+      "description": "Lue dans Outlook (6 semaines) ou saisie (congés collectifs) ; retirée de la capacité",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "personne": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null = absence collective (congés, fermeture) : s'applique à toutes les personnes"
+        },
+        "debut": {
+          "$ref": "#/$defs/date"
+        },
+        "fin": {
+          "$ref": "#/$defs/date"
+        },
+        "jours_ouvres": {
+          "type": "number",
+          "minimum": 0
+        },
+        "libelle": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "instantane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "date",
+        "pris_le",
+        "items",
+        "source"
+      ],
+      "description": "Écrit chaque lundi avant tout recalcul ; jamais supprimé",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "date": {
+          "$ref": "#/$defs/date"
+        },
+        "pris_le": {
+          "$ref": "#/$defs/horodatage"
+        },
+        "sources_ok": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "item",
+              "etape",
+              "sante"
+            ],
+            "properties": {
+              "item": {
+                "$ref": "#/$defs/id"
+              },
+              "etape": {
+                "type": "string",
+                "enum": [
+                  "idee",
+                  "qualifie",
+                  "planifie",
+                  "actif",
+                  "termine"
+                ]
+              },
+              "sante": {
+                "type": "string",
+                "enum": [
+                  "vert",
+                  "jaune",
+                  "rouge"
+                ]
+              },
+              "pct_avancement": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "jalons_faits": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "jalons_total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "risques_ouverts": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "prochain_jalon": {
+                "$ref": "#/$defs/date"
+              },
+              "resume": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "stat_jira": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "epics",
+        "tickets",
+        "source"
+      ],
+      "description": "v2 (R10) — statistiques des épopées Jira d'un item, lues par l'adaptateur Jira ; jamais saisies",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "epics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9]+-[0-9]+$"
+          }
+        },
+        "tickets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total",
+            "faits",
+            "en_cours",
+            "a_faire"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "faits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "en_cours": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "a_faire": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "description": "Annulés exclus ; fait = catégorie Done (dès « Prêt pour Preprod », DoD Franck)"
+        },
+        "sprint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ref",
+            "tickets",
+            "faits",
+            "points"
+          ],
+          "description": "Contenu du sprint actif rattaché à l'item",
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "tickets": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "faits": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "points": {
+              "type": "number",
+              "minimum": 0
+            },
+            "points_faits": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "fenetre_reelle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "debut",
+            "fin",
+            "sprints",
+            "ouverts"
+          ],
+          "description": "v4 (R06) — fenêtre réelle lue dans Jira : début = premier sprint qui contient un ticket des épopées (annulés exclus) ; fin = fin du dernier sprint quand plus aucun ticket n'est ouvert, sinon null (en cours) ; jusqu_au = fin du dernier sprint planifié",
+          "properties": {
+            "debut": {
+              "$ref": "#/$defs/date"
+            },
+            "fin": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "jusqu_au": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/date"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "sprints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ouverts": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "lecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "adaptateur",
+        "passage",
+        "lu_le",
+        "statut",
+        "source"
+      ],
+      "description": "v6 (R36 cadence) — état de la dernière lecture d'un adaptateur : un document par adaptateur (id lecture.<adaptateur>), réécrit à chaque passage ; sert à afficher la fraîcheur des blocs. Écrit par les tâches planifiées, jamais saisi dans Gérer",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "adaptateur": {
+          "type": "string",
+          "enum": [
+            "smartsheet",
+            "outlook",
+            "outlook_equipe",
+            "jira",
+            "jira_data",
+            "jira_data_reel",
+            "artefacts",
+            "miro"
+          ],
+          "description": "jira_data_reel = Jira data avec l'étape d (réel des épopées) ; outlook_equipe = Outlook en mode équipe"
+        },
+        "passage": {
+          "type": "string",
+          "enum": [
+            "lundi",
+            "quotidien",
+            "jeudi",
+            "demande",
+            "skill"
+          ]
+        },
+        "lu_le": {
+          "$ref": "#/$defs/horodatage"
+        },
+        "statut": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "partiel",
+            "echec"
+          ]
+        },
+        "ecrits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cause": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    }
+  }
+}

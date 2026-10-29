@@ -178,7 +178,6 @@
       "nom": "Franck Kowalczyk",
       "role": "pm",
       "voie": "flux",
-      "wip_limite": 3,
       "source": {
         "systeme": "saisie",
         "ref": "Team_G2.1_v1.xlsx",
@@ -190,7 +189,6 @@
       "nom": "Personne_09",
       "role": "architecte",
       "voie": "flux",
-      "wip_limite": 2,
       "source": {
         "systeme": "saisie",
         "ref": "Team_G2.1_v1.xlsx",
@@ -202,7 +200,6 @@
       "nom": "Personne_14",
       "role": "coordo",
       "voie": "flux",
-      "wip_limite": 3,
       "source": {
         "systeme": "saisie",
         "ref": "Team_G2.1_v1.xlsx",

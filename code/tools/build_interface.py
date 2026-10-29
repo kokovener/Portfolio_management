@@ -21,6 +21,9 @@ def main() -> None:
     core = (ROOT / "interface" / "core.js").read_text(encoding="utf-8")
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     schema_js = "window.PORTFOLIO_SCHEMA = " + json.dumps(schema, ensure_ascii=False, separators=(",", ":")) + ";"
+    # R36: refresh cadence (block freshness targets) travels with the page, read from config/cadence.json
+    cadence = json.loads((ROOT / "config" / "cadence.json").read_text(encoding="utf-8"))
+    schema_js += "window.PORTFOLIO_CADENCE = " + json.dumps(cadence, ensure_ascii=False, separators=(",", ":")) + ";"
     for blob in (schema_js, core):
         if "</script" in blob.lower():
             sys.exit("refused: '</script' inside an inlined blob")

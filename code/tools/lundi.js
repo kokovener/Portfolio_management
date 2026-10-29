@@ -3,13 +3,14 @@
  *
  * Usage:
  *   node tools/lundi.js snapshot <base_dir> <date> <pris_le> <out_dir> <schema.json>
- *       base_dir  full ArtifactData export of the collections (14 in model v2) (<dir>/<collection>/<id>.json), taken BEFORE
+ *       base_dir  full ArtifactData export of the collections (16 in model v14) (<dir>/<collection>/<id>.json), taken BEFORE
  *                 any adapter runs. Writes out_dir/doc.json + batch.json (one create, never pinned: a snapshot is
  *                 never overwritten) and runs validate_model.py (fail closed). Refuses if snap.<date> exists.
  *   node tools/lundi.js digest <run_dir> <date> <now_ts> <artifact_url> <out_md> <out_msg> [--reco "<text>"]
  *       run_dir   holds base_apres/ (export after the adapters), statut.json (adapter outcomes) and each adapter's
  *                 report.json (path given in statut.json). Writes run_dir/alertes.json, out_md (digest) and
- *                 out_msg (Teams message, HTML). Previous alerts: ../<previous date>/alertes.json if present.
+ *                 out_msg (Teams message, HTML). Previous alerts: recomputed from ../<previous date>/base_apres with today's rules,
+ *                 else ../<previous date>/alertes.json.
  *       Also writes run_dir/snap_sources.json: one pinned update adding sources_ok / sources_total to snap.<date>
  *       (the only write ever made to a snapshot after its creation; its items are never touched).
  *   node tools/lundi.js dossier <run_dir> <date> <out.json>
@@ -26,7 +27,7 @@
  *   node tools/lundi.js pagecheck <built.html> <published.html>
  *       exit 0 = same page (no republication), exit 10 = page changed (republish), 2 = unreadable.
  * Times are never computed here: <pris_le> and <now_ts> come from `TZ=America/Toronto date`.
- * Never writes a source; never deletes a db document; nothing from Recrutements/ is read.
+ * Never writes a source; deletes no db document itself (only Jira data deletions K13 pass `writes`); nothing from Recrutements/ is read.
  */
 'use strict';
 const fs = require('fs');
@@ -108,9 +109,9 @@ function cmdSnapshot([baseDir, date, prisLe, outDir, schemaP]) {
 }
 
 // ---------- digest ----------
-const ORDRE = ['dependance', 'jalon', 'mep', 'wip', 'fraicheur', 'phase'];
-const REGLE = { dependance: 'Prédécesseur reculé', jalon: 'Jalon reculé / dépassé', mep: 'MEP ≤ 7 j sans « prêt »', wip: 'WIP > limite', fraicheur: 'Fraîcheur > 14 j', phase: 'Phase vide' };
-const ADAPT = { smartsheet: 'Smartsheet', jira: 'Jira', jira_data: 'Jira (data)', artefacts: 'Artefacts', outlook: 'Outlook', miro: 'Miro' };
+const ORDRE = ['recul', 'jalon', 'bloque', 'risque', 'attente', 'mep', 'fraicheur', 'phase']; // R44 (2026-10-29)
+const REGLE = { recul: 'Recul ≥ 5 j o. et ce qu\'il entraîne', jalon: 'Jalon dépassé', bloque: 'Bloqués du sprint', risque: 'Risque ≥ 15', attente: 'Attente > 5 j o.', mep: 'MEP ≤ 7 j sans « prêt »', fraicheur: 'Fraîcheur : ni Smartsheet ni Jira depuis > 15 j o.', phase: 'Phase vide' };
+const ADAPT = { smartsheet: 'Smartsheet', jira: 'Jira', jira_data: 'Jira (data)', jira_data_reel: 'Jira (data + réel)', artefacts: 'Artefacts', outlook: 'Outlook', outlook_equipe: 'Outlook (équipe)', miro: 'Miro' };
 // Signals Franck asked to see first (prompt step 4), then the rest grouped by kind.
 const PRIO_SIG = ['feed_ignore', 'echeance_passee', 'action_non_relue', 'absence_non_relue', 'personne_non_relue', 'hors_annuaire',
   'demi_journee_illisible', 'parti', 'mep_passee', 'mep_sans_date', 'recul', 'conflit'];
@@ -140,7 +141,7 @@ function readSignaux(p) {
 // ---------- analyst dossier (step 3b) ----------
 function cmdDossier([runDir, date, outP]) {
   if (!outP || !DATE.test(date)) usage();
-  const base = loadBase(path.join(runDir, 'base_apres'));
+  const base = Core.publicBase(loadBase(path.join(runDir, 'base_apres'))); // R37: hidden items never reach the digest
   if (!base.items.length) fail('refused: base_apres is empty — export the base after the adapters');
   const ix = Core.index(base);
   const nom = (id) => (ix.items[id] || { nom: id }).nom;
@@ -191,7 +192,15 @@ const keyOf = (a) => `${a.kind}|${a.item || ''}|${a.texte.replace(/\d+ (jours|j)
 function previousRun(runDir, date) {
   const parent = path.dirname(path.resolve(runDir));
   const prev = fs.readdirSync(parent).filter((d) => DATE.test(d) && d < date && fs.existsSync(path.join(parent, d, 'alertes.json'))).sort().pop();
-  return prev ? { date: prev, alertes: JSON.parse(fs.readFileSync(path.join(parent, prev, 'alertes.json'), 'utf8')).alertes } : null;
+  if (!prev) return null;
+  // Same rules on both sides: when the previous Monday's export is kept, its alerts are recomputed with today's core,
+  // so a rule change (R44, 29 Oct.) does not mark every alert "nouvelle"; the stored alertes.json is the fallback.
+  const prevBase = path.join(parent, prev, 'base_apres');
+  if (fs.existsSync(prevBase)) {
+    const b = Core.publicBase(loadBase(prevBase));
+    if (b.items.length) return { date: prev, alertes: Core.alertes(b, prev), recalcule: true };
+  }
+  return { date: prev, alertes: JSON.parse(fs.readFileSync(path.join(parent, prev, 'alertes.json'), 'utf8')).alertes };
 }
 function signalLines(sigs) {
   // Group by kind; ≤ 2 occurrences shown in full, more collapsed to one line with the rows.
@@ -220,7 +229,7 @@ function cmdDigest(args) {
   if (!outMsg || !DATE.test(date) || !TS.test(nowTs)) usage();
   const lundi = DATE.test(date) ? Core.mondayOf(date) : null;
   const statut = JSON.parse(fs.readFileSync(path.join(runDir, 'statut.json'), 'utf8'));
-  const base = loadBase(path.join(runDir, 'base_apres'));
+  const base = Core.publicBase(loadBase(path.join(runDir, 'base_apres'))); // R37: hidden items never reach the digest
   if (!base.items.length) fail('refused: base_apres is empty — export the base after the adapters');
   const ix = Core.index(base);
 
@@ -275,7 +284,7 @@ function cmdDigest(args) {
       const l = alertes.filter((a) => a.kind === k); if (!l.length) return;
       if (!COLLAPSE.has(k) || l.length <= 2) { l.forEach((a) => L.push(`| ${REGLE[k]} | ${cell(a.texte)} | ${nv(a)} |`)); return; }
       // One row per rule: item code (Smartsheet L) or name, with its age for freshness
-      const lab = (a) => { const it = ix.items[a.item]; const n = it ? (/^L[\d.-]+[A-Z]?\b/.test(it.nom) ? it.nom.split(' ')[0] : it.nom) : a.item; const m = a.texte.match(/depuis (\d+) jours/); return m ? `${n} (${m[1]} j)` : n; };
+      const lab = (a) => { const it = ix.items[a.item]; const n = it ? (/^L[\d.-]+[A-Z]?\b/.test(it.nom) ? it.nom.split(' ')[0] : it.nom) : a.item; const m = a.texte.match(/depuis (\d+) j ouvrés/); return m ? `${n} (${m[1]} j o.)` : n; };
       const nouvelles = l.filter((a) => a.nouvelle).map(lab);
       L.push(`| ${REGLE[k]} | ${l.length} items : ${cell(l.map(lab).join(' · '))} | ${prev ? (nouvelles.length ? cell(nouvelles.join(' · ')) : 'non') : '—'} |`);
     });
@@ -309,7 +318,7 @@ function cmdDigest(args) {
     L.push('');
   }
   if (reco) L.push('## Recommandation', '', reco, '');
-  L.push('---', `*Règles : D7, D8, D16, étape 4 (recul ≥ 5 j ouvrés · MEP ≤ 7 j · fraîcheur > 14 j). Tâche « Portefeuille PLQ — lundi 7 h ». Aucune source n'est modifiée.*`, '');
+  L.push('---', `*Règles : D7, D8, D16, étape 4 (recul ≥ 5 j ouvrés et sa chaîne · jalon dépassé · bloqués du sprint · risque ≥ 15 · attente > 5 j ouvrés · MEP ≤ 7 j · fraîcheur : ni Smartsheet ni Jira depuis > 15 j ouvrés). Tâche « Portefeuille PLQ — lundi 7 h ». Aucune source n'est modifiée.*`, '');
   fs.mkdirSync(path.dirname(outMd), { recursive: true });
   fs.writeFileSync(outMd, L.join('\n'), 'utf8');
 
@@ -363,7 +372,11 @@ function cmdWrites([batchP, outDir, from, to]) {
   const win = (p) => { const a = path.resolve(p); return a.startsWith(src) ? dst + a.slice(src.length).replace(/\//g, '\\') : a; };
   fs.mkdirSync(outDir, { recursive: true });
   const writes = batch.map((w, k) => {
-    if (w.op === 'delete') fail(`refused: ${batchP} holds a delete`);
+    // Only deletion ever allowed: Jira-data charges not re-read (rule K13, standing consent Franck 2026-10-29)
+    if (w.op === 'delete') {
+      if (!(w.purge === 'K13' && w.collection === 'charges' && /^jira\./.test(w.doc_id))) fail(`refused: ${batchP} holds a delete`);
+      const o = { op: 'delete', collection: w.collection, doc_id: w.doc_id }; if (w.if_version) o.if_version = w.if_version; return o;
+    }
     const f = path.join(outDir, `${String(k).padStart(3, '0')}_${w.collection}_${w.doc_id}.json`);
     fs.writeFileSync(f, JSON.stringify(w.data), 'utf8');
     const o = { op: w.op, collection: w.collection, doc_id: w.doc_id, file_path: win(f) };

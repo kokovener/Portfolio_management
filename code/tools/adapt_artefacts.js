@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ALLOWED = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables'];
-const OWNED = ['nom', 'type', 'parent', 'voie', 'etape', 'promu', 'priorite', 'responsable', 'fenetre', 'note_lundi', 'liens'];
+const OWNED = ['nom', 'type', 'parent', 'voie', 'etape', 'promu', 'priorite', 'responsable', 'fenetre', 'note_lundi', 'liens', 'visible'];
 const ITEM_SOURCE = ['pct_avancement', 'phase_source', 'contenu_sprint', 'support']; // model §3 read-only fields (sante apart)
 const RE_BLOCK = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
 

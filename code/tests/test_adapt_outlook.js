@@ -20,10 +20,8 @@ ok('directory spelling wins: Kowalzzyk -> team.kowalczyk-franck (seed id kept), 
   assert(r.doc.personnes.some((p) => p.id === 'team.kowalczyk-franck')); assert(r.doc.personnes.some((p) => p.id === 'team.personne-02'));
   assert.strictEqual(sig(r, 'nom_ecart').length, 2);
 });
-ok('D7 WIP limits on flux lanes, none on scrum/hors', () => {
-  const p = Object.fromEntries(r.doc.personnes.map((x) => [x.id, x]));
-  assert.strictEqual(p['team.personne-09'].wip_limite, 2); assert.strictEqual(p['team.personne-07'].wip_limite, 2);
-  assert.strictEqual(p['team.personne-14'].wip_limite, 3); assert.strictEqual(p['team.personne-12'].wip_limite, undefined);
+ok('D7 flux part dropped (Franck 2026-10-28): no wip_limite written on anyone', () => {
+  assert(r.doc.personnes.every((x) => !('wip_limite' in x)));
 });
 ok('real read: recurring lunch "oof" of Personne_05 is not an absence; only 3 Nov. morning (0.5 d)', () => {
   assert.deepStrictEqual(r.doc.absences.map((a) => [a.id, a.debut, a.fin, a.jours_ouvres, a.libelle]), [['outlook.personne-05.2026-11-03', '2026-11-03', '2026-11-03', 0.5, 'absence']]);
@@ -91,5 +89,10 @@ ok('AF and UX out of capacity (hors); departed person not written, reported', ()
   const s11 = adapt(team, raw, base, {}, dep); const p = Object.fromEntries(s11.doc.personnes.map((x) => [x.id, x]));
   assert.strictEqual(p['team.personne-01'].voie, 'hors'); assert.strictEqual(p['team.personne-05'].voie, 'hors');
   assert(!p['team.personne-07']); assert.strictEqual(s11.doc.personnes.length, 14); assert.strictEqual(sig(s11, 'parti').length, 1);
+});
+ok('R36 team-only mode (--equipe): personnes written, absences neither produced nor touched', () => {
+  const r0 = adapt(team, raw, base, {}, []); const re = adapt(team, null, base, {}, []);
+  assert.deepStrictEqual(re.doc.personnes, r0.doc.personnes.map((p) => Object.assign({}, p, { source: Object.assign({}, p.source, { lu_le: team.read_at }) })));
+  assert(!('absences' in re.doc)); assert(re.writes.every((w) => w.collection === 'personnes')); assert.strictEqual(re.report.mode, 'equipe');
 });
 console.log(`${n} tests ok`);

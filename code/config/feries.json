@@ -1,0 +1,14 @@
+{
+  "_doc": "Quebec statutory holidays (Loi sur les normes du travail) falling on a weekday. Read by tools/adapt_feries.js (R41, model v11). PLQ closure days are NOT here: Franck adds them to his Outlook calendar as events whose subject starts with 'Fermeture' or 'Férié' (read by the same adapter). Good Friday kept, Easter Monday not (employer's choice; add it to the calendar if the office closes).",
+  "source": "Loi sur les normes du travail du Québec, art. 60 · Loi sur la fête nationale",
+  "jours": [
+    { "date": "2026-12-25", "libelle": "Noël" },
+    { "date": "2027-01-01", "libelle": "Jour de l'An" },
+    { "date": "2027-03-26", "libelle": "Vendredi saint" },
+    { "date": "2027-05-24", "libelle": "Journée nationale des patriotes" },
+    { "date": "2027-06-24", "libelle": "Fête nationale" },
+    { "date": "2027-07-01", "libelle": "Fête du Canada" },
+    { "date": "2027-09-06", "libelle": "Fête du Travail" },
+    { "date": "2027-10-11", "libelle": "Action de grâce" }
+  ]
+}

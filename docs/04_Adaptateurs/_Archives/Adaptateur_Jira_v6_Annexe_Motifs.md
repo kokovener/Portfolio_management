@@ -1,0 +1,60 @@
+# Adaptateur Jira v1 · Annexe motifs
+
+> À n'ouvrir que pour rouvrir un choix. Un motif ne se supprime jamais : il se déplace. Références : code `Projets_Dev\Portefeuille_PLQ\tools\adapt_jira.js` · tests `tests/test_adapt_jira.js` · exécutions `dist/runs/2026-10-27/jira_*` · interface A8 = `03_Interface/Interface_Specification_v1.md`.
+
+| # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
+|---|---|---|---|---|
+| J1 | Actif + 1er futur | Prompt : « sprint courant et suivant » ; S21 n'a ni dates ni contenu | Tous les futurs | — |
+| J2 | Heure du Québec pour les dates de sprint ; minuit = veille | Jira stocke la fin à minuit local (S17, S18 : minuit EDT) ; S19 finit le 6 nov. 23h00 en heure normale, après le passage du 1er nov. ; un décalage fixe −4 h décalerait d'un jour les fins à minuit après le 1er nov. | Date brute · décalage fixe −4 h (première version, corrigée après relecture) | Relecture 2026-10-27 : une règle d'affichage (EDT fixe) appliquée au calcul de dates casse au changement d'heure ; tester les deux côtés du 1er nov. |
+| J3 | Dates déduites pour S20 | Le modèle exige `debut`/`fin` ; sans S20 la vue Sprint et la charge 4 semaines perdent le sprint suivant ; durée prise du sprint actif (3 sem.) car la cadence varie (S17 ~2 sem., S18 ~2,5 sem., S19 3 sem., liste des sprints clos du board 38) | Ne pas écrire S20 · 14 j fixes (exemple étape 1) | L'exemple étape 1 « S19 + 14 j » était faux de 2 manières (S19 commence le 19, dure 3 sem.). Règle : une déduction se marque dans l'enregistrement et se signale, sinon elle devient une donnée |
+| J4 | Grain MEP par l'épopée | Les tickets MEP sont enfants de GOU21-1651 (clé structurée) ; le préfixe « MEP » écarte les tâches de préparation (GOU21-11302, GOU21-10899) ; une recherche `summary ~ "MEP"` ramenait plus de 80 tickets dont « Préparation de MEPS » et des tickets 2025 | Résumé seul · versions seules | Patron 3a confirmé : clé structurée d'abord, colonne déclarative en contrôle |
+| J5 | Statut par le nom, Jira fait foi | Le ledger est un journal quotidien ; Jira est le système d'enregistrement ; la catégorie Done contient « Prêt pour Preprod » | Ledger prioritaire · catégorie de statut (première version : un ticket « Prêt pour Preprod » serait devenu « complétée ») | Relecture 2026-10-27 : la règle « lire le nom du statut » (J8) n'était appliquée qu'aux demandes de version ; appliquer une règle de lecture partout où le champ est lu |
+| J6 | Date : ledger d'abord | Le ledger porte la date de déploiement : GOU21-11185 annoncée et faite le 14 oct. (W42), close dans Jira le 19 ; GOU21-11236 faite le 20 oct., close le 22 ; Jira n'a ni `duedate` ni date de version (champs demandés, vides) | Date de clôture Jira d'abord (première version, corrigée après relecture) | Relecture 2026-10-27 : la date de clôture d'un ticket n'est pas la date de l'événement ; chercher la source qui note l'événement |
+| J6b | Ligne de clôture prioritaire au ledger | SDD-2963 (W40) : « complétée » puis plus bas « planifiée » le même jour ; « dernière ligne gagne » l'aurait rouvert | Dernière ligne gagne | Un journal n'est pas ordonné par l'état : choisir la ligne par son sens |
+| J7 | MEP sans date non écrite | Date obligatoire au schéma gelé ; une date posée créerait une fausse alerte « MEP dans 7 j » (étape 4) ; preuve d'absence : `getJiraProjectVersions` renvoie `releaseDate` pour les versions livrées, aucune pour les 5 non livrées ; `duedate` vide sur les 13 tickets MEP | Date = aujourd'hui · fin du sprint | Relecture : « champ absent » ≠ « donnée absente » tant que la requête ne l'a pas demandé ; noter la requête qui prouve l'absence |
+| J8 | Prête = prête pour la production | Ledger « ppdep » = « Pret pour déploiement en production » ; « Prêt pour Preprod » n'est pas déployable ; une MEP sans version liée ne peut être « prête » que par son propre statut | Catégorie Done | La catégorie de statut Jira ne dit pas « déployable » : lire le nom du statut |
+| J9 | Système par la version | La version est la clé structurée (lien `versions/<id>`) ; versions livrées lues aussi (sinon les MEP terminées tombaient sur le résumé) ; SDD sans « extranet » = G1 | Saisie dans Gérer (mep en lecture seule, modèle §3) | Exemple étape 1 GOU21-11325 « G2.1 · goutte21 » posé sans source : corrigé. Relecture : l'exemple de la fiche avait été écrit d'après la règle, pas d'après la trace (`report.json`) |
+| J10 | Fenêtre 30 j, ledgers W40–W44 | La grille montre le passé récent ; W40 commence le 28 sept., 30 j avant le 27 oct. ; une ligne planifiée plus ancienne reste lue tant qu'elle n'est pas close | W44 seul (prompt) : perdait 13 MEP G1 terminées | — |
+| J11 | Conservation des MEP non relues | Règle projet : jamais de suppression sans accord | Suppression des absentes | — |
+| J12 | GOU21-11323 gardé | Déclaré MEP au ledger, hors épopée : gardé (source ledger, statut confirmé Jira), signalé | L'ignorer | — |
+| J13 | `responseFields` | Les réponses JQL brutes dépassent la limite de l'outil (78–200 k car.) | Pagination fine | Toujours filtrer les champs de réponse à la source |
+| R1 | Relecture du 2026-10-27 (sous-agent, contexte neuf) | 15 écarts ; corrigés : sémantique de date (J6), J2 heure du Québec, J5, J9, signaux sans destination (→ digest étape 4), « 7 MEP » (11 réelles après réécriture), « 15 j-p » (= jours ouvrés), §1 incomplet, J12–J13 absents du §5, UTC brut, écarts au modèle non déclarés (E3, E4), section limites absente, preuve de relance absente. Écart rejeté : « la date du ledger = création du ticket » (W42 et W43 montrent des dates de déploiement) | — | Vérifier un chiffre de vue après la dernière écriture, pas avant |
+
+
+## v2 — 2026-10-28 (retours lot 2)
+
+| # | Décision | Motif | Option écartée | Erreur payée / preuve |
+|---|---|---|---|---|
+| JD1 | Support = lien web vers STG21 sur un ticket GOU21 | Franck (R03) : le connecteur ne lit que GOU21 ; le lien « fixes » vers STG21 est la trace du support (GOU21-11137 ↔ STG21-286) | Lire JSM STG21 directement (hors périmètre du connecteur, M22) | Les URL STG21 ont deux formes (`/browse/STG21-n` et `/servicedesk/…/queues/custom/1/STG21-n`) : une règle sur `/browse/` seule aurait raté GOU21-10412. Règle : tester l'expression sur chaque forme réellement lue |
+| JD2 | Charge en points Jira, pas en jours-personne | Jira est la vérité du sprint (R04, R05) ; les points existent (`customfield_10036`), les jours-personne non | Convertir points → jours (taux inventé) | — |
+| JD3 | Comptes par requêtes `count` plutôt que la liste des 310 enfants | Une liste complète dépasse la taille de sortie et doit être transcrite à la main ; trois comptes suffisent à l'avancement | Lister les enfants (points totaux possibles) | Sortie de 70 Ko refusée au premier essai |
+| JD4 | `responseFields` en chemin `issues.*` (pas `issues.nodes.*`) | La réponse de `getJiraBoardIssueData` est `data.issues[]` | — | Premier appel : 73 objets vides. Règle : vérifier la forme d'une réponse sur 3 lignes avant de filtrer |
+| JD5 | `listJiraIssueRemoteIssueLinks` sans `responseFields` | Le filtre `data.object.url` rend `[{}]` : un lien existant paraît vide | Filtrer | GOU21-10412 rendu vide avec filtre, STG21-226 sans filtre |
+| JD6 | Tendance du support calculée contre une lecture d'un autre jour | Une relance le même jour ne doit rien écrire (idempotence) | Comparer à la dernière écriture | Test de relance en échec au premier passage (1 écriture) |
+| JD7 | Test Jira MEP : ledgers figés aux lignes ≤ 26 oct. | Les ledgers sont vivants ; le test cassait dès qu'une ligne s'ajoutait | Copier les ledgers en fixture (noms de personnes → sauvegarde GitHub bloquée) | `6 !== 4` le 28 oct. |
+| JD8 | Périmètre support = Bug, Story, Tâche, toute épopée ; lecture incrémentale (MAJ < 8 j + liés connus) | Franck, 28 oct. : un ticket de support devient l'un des trois types ; 1 894 tickets ouverts → impossible de lire tous les liens chaque lundi ; ajouter un lien met à jour le ticket | Bugs + GOU21-5466 seulement (premier choix, sans Franck) | Le premier périmètre voyait 1 demande sur 2 : STG21-206 (GOU21-9889, Tâche sous Producteur P2) manquait. Règle : un périmètre tranché sans le métier se vérifie sur l'exemple qu'il a fourni |
+| JD9 | Compter les demandes STG21, pas les tickets GOU21 | STG21-226 est liée à 10412 et 10413 (FE) : compter les tickets doublerait le support | Compter les tickets | Balayage du 28 oct. |
+| JD10 | Comparer le contenu à clés triées pour décider « inchangé » | Les exports ArtifactData trient les clés ; l'ordre différait → 31 réécritures inutiles | Comparer le JSON brut | Relance du 28 oct. : 31 écritures au lieu de 1 |
+| JD11 | Fait = catégorie Done sauf Annulé ; Annulé hors charge et hors totaux | DoD Franck 28 oct. : « dès Prêt pour Preprod » ; la colonne « Hors Dev » du board 38 range Prêt pour Preprod, En validation preprod, Prêt pour déploiement, Terminé et Annulé dans Done | Compter Annulé comme fait (lecture v2 du matin) | Codes de taxes affiché 17 / 49 au lieu de 12 / 44 |
+| JD12 | Tickets du coordonnateur affichés « coordination », pas comme charge personnelle | Franck 28 oct. : Personne_14 porte 24 / 29 tickets de S19 par coordination | Les compter comme sa charge | — |
+| JD13 | Points = équipe par item ; charge personne = sous-tâches | Franck 28 oct. : la tâche parente est assignée au coordonnateur et groomée par l'équipe ; les personnes portent les sous-tâches | Points par assigné de la tâche parente (lecture du matin) | Personne_14 portait 101 pts / 24 tickets en S19 : artefact du flux, pas une charge. Règle : demander le flux de travail réel avant de choisir l'unité de charge |
+| JD14 | Sous-tâches transcrites par un sous-agent puis recoupées par 2 comptes JQL | 286 lignes : une transcription à la main dans le fil principal coûte cher et se trompe ; le recoupement par count prouve le brut | Comptes JQL par personne (≈ 30 appels par sprint) | Recoupement 28 oct. : 186 Terminé et 49 ouvertes en S19, identiques |
+| JR1 | Réel du travail = sprints des tickets des épopées | GOU21-9199 n'a ni start date ni due date ni fixVersion (lecture 28 oct.) ; le champ Sprint porte les dates de chaque sprint ; 2 appels suffisent (calendrier + tickets) | Dates d'épopée · `listJiraIssueChangelogs` par ticket (1 appel par ticket) | — |
+| JR2 | `stat_jira.fenetre_reelle`, pas `item` | `stat_jira` est déjà l'entité « lue dans Jira » ; écrire dans `item` aurait réécrit la provenance Smartsheet de l'item (limite K3) | `item.fenetre_reelle` | — |
+| JR3 | Sprint futur daté par déduction | Jira ne date pas S20 / S21 ; même règle que l'adaptateur sprints (S20 = 9 → 27 nov. déjà en base) | Laisser non daté (barre réelle sans fin planifiée) | Fin de sprint à 04:00Z = minuit EDT : prise d'abord comme le 7 nov. au lieu du 6 → `jusqu_au` décalé d'un jour ; corrigé (minuit local = veille), testé |
+| JR4 | Garde-fou périmètre | Réponse Franck : tout n'est pas estimé au début ; le total de tickets qui monte explique un % qui baisse | Rien (un % qui baisse serait lu comme un recul) | — |
+
+## v4 (R36, 2026-10-28)
+
+Voir `05_Pilotage/Cadence_Rafraichissement_v1_Annexe_Motifs.md` M8, M10 (mode équipe, réel conservé).
+
+## v5 (R32–R35, 2026-10-28)
+
+Voir `02_Modele/Modele_Canonique_v7_Annexe_Motifs.md` M42–M44.
+
+## v6 (K12, K13, 2026-10-29)
+
+| # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
+|---|---|---|---|---|
+| J-K13 | Supprimer les charges non relues des sprints lus | Une sous-tâche sortie d'un sprint continuait de compter (Jean-Daniel, Sandy en S20) ; accord permanent de Franck | Mettre à zéro · demander à chaque fois | La règle « jamais supprimer » sans purge laisse la charge gonfler à chaque replanification |
+| J-K12 | Id stable quand un assigné rejoint l'équipe | L'id passait du nom Jira à l'id d'équipe : doublon à la lecture suivante | Supprimer l'ancien enregistrement | Jean-Daniel resté « hors équipe » le 28 oct. |

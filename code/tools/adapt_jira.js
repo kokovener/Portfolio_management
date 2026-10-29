@@ -187,8 +187,13 @@ if (require.main === module) {
   const base = { sprints: readDir(path.join(baseDir, 'sprints')), meps: readDir(path.join(baseDir, 'meps')) };
   const vp = path.join(baseDir, 'versions.json');
   const versions = fs.existsSync(vp) ? JSON.parse(fs.readFileSync(vp, 'utf8')) : {};
-  const ledgers = ledgerPs.map((p) => parseLedger(fs.readFileSync(p, 'utf8'), p));
+  // A ledger not written yet (Monday 7h runs before the daily briefing that creates the week's ledger) is skipped
+  // with a signal; at least one ledger must exist, otherwise MEP dates would silently fall back to Jira only.
+  const present = ledgerPs.filter((p) => fs.existsSync(p)); const missing = ledgerPs.filter((p) => !fs.existsSync(p));
+  if (!present.length) { console.error('refused: no ledger found among ' + ledgerPs.join(', ')); process.exit(2); }
+  const ledgers = present.map((p) => parseLedger(fs.readFileSync(p, 'utf8'), p));
   const { doc, writes, report } = adapt(raw, base, versions, ledgers);
+  missing.forEach((p) => report.signals.push({ kind: 'ledger_absent', row: path.basename(p), texte: `ledger ${path.basename(p)} absent à la lecture (écrit par le briefing quotidien) — semaine lue sans lui` }));
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'doc.json'), JSON.stringify(doc, null, 2));
   fs.writeFileSync(path.join(outDir, 'batch.json'), JSON.stringify(writes, null, 1));

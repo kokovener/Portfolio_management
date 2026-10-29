@@ -208,41 +208,5 @@
         "lu_le": "2026-10-27T15:40-04:00"
       }
     }
-  ],
-  "charges": [
-    {
-      "id": "feed.expertg1.w1027.pm",
-      "item": "feed.expertg1",
-      "periode": {
-        "type": "semaine",
-        "ref": "2026-10-26"
-      },
-      "role": "pm",
-      "personne": "team.kowalczyk-franck",
-      "mode": "wip",
-      "valeur": 1,
-      "source": {
-        "systeme": "saisie",
-        "lu_le": "2026-10-27T15:40-04:00",
-        "par": "Franck"
-      }
-    },
-    {
-      "id": "feed.expertg1.w1027.archi",
-      "item": "feed.expertg1",
-      "periode": {
-        "type": "semaine",
-        "ref": "2026-10-26"
-      },
-      "role": "architecte",
-      "personne": "team.personne-09",
-      "mode": "wip",
-      "valeur": 1,
-      "source": {
-        "systeme": "saisie",
-        "lu_le": "2026-10-27T15:40-04:00",
-        "par": "Franck"
-      }
-    }
   ]
 }

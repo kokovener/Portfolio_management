@@ -1,0 +1,69 @@
+# Portefeuille PLQ — Kickoff v2
+
+> Sortie du brainstorming du 2026-10-27 · Owner : Franck · Motifs : `Portefeuille_PLQ_Kickoff_v2_Annexe_Motifs.md` · **v2 2026-10-28 : D7 révisée (volet flux abandonné, Franck R23 R24 R28)** · Prompt : `Portefeuille_PLQ_Prompt_Initial_v1.md`
+
+## 1. Décisions actées
+
+| # | Sujet | Décision |
+|---|---|---|
+| D1 | Type de projet | **Cowork** : dossier local + CLAUDE.md + connecteurs + tâches planifiées |
+| D2 | Stockage | Base de l'artefact (capacité `db`) · bascule Smartsheet si > 50–100 items ou si un 2e éditeur apparaît |
+| D3 | Éditeurs | Franck seul (interface Gérer + conversation Claude) · architecte = source lue (son JSON / artefact), jamais éditeur |
+| D4 | Grain | Items et jalons, jamais tâches · test : « peut-on répondre oui / non à une date ? » = jalon ; « combien de temps ? » = tâche · ex. « Gestion des codes de taxes » = item promu, ses jalons = pré-lecture CDP, décision CDP, BRD validé, MEP · Goutte 2.1 lu au grain L + items promus par Franck (entité ou sujet transverse) · aucune écriture du portefeuille dans une source |
+| D5 | Horizon et grille | 3 mois glissants · grille en semaines · sprints GOU21 en surcouche |
+| D6 | Voies | Scrum (dev GOU21) et Flux (PM, architecte, analystes) sur la même grille |
+| D7 | Capacité | Scrum = jours-personne par sprint − absences Outlook − réserve run (15 % par défaut, réglable) · charge Jira = points d'équipe par item, sous-tâches par personne · **v2 : volet Flux (WIP saisi par personne) abandonné le 2026-10-28** · aucune heure saisie |
+| D8 | Santé | Rouge : jalon dépassé, ou risque ≥ 15, ou fraîcheur > 14 j · Jaune : risque ≥ 10, ou attente de tiers > 5 j ouvrés · Vert sinon · calculée, jamais déclarée |
+| D9 | Étapes et priorité | Idée · Qualifié · Planifié · Actif · Terminé · priorité = valeur + urgence − effort (chacun 1–5), risque affiché à côté |
+| D10 | Périmètre v0 | Goutte 2.1 (L actifs = phase ≠ Backlog et ≠ Done) + Expert G1 + Run TI + 2 projets saisis à la main |
+| D11 | Sources v0 | Smartsheet Goutte21_Master · Jira GOU21 (sprints, versions = MEP), SDD + PLQ (run), JSM STG21 (support, par extranet) · artefacts projet via bloc feed · Outlook (absences des personnes de Team_G2.1) · Miro (cadre « Actions » du dernier board de rétro) |
+| D12 | Artefacts projet | Lisibles seulement via un bloc feed au modèle canonique ; Franck ajoute le bloc à ses propres artefacts (préparation de source, pas écriture du portefeuille) ; le JSON de l'architecte est lu tel que livré |
+| D13 | Vue livrée en premier | Équipe (digest Teams du lundi) · CDP et auditeur en v1 |
+| D14 | Ordre de construction | Mise en place → modèle canonique (gelé) → interface → adaptateurs → tâche du lundi → 1re semaine réelle |
+| D15 | Reporté | Import Excel candidats · vues CDP / auditeur · budget heures · écriture Jira (epic auto) |
+| D16 | Dépendances | Entre items et entre jalons, typées (bloque · alimente · attend), y compris vers un livrable de l'architecte (feed) · un prédécesseur qui recule met le successeur en alerte · visibles sur la ligne de l'item et dans la fiche |
+| D17 | Support extranets | Item « Run — Extranets » lu dans JSM STG21 par extranet (10) : ouverts, âge, tendance · même board que l'artefact « Triage Supportg2 Stg21 » |
+| D18 | MEP | Ligne « MEP planifiées » sur la grille (losanges datés) + liste dans la vue sprint · source : versions / tickets MEP Jira (GOU21, SDD, PLQ), recoupés avec le ledger |
+| D19 | Actions de rétro | Carte « Actions de la rétro » dans la vue sprint, lue dans le cadre « Actions » du dernier board Miro (skill retro-sprint-g21) · mise à jour par la tâche du lundi et par une skill lancée après chaque rétro |
+| D20 | Droits | Artefact partagé en lecture (niveau « interact ») à l'équipe · règles `db` : écriture réservée au niveau owner (Franck) ; un 2e éditeur = passage au niveau admin, jamais par personne · l'interface masque Gérer quand `user.canEdit()` est faux · pas de droit par ligne (limite assumée) |
+
+## 2. Mise en place (étape 0, avant le prompt)
+
+| # | Action |
+|---|---|
+| 1 | Créer `C:\Users\fkowalczyk\OneDrive - Les producteurs de lait du Québec\Documents\Claude\Portefeuille_PLQ\` avec `01_Cadrage/ 02_Modele/ 03_Interface/ 04_Adaptateurs/ 05_Pilotage/ _Outils/ CLAUDE.md` |
+| 2 | Y copier : ce kickoff, l'annexe motifs, le prompt initial, `Portefeuille_PLQ_Flux_v2.drawio`, le dossier `maquettes/` → `01_Cadrage/` · `_v0` et `_v1.drawio` → `01_Cadrage/_Archives/` |
+| 3 | Créer `C:\Users\fkowalczyk\Projets_Dev\Portefeuille_PLQ\` (code : page HTML, scripts feed, tests) |
+| 4 | CLAUDE.md : règles Goutte 2.1 (`_vN`, `_Archives/`, jeu de caractères, suppression = accord explicite, heure EDT) + règles produit §4 |
+| 5 | Ouvrir la session Cowork sur `Portefeuille_PLQ\` et attacher aussi `…\Documents\Claude\Goutte2.1\` (lecture) et `Projets_Dev\Portefeuille_PLQ\` |
+| 6 | Connecteurs actifs : Smartsheet · Atlassian · Microsoft 365 · Miro · Artifact · Scheduled tasks · skills `suivi-planifie` (patron de la tâche, à adapter : identifiants = URL de l'artefact), `risk-scoring-standard`, `archive-versions`, `maj-triage-stg21` (structure du board support), `retro-sprint-g21` (emplacement du cadre Actions) |
+
+## 3. Entrants
+
+| Entrant | Où |
+|---|---|
+| Flux v2 | `01_Cadrage/Portefeuille_PLQ_Flux_v2.drawio` |
+| Maquettes 3 vues | https://claude.ai/artifact/DSpedLCbm6enVxTz9cS9nd · copie locale `01_Cadrage/maquettes/project/*.dc.html` |
+| Plan Goutte 2.1 | `Goutte2.1/05_Gestion_Projet/Planification/Plan_Reinit_Goutte21_v7.md` §2, §11, §12 (R7, R8), §13.4, §16 |
+| Équipe, rôles, absences à lire | `Goutte2.1/01_Gouvernance/Team_G2.1_v1.xlsx` |
+| Ledger hebdo (run visible) | `Goutte2.1/Daily_Brief/_ledger/2026-W44.md` |
+| Smartsheet | `Goutte21_Master` 230627583414148 · `Jalons_Entites` 2733930749841284 |
+| Jira | GOU21 (sprints, versions MEP) · SDD · PLQ · JSM STG21 (champ ou étiquette « extranet » à confirmer via `maj-triage-stg21`) |
+| Miro | Dernier board de rétro (gabarit d'équipe, cadre « Actions du sprint suivant ») |
+| Codes de taxes (exemple d'item promu) | `Goutte2.1/01_Gouvernance/Comites/Codes_Taxes_Pre-read_CDP_v1.docx` + `Codes_Taxes_4_Scenarios_v1.pptx` |
+| Artefact feed exemple | « Expert G1 — Gantt S1 » https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg |
+| Design system | https://claude.ai/artifact/SW339XsDhEpz696xhonAC1 |
+| Canal Teams du digest | [à nommer par Franck avant l'étape 4] |
+
+## 4. Règles produit (CLAUDE.md du projet)
+
+| Règle | Énoncé |
+|---|---|
+| Source de vérité | Le portefeuille ne modifie jamais Smartsheet, Jira, Outlook, ni un artefact source |
+| Grain | Un item = programme, projet ou run ; on suit des jalons, jamais des tâches |
+| Santé et fraîcheur | D8 ; un item sans mise à jour depuis 14 j passe en alerte |
+| Capacité | D7 |
+| Feed | `<script type="application/json" id="portfolio-feed">` au modèle canonique ; absent → ignoré et signalé dans le digest |
+| Instantanés | Chaque lundi, instantané daté écrit avant tout recalcul ; jamais supprimé |
+| Données personnelles | Rien de `Recrutements/` n'entre dans la base ni dans un digest |
+| Livrables | Quoi seulement, deux écrans ; motifs dans `*_Annexe_Motifs.md` ; relecture sous-agent avant toute décision livrée |

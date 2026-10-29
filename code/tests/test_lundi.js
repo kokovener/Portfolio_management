@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Monday run tests. Usage: node tests/test_lundi.js <base_export_dir> <schema.json>
- * base_export_dir = a full ArtifactData export (13 collections). Works in a temp dir; never touches the db.
+ * base_export_dir = a full ArtifactData export (16 collections, e.g. dist/passages/2026-10-29-jeudi-1302/base_avant). Works in a temp dir; never touches the db.
  */
 'use strict';
 const fs = require('fs');
@@ -59,6 +59,9 @@ ok('fmtLocal: EDT before Nov 1, EST after, never UTC', () => {
 function week(date, ts, mutate, prevDir) {
   const rd = path.join(tmp, 'runs', date); fs.mkdirSync(rd, { recursive: true });
   cp(baseDir, path.join(rd, 'base_apres'));
+  // Week 1 must be a first run whatever the live export holds: drop its Monday snapshots (real base has snap.2026-10-27)
+  const ins = path.join(rd, 'base_apres', 'instantanes');
+  if (!prevDir && fs.existsSync(ins)) fs.readdirSync(ins).filter((f) => /^snap\./.test(f)).forEach((f) => fs.rmSync(path.join(ins, f)));
   if (prevDir) cp(path.join(prevDir, 'base_apres', 'instantanes'), path.join(rd, 'base_apres', 'instantanes'));
   const s = run('snapshot', path.join(rd, 'base_apres'), date, ts, path.join(rd, 'snap'), schemaP); assert.strictEqual(s.status, 0, s.stderr);
   const snap = JSON.parse(fs.readFileSync(path.join(rd, 'snap', 'batch.json'), 'utf8'))[0].data;
@@ -91,13 +94,29 @@ ok('digest week 2: new alert flagged, health change vs previous snapshot', () =>
 });
 ok('digest: Tuesday rerun vs previous Monday, nothing new = short message (silence rule)', () => {
   const par = path.join(tmp, 'calme'); const a = path.join(par, '2026-10-26'); const rd = path.join(par, '2026-11-02');
-  fs.mkdirSync(a, { recursive: true }); fs.copyFileSync(path.join(w1.rd, 'alertes.json'), path.join(a, 'alertes.json'));
+  // Previous alerts = the same base on the rerun day, so a live wait crossing 5 working days overnight is not "new"
+  const Core = require('../interface/core.js');
+  fs.mkdirSync(a, { recursive: true });
+  fs.writeFileSync(path.join(a, 'alertes.json'), JSON.stringify({ alertes: Core.alertes(Core.publicBase(L.loadBase(path.join(w1.rd, 'base_apres'))), '2026-11-03') }));
   fs.mkdirSync(rd, { recursive: true }); cp(path.join(w1.rd, 'base_apres'), path.join(rd, 'base_apres'));
   fs.writeFileSync(path.join(rd, 'statut.json'), JSON.stringify({ adaptateurs: [{ nom: 'smartsheet', statut: 'ok' }] }));
   const r = run('digest', rd, '2026-11-03', '2026-11-03T07:03-05:00', 'https://claude.ai/artifact/X', path.join(rd, 'd.md'), path.join(rd, 'm.html'));
   assert.strictEqual(r.status, 0, r.stderr);
   const m = fs.readFileSync(path.join(rd, 'm.html'), 'utf8');
   assert(/dont 0 nouvelle/.test(m) && /Rien de nouveau/.test(m) && !/<ul>/.test(m), m);
+});
+ok('digest: previous alerts recomputed with today\'s rules when the previous export is kept (rule change ≠ all new)', () => {
+  const par = path.join(tmp, 'regles'); const a = path.join(par, '2026-10-26'); const rd = path.join(par, '2026-11-02');
+  fs.mkdirSync(a, { recursive: true }); cp(path.join(w1.rd, 'base_apres'), path.join(a, 'base_apres'));
+  fs.writeFileSync(path.join(a, 'alertes.json'), JSON.stringify({ alertes: [{ kind: 'ancienne_regle', item: null, texte: 'texte d\'avant R44' }] }));
+  fs.mkdirSync(rd, { recursive: true }); cp(path.join(w1.rd, 'base_apres'), path.join(rd, 'base_apres'));
+  fs.writeFileSync(path.join(rd, 'statut.json'), JSON.stringify({ adaptateurs: [{ nom: 'smartsheet', statut: 'ok' }] }));
+  const r = run('digest', rd, '2026-11-02', '2026-11-02T07:03-05:00', 'u', path.join(rd, 'd.md'), path.join(rd, 'm.html'));
+  assert.strictEqual(r.status, 0, r.stderr);
+  const al = JSON.parse(fs.readFileSync(path.join(rd, 'alertes.json'), 'utf8')).alertes;
+  const neuves = al.filter((x) => x.nouvelle).map((x) => x.texte);
+  // only alerts that depend on the day (working-day counters crossing a threshold between 26 Oct. and 2 Nov.) may be new
+  assert(neuves.length < al.length, 'every alert flagged new: previous alerts were not recomputed');
 });
 ok('digest: snap_sources.json = one pinned update with sources_ok / sources_total only', () => {
   const u = JSON.parse(fs.readFileSync(path.join(w1.rd, 'snap_sources.json'), 'utf8'));

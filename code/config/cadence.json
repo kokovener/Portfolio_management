@@ -1,0 +1,37 @@
+{
+  "_doc": "Cadence de rafraîchissement (R36, décisions Franck 2026-10-28). Cadrage : Portefeuille_PLQ/05_Pilotage/Cadence_Rafraichissement_v1.md. Modifier ici, jamais dans le code.",
+  "sprint": { "ancre": "2026-11-09", "duree_j": 21 },
+  "ordre": ["smartsheet", "outlook_equipe", "outlook", "jira", "jira_data", "jira_data_reel", "artefacts", "miro"],
+  "remplace": { "jira_data_reel": ["jira_data"], "outlook": ["outlook_equipe"] },
+  "passages": {
+    "lundi": { "tache": "portefeuille-plq-lundi", "heure": "07:00", "jours": [1],
+      "adaptateurs": ["smartsheet", "jira", "jira_data_reel", "artefacts", "miro"],
+      "debut_sprint": ["outlook"], "instantane": true, "digest": true, "teams": true },
+    "quotidien": { "tache": "portefeuille-plq-quotidien", "heure": "09:00", "jours": [1, 2, 3, 4, 5],
+      "adaptateurs": ["jira", "jira_data"], "par_jour": { "3": ["artefacts"] },
+      "instantane": false, "digest": false, "teams": false },
+    "jeudi": { "tache": "portefeuille-plq-jeudi", "heure": "13:00", "jours": [4],
+      "adaptateurs": ["smartsheet"], "instantane": false, "digest": false, "teams": false }
+  },
+  "demande": {
+    "equipe": ["outlook_equipe", "jira_data"],
+    "sprint": ["jira", "jira_data"],
+    "smartsheet": ["smartsheet"],
+    "absences": ["outlook"],
+    "feeds": ["artefacts"],
+    "retro": ["miro"],
+    "reel": ["jira", "jira_data_reel"]
+  },
+  "blocs": [
+    { "ref": "B1", "nom": "Sprint : items, sous-tâches, points, capacité", "adaptateurs": ["jira_data", "outlook"], "cible": { "jira_data": { "jours_ouvres": 1 }, "outlook": { "jours": 21 } } },
+    { "ref": "B2", "nom": "Support extranets", "adaptateurs": ["jira_data"], "cible": { "jira_data": { "jours_ouvres": 1 } } },
+    { "ref": "B3", "nom": "MEP · sprints", "adaptateurs": ["jira"], "cible": { "jira": { "jours_ouvres": 1 } } },
+    { "ref": "B4", "nom": "Gantt prévu, phases, gates", "adaptateurs": ["smartsheet"], "cible": { "smartsheet": { "jours": 7 } } },
+    { "ref": "B5", "nom": "Réel Jira (sprints des épopées)", "adaptateurs": ["jira_data_reel"], "cible": { "jira_data_reel": { "jours": 7 } } },
+    { "ref": "B6", "nom": "Équipe", "adaptateurs": ["outlook_equipe"], "cible": {} },
+    { "ref": "B7", "nom": "Absences", "adaptateurs": ["outlook"], "cible": { "outlook": { "jours": 21 } } },
+    { "ref": "B8", "nom": "Actions de rétro", "adaptateurs": ["miro"], "cible": { "miro": { "jours": 21 } } },
+    { "ref": "B9", "nom": "Feeds d'artefacts", "adaptateurs": ["artefacts"], "cible": { "artefacts": { "jours": 5 } } }
+  ],
+  "par": { "smartsheet": "adaptateur-smartsheet", "outlook": "adaptateur-outlook", "outlook_equipe": "adaptateur-outlook", "jira": "adaptateur-jira", "jira_data": "adaptateur-jira-data", "jira_data_reel": "adaptateur-jira-data", "artefacts": "adaptateur-artefacts", "miro": "adaptateur-miro" }
+}

@@ -25,10 +25,10 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   let n = 0; const ok = (m) => { n++; console.log('ok  ' + m); };
   const { w, d, errors } = await open();
   const txt = () => d.querySelector('#app').textContent;
-  assert(/Base : 45 enregistrements/.test(txt()), 'seed loaded'); ok('portefeuille: base loaded (45 records)');
+  assert(/Base : 43 enregistrements/.test(txt()), 'seed loaded'); ok('portefeuille: base loaded (43 records; 2 WIP charges removed with D7 flux, v8)');
   ['L8D Paie Transporteur', 'Expert G1 — graphe de connaissance', 'Gestion des codes de taxes', 'Run TI — G1, IIS, extranets', 'Run G2.1 — support extranets']
     .forEach((nm) => assert(txt().includes(nm), nm));
-  assert(/Décision CDP/.test(txt()) && /dépendance/.test(txt())); ok('portefeuille: 4 examples + alerts (recul, dépendance)');
+  assert(/Décision CDP/.test(txt()) && /j ouvrés/.test(txt())); ok('portefeuille: 4 examples + alerts (recul chain with its successors, R44)');
   assert(d.querySelectorAll('.ms').length >= 8 && d.querySelectorAll('.bar').length >= 3); ok('portefeuille: timeline diamonds and bars');
   // R07 accordion: children closed by default, a toggle opens them; R08: no charge block on the portfolio
   const rowL8D = () => d.querySelector('.tl [data-act="open-item"][data-id="goutte21.l8d"]');
