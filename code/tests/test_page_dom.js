@@ -7,13 +7,13 @@
 'use strict';
 const fs = require('fs');
 const assert = require('assert');
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require('jsdom'); const frozenClock = require('./frozen_clock');
 const html = fs.readFileSync(process.argv[2], 'utf8');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function open(query) {
   const errors = [];
-  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://local.test/' + (query || ''), pretendToBeVisual: true });
+  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://local.test/' + (query || ''), pretendToBeVisual: true, beforeParse: frozenClock() });
   dom.window.addEventListener('error', (e) => errors.push(e.message));
   dom.window.scrollTo = () => {};
   await sleep(150);
@@ -29,7 +29,7 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   ['L8D Paie Transporteur', 'Expert G1 — graphe de connaissance', 'Gestion des codes de taxes', 'Run TI — G1, IIS, extranets', 'Run G2.1 — support extranets']
     .forEach((nm) => assert(txt().includes(nm), nm));
   assert(/Décision CDP/.test(txt()) && /j ouvrés/.test(txt())); ok('portefeuille: 4 examples + alerts (recul chain with its successors, R44)');
-  assert(d.querySelectorAll('.ms').length >= 8 && d.querySelectorAll('.bar').length >= 3); ok('portefeuille: timeline diamonds and bars');
+  /* U11: merged diamonds count their badge */ assert([...d.querySelectorAll('.ms')].reduce((k, m) => k + (m.nextElementSibling && m.nextElementSibling.classList.contains('msn') ? +m.nextElementSibling.textContent : 1), 0) >= 8 && d.querySelectorAll('.bar').length >= 3); ok('portefeuille: timeline diamonds and bars');
   // R07 accordion: children closed by default, a toggle opens them; R08: no charge block on the portfolio
   const rowL8D = () => d.querySelector('.tl [data-act="open-item"][data-id="goutte21.l8d"]');
   const tgL8 = d.querySelector('.tg[data-act="toggle"][data-id="goutte21.l8"]');
@@ -39,8 +39,11 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   click(w, d.querySelector('[data-act="expand-all"]')); await sleep(20);
 
   click(w, d.querySelector('[data-act="open-item"][data-id="feed.expertg1"]')); await sleep(20);
-  assert(/Jalons · 8 \(dont 5 faits\)/.test(txt()) && /P1 — valeur 4/.test(txt()) && /santé calculée : jaune/.test(txt())); ok('projet Expert G1: 8 jalons, P1, jaune');
-  assert(d.querySelector('form[data-form="item"]'), 'gerer visible'); ok('projet: Gérer visible when canEdit');
+  assert(/Jalons · 8 \(dont 5 faits\)/.test(txt()) && /P1 — valeur 4/.test(txt()) && d.querySelector('.bnr.jaune') /* U14 banner */); ok('projet Expert G1: 8 jalons, P1, jaune');
+  // U15: Gérer opens in a modal from « Modifier »
+  assert(!d.querySelector('form[data-form="item"]') && d.querySelector('[data-act="modal"]'), 'Modifier button, no inline form');
+  click(w, d.querySelector('[data-act="modal"]')); await sleep(10);
+  assert(d.querySelector('.modal[role="dialog"] form[data-form="item"]'), 'gerer visible'); ok('projet: Gérer in a modal (Modifier) when canEdit');
 
   click(w, d.querySelector('[data-act="open-sprint"]')); await sleep(20);
   assert(/S19/.test(txt()) && /Items dans le sprint/.test(txt())); ok('sprint view renders (S19 actif)');
@@ -51,6 +54,7 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   click(w, d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
   click(w, d.querySelector('[data-act="expand-all"]')); await sleep(20);
   click(w, [...d.querySelectorAll('[data-act="open-item"]')].find((a) => a.dataset.id === 'goutte21.l8d')); await sleep(20);
+  click(w, d.querySelector('[data-act="modal"]')); await sleep(10);
   const f = d.querySelector('form[data-form="item"]');
   f.querySelector('[name="note_lundi"]').value = 'Test étape 2 — saisie Gérer';
   f.dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true })); await sleep(100);
@@ -76,7 +80,7 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   // read-only mode
   const ro = await open('?ro');
   click(ro.w, ro.d.querySelector('[data-act="open-item"][data-id="feed.expertg1"]')); await sleep(20);
-  assert(!ro.d.querySelector('form[data-form]') && !ro.d.querySelector('[data-act="new-item"]') && /lecture seule/.test(ro.d.querySelector('#app').textContent));
+  assert(!ro.d.querySelector('form[data-form]') && !ro.d.querySelector('[data-act="modal"]') && !ro.d.querySelector('[data-act="new-item"]') && /lecture seule/.test(ro.d.querySelector('#app').textContent));
   ok('read-only: Gérer and + Ajouter hidden');
   console.log(`\n${n} DOM checks OK`);
 })().catch((e) => { console.error('FAIL', e.message); process.exit(1); });

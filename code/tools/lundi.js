@@ -111,9 +111,9 @@ function cmdSnapshot([baseDir, date, prisLe, outDir, schemaP]) {
 // ---------- digest ----------
 const ORDRE = ['recul', 'jalon', 'bloque', 'risque', 'attente', 'mep', 'fraicheur', 'phase']; // R44 (2026-10-29)
 const REGLE = { recul: 'Recul ≥ 5 j o. et ce qu\'il entraîne', jalon: 'Jalon dépassé', bloque: 'Bloqués du sprint', risque: 'Risque ≥ 15', attente: 'Attente > 5 j o.', mep: 'MEP ≤ 7 j sans « prêt »', fraicheur: 'Fraîcheur : ni Smartsheet ni Jira depuis > 15 j o.', phase: 'Phase vide' };
-const ADAPT = { smartsheet: 'Smartsheet', jira: 'Jira', jira_data: 'Jira (data)', jira_data_reel: 'Jira (data + réel)', artefacts: 'Artefacts', outlook: 'Outlook', outlook_equipe: 'Outlook (équipe)', miro: 'Miro' };
+const ADAPT = { smartsheet: 'Smartsheet', jira: 'Jira', jira_data: 'Jira (data)', jira_data_reel: 'Jira (data + réel)', artefacts: 'Artefacts', outlook: 'Outlook', outlook_equipe: 'Outlook (équipe)', miro: 'Miro', gantt: 'Gantt' };
 // Signals Franck asked to see first (prompt step 4), then the rest grouped by kind.
-const PRIO_SIG = ['feed_ignore', 'echeance_passee', 'action_non_relue', 'absence_non_relue', 'personne_non_relue', 'hors_annuaire',
+const PRIO_SIG = ['feed_ignore', 'gantt_ignore', 'gantt_double', 'gantt_perime', 'gantt_jalon_ecart', 'jalon_disparu', 'plan_ancien', 'echeance_passee', 'action_non_relue', 'absence_non_relue', 'personne_non_relue', 'hors_annuaire',
   'demi_journee_illisible', 'parti', 'mep_passee', 'mep_sans_date', 'recul', 'conflit'];
 
 // Signal kinds already shown as an alert (same fact twice is noise).
@@ -353,12 +353,19 @@ function cmdDigest(args) {
 }
 
 // ---------- versions / writes helpers ----------
+// Single exception rule shared by every command that reads a batch (versions, writes):
+// only Jira-data charges not re-read may be deleted (rule K13, standing consent Franck 2026-10-29).
+function isK13Purge(w) { return w.op === 'delete' && w.purge === 'K13' && w.collection === 'charges' && /^jira\./.test(w.doc_id); }
 function cmdVersions([avant, ...batches]) {
   if (!avant) usage();
   const v = JSON.parse(fs.readFileSync(avant, 'utf8'));
   batches.forEach((b) => JSON.parse(fs.readFileSync(b, 'utf8')).forEach((w) => {
     const k = `${w.collection}/${w.doc_id}`;
-    if (w.op === 'delete') fail(`refused: ${b} holds a delete — never applied by the Monday run`);
+    if (w.op === 'delete') {
+      if (!isK13Purge(w)) fail(`refused: ${b} holds a delete — never applied by the Monday run`);
+      delete v[k]; // purged doc: a later re-creation starts again at version 1
+      return;
+    }
     v[k] = (k in v) ? v[k] + 1 : 1;
   }));
   process.stdout.write(JSON.stringify(v, null, 0) + '\n');
@@ -372,9 +379,9 @@ function cmdWrites([batchP, outDir, from, to]) {
   const win = (p) => { const a = path.resolve(p); return a.startsWith(src) ? dst + a.slice(src.length).replace(/\//g, '\\') : a; };
   fs.mkdirSync(outDir, { recursive: true });
   const writes = batch.map((w, k) => {
-    // Only deletion ever allowed: Jira-data charges not re-read (rule K13, standing consent Franck 2026-10-29)
+    // Only deletion ever allowed: K13 purge (see isK13Purge)
     if (w.op === 'delete') {
-      if (!(w.purge === 'K13' && w.collection === 'charges' && /^jira\./.test(w.doc_id))) fail(`refused: ${batchP} holds a delete`);
+      if (!isK13Purge(w)) fail(`refused: ${batchP} holds a delete`);
       const o = { op: 'delete', collection: w.collection, doc_id: w.doc_id }; if (w.if_version) o.if_version = w.if_version; return o;
     }
     const f = path.join(outDir, `${String(k).padStart(3, '0')}_${w.collection}_${w.doc_id}.json`);

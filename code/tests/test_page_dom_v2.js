@@ -4,13 +4,13 @@
  *        NODE_PATH=<jsdom dir> node tests/test_page_dom_v2.js /tmp/p2.html
  */
 'use strict';
-const fs = require('fs'); const assert = require('assert'); const { JSDOM } = require('jsdom');
+const fs = require('fs'); const assert = require('assert'); const { JSDOM } = require('jsdom'); const frozenClock = require('./frozen_clock');
 const html = fs.readFileSync(process.argv[2], 'utf8');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const S_same = () => true; // rows compared are siblings of the same section in the seed
 (async () => {
   const errors = [];
-  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://local.test/', pretendToBeVisual: true });
+  const dom = new JSDOM(html, { runScripts: 'dangerously', url: 'https://local.test/', pretendToBeVisual: true, beforeParse: frozenClock() });
   dom.window.addEventListener('error', (e) => errors.push(e.message)); dom.window.scrollTo = () => {};
   await sleep(150);
   const w = dom.window; const d = w.document; const txt = () => d.querySelector('#app').textContent;
@@ -24,7 +24,8 @@ const S_same = () => true; // rows compared are siblings of the same section in 
   const a = d.querySelector('a[href="https://jira-plq.atlassian.net/browse/GOU21-9199"]'); assert(a && a.target === '_blank', 'epic link');
   ok('projet: Data Jira card (R10) with clickable epic (R02)');
 
-  // R02 Gérer: epics field saved, normalised
+  // R02 Gérer: epics field saved, normalised (U15: in the « Modifier » modal)
+  click(d.querySelector('[data-act="modal"]')); await sleep(10);
   const f = d.querySelector('form[data-form="item"]'); f.querySelector('[name="epics_jira"]').value = 'gou21-9199;  GOU21-11067';
   f.dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true })); await sleep(120);
   assert(d.querySelector('a[href$="GOU21-11067"]'), 'epic saved'); ok('gerer: epics_jira saved, upper-cased, deduplicated (R02)');
@@ -39,6 +40,7 @@ const S_same = () => true; // rows compared are siblings of the same section in 
     assert(!d.querySelector('[data-act="open-item"][data-id="saisie.codes-taxes"]') && /vue visiteur/.test(txt()) && !d.querySelector('[data-act="new-item"]') && !d.querySelector('[data-act="drag"]'), 'visitor: hidden item gone, no edit');
     click(d.querySelector('[data-act="visitor"]')); await sleep(20);
     click(d.querySelector('[data-act="open-item"][data-id="saisie.codes-taxes"]')); await sleep(20);
+    click(d.querySelector('[data-act="modal"]')); await sleep(10);
     const h = d.querySelector('form[data-form="item"]'); h.querySelector('[name="visible"]').checked = true; h.dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true })); await sleep(120);
     assert(!/masqué/.test(d.querySelector('h1').textContent), 'shown again'); }
   ok('gerer: item hidden from visitors, visitor view toggle, shown again (R37 R38)');
@@ -49,6 +51,7 @@ const S_same = () => true; // rows compared are siblings of the same section in 
   click(d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
   const ssId = [...d.querySelectorAll('[data-act="open-item"]')].map((x) => x.dataset.id).find((id) => /^goutte21\.l/.test(id));
   click(d.querySelector(`[data-act="open-item"][data-id="${ssId}"]`)); await sleep(20);
+  click(d.querySelector('[data-act="modal"]')); await sleep(10);
   const f2 = d.querySelector('form[data-form="item"]');
   assert(f2 && !f2.querySelector('select[name="voie"]') && !f2.querySelector('select[name="etape"]') && f2.querySelector('input[type=hidden][name="etape"]') && /lu dans Smartsheet/.test(f2.textContent), 'read-only étape/voie');
   ok(`projet: plain nature label (R31); étape / voie read from Smartsheet on ${ssId} (R30)`);
@@ -101,13 +104,17 @@ const S_same = () => true; // rows compared are siblings of the same section in 
   // R40: owner marks a retro action done, then reopens it; only statut changes
   { const b = d.querySelector('[data-act="retro"][data-st="fait"]'); assert(b, 'Faite button'); const id = b.dataset.id;
     click(b); await sleep(40);
-    const r = d.querySelector(`[data-act="retro"][data-id="${id}"]`); assert.strictEqual(r.dataset.st, 'a_faire'); assert.strictEqual(r.textContent, 'Rouvrir');
+    const r = d.querySelector(`[data-act="retro"][data-id="${id}"]`); assert.strictEqual(r.dataset.st, 'a_faire'); assert.strictEqual(r.textContent, 'rouvrir'); /* U21: discreet link */
     click(r); await sleep(40); assert.strictEqual(d.querySelector(`[data-act="retro"][data-id="${id}"]`).dataset.st, 'fait', 'reopened'); }
   ok('sprint: retro action Faite / Rouvrir by the owner (R40)');
   click(d.querySelector('[data-act="open-sprint"][data-id="jira.gou21-s19"]')); await sleep(20);
   assert(/Capacité · sous-tâches par personne/.test(txt()) && !/Préparation · backlog/.test(txt()), 'current view unchanged');
   assert(/Aucun ticket de support dans ce sprint/.test(txt()) && /1 dans S20/.test(txt()), 'R33 support S19');
-  assert(/Bloqués dans le sprint · 2/.test(txt()) && /GOU21-10591/.test(txt()) && /Personne_13/.test(txt()), 'R27 bis blocked in sprint');
+  // U22: the blocked sub-task folds under its blocked parent (counter), unfolded on click
+  assert(/Bloqués dans le sprint · 1 \(\+ 1 sous-tâche\)/.test(txt()) && !/GOU21-10591/.test(txt()), 'U22 folded');
+  click(d.querySelector('[data-act="toggle"][data-id="blq:GOU21-9698"]')); await sleep(20);
+  assert(/GOU21-10591/.test(txt()) && /Personne_13/.test(txt()), 'R27 bis blocked in sprint');
+  click(d.querySelector('[data-act="toggle"][data-id="blq:GOU21-9698"]')); await sleep(20);
   { const left = d.querySelectorAll('.main2 > .side')[0]; const eb = [...left.querySelectorAll(':scope > .card .eyebrow')].map((e) => e.textContent.split(' · ')[0]);
     assert.deepStrictEqual(eb.slice(0, 3), ['Items dans le sprint', 'Bloqués dans le sprint', 'Capacité'], 'order ' + eb); }
   ok('sprint: support tickets of the sprint with STG21 links, others summarised (R33)');

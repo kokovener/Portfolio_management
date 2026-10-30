@@ -1,0 +1,2198 @@
+{
+ "modele": "15",
+ "source": {
+  "systeme": "calcul",
+  "ref": "seed étape 2 = fusion des 5 exemples de l'étape 1",
+  "lu_le": "2026-10-27T17:10-04:00",
+  "par": "build_seed.js"
+ },
+ "items": [
+  {
+   "id": "goutte21",
+   "nom": "Programme Goutte 2.1",
+   "type": "programme",
+   "parent": null,
+   "voie": "scrum",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   },
+   "updated_at": "2026-10-27T15:40-04:00"
+  },
+  {
+   "id": "goutte21.l8",
+   "nom": "L8 Paies",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "actif",
+   "promu": false,
+   "pct_avancement": 2,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6026558968889220",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-10-27T15:40-04:00"
+  },
+  {
+   "id": "goutte21.l8d",
+   "nom": "L8D Paie Transporteur",
+   "type": "projet",
+   "parent": "goutte21.l8",
+   "voie": "scrum",
+   "etape": "actif",
+   "promu": false,
+   "pct_avancement": 3,
+   "phase_source": "AF / UX",
+   "responsable": "Franck Kowalczyk",
+   "priorite": {
+    "valeur": 5,
+    "urgence": 4,
+    "effort": 4,
+    "score": 5
+   },
+   "contenu_sprint": "AF-2 · UX-2 validation client · gate AC-4",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6709259052973956",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-10-27T15:40-04:00",
+   "epics_jira": [
+    "GOU21-9604"
+   ]
+  },
+  {
+   "id": "feed.expertg1",
+   "nom": "Expert G1 — graphe de connaissance",
+   "type": "projet",
+   "parent": null,
+   "voie": "flux",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "fenetre": {
+    "debut": "2026-10-22",
+    "fin": "2026-11-20"
+   },
+   "pct_avancement": 62.5,
+   "priorite": {
+    "valeur": 4,
+    "urgence": 4,
+    "effort": 2,
+    "score": 6
+   },
+   "liens": [
+    {
+     "libelle": "Gantt S1",
+     "url": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg"
+    }
+   ],
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-27T07:00-04:00",
+    "par": "feed"
+   },
+   "updated_at": "2026-10-27T07:00-04:00",
+   "sante": {
+    "couleur": "jaune",
+    "motifs": [
+     "risque feed.expertg1.r1 = 12 (≥ 10)"
+    ],
+    "calcule_le": "2026-10-27T07:00-04:00"
+   }
+  },
+  {
+   "id": "run.ti",
+   "nom": "Run TI — G1, IIS, extranets",
+   "type": "run",
+   "parent": null,
+   "voie": "flux",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Personne_14",
+   "source": {
+    "systeme": "jira",
+    "ref": "SDD, PLQ",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-jira"
+   },
+   "updated_at": "2026-10-27T15:40-04:00"
+  },
+  {
+   "id": "run.extranets",
+   "nom": "Run G2.1 — support extranets",
+   "type": "run",
+   "parent": "goutte21",
+   "voie": "flux",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Personne_14",
+   "support": [
+    {
+     "extranet": "Interprovince",
+     "ouverts": 4,
+     "age_moyen_j": 6,
+     "plus_vieux_j": 21,
+     "tendance": 2
+    },
+    {
+     "extranet": "Producteurs",
+     "ouverts": 2,
+     "tendance": 0
+    },
+    {
+     "extranet": "Transporteurs",
+     "ouverts": 2,
+     "tendance": 0
+    },
+    {
+     "extranet": "Transformateurs",
+     "ouverts": 1,
+     "tendance": -1
+    }
+   ],
+   "source": {
+    "systeme": "saisie",
+    "ref": "chiffres de la maquette — remplacés par la lecture JSM STG21 à l'étape 3",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   },
+   "updated_at": "2026-10-27T15:40-04:00"
+  },
+  {
+   "id": "saisie.codes-taxes",
+   "nom": "Gestion des codes de taxes",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "flux",
+   "etape": "planifie",
+   "promu": true,
+   "responsable": "Franck Kowalczyk",
+   "priorite": {
+    "valeur": 4,
+    "urgence": 3,
+    "effort": 2,
+    "score": 5
+   },
+   "liens": [
+    {
+     "libelle": "Pré-read CDP v1",
+     "url": "file:///Goutte2.1/01_Gouvernance/Comites/Codes_Taxes_Pre-read_CDP_v1.docx"
+    },
+    {
+     "libelle": "4 scénarios v1",
+     "url": "file:///Goutte2.1/01_Gouvernance/Comites/Codes_Taxes_4_Scenarios_v1.pptx"
+    }
+   ],
+   "note_lundi": "Recommandation S2 (import + écran de visualisation) ; décision CDP attendue",
+   "source": {
+    "systeme": "saisie",
+    "ref": "Gérer",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   },
+   "updated_at": "2026-10-27T15:40-04:00",
+   "epics_jira": [
+    "GOU21-9199"
+   ]
+  },
+  {
+   "id": "saisie.methane-p2",
+   "nom": "Méthane P2",
+   "type": "projet",
+   "parent": null,
+   "voie": "scrum",
+   "etape": "actif",
+   "promu": false,
+   "responsable": "Personne_11",
+   "epics_jira": [
+    "GOU21-7732"
+   ],
+   "fenetre": {
+    "debut": "2026-10-05",
+    "fin": "2027-01-15"
+   },
+   "updated_at": "2026-10-29T10:16-04:00",
+   "source": {
+    "systeme": "saisie",
+    "ref": "skill ajout-projet-portefeuille",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "Franck"
+   }
+  }
+ ],
+ "jalons": [
+  {
+   "id": "goutte21.l8d.gate-ac4",
+   "item": "goutte21.l8d",
+   "nom": "Gate AC-4 GO Dev",
+   "date": "2026-11-14",
+   "date_initiale": "2026-11-14",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "ref": "Smartsheet n'a pas de jalon au grain L : saisi dans Gérer, à confirmer"
+   }
+  },
+  {
+   "id": "feed.expertg1.j1",
+   "item": "feed.expertg1",
+   "nom": "J1 : début de construction",
+   "date": "2026-10-22",
+   "statut": "fait",
+   "fait_le": "2026-10-22",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.parseurs",
+   "item": "feed.expertg1",
+   "nom": "Parseurs SQL · VB6 · C# · SSRS conformes",
+   "date": "2026-10-24",
+   "date_initiale": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-24",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.q1",
+   "item": "feed.expertg1",
+   "nom": "1re question au graphe (engagement 4 nov.)",
+   "date": "2026-10-26",
+   "date_initiale": "2026-11-04",
+   "statut": "fait",
+   "fait_le": "2026-10-26",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.resumes",
+   "item": "feed.expertg1",
+   "nom": "Décision résumés : B définitif",
+   "date": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-27",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.aivosto",
+   "item": "feed.expertg1",
+   "nom": "Aivosto : non-achat",
+   "date": "2026-10-27",
+   "statut": "fait",
+   "fait_le": "2026-10-27",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.validateurs",
+   "item": "feed.expertg1",
+   "nom": "Validateurs confirmés (Alain, Marc-André)",
+   "date": "2026-11-04",
+   "date_initiale": "2026-11-04",
+   "statut": "a_risque",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.pilote-doc",
+   "item": "feed.expertg1",
+   "nom": "Pilote couche doc v0.3 + dossier de validation",
+   "date": "2026-11-04",
+   "statut": "en_cours",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.go-nogo",
+   "item": "feed.expertg1",
+   "nom": "Go / no-go pilote + couche doc",
+   "date": "2026-11-11",
+   "date_initiale": "2026-11-11",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "saisie.codes-taxes.preread",
+   "item": "saisie.codes-taxes",
+   "nom": "Pré-lecture CDP envoyée",
+   "date": "2026-06-09",
+   "statut": "fait",
+   "fait_le": "2026-06-09",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "saisie.codes-taxes.decision-cdp",
+   "item": "saisie.codes-taxes",
+   "nom": "Décision CDP (scénario retenu)",
+   "date": "2026-12-04",
+   "date_initiale": "2026-11-20",
+   "statut": "a_risque",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "saisie.codes-taxes.brd",
+   "item": "saisie.codes-taxes",
+   "nom": "BRD validé",
+   "date": "2026-12-18",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "saisie.codes-taxes.mep",
+   "item": "saisie.codes-taxes",
+   "nom": "MEP",
+   "date": "2027-01-22",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "saisie.methane-p2.gantt.phase-ii.acceptation-en-prep-client",
+   "item": "saisie.methane-p2",
+   "nom": "Acceptation en PREP (client) — Phase II",
+   "date": "2027-01-07",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "sharepoint",
+    "ref": "https://plq.sharepoint.com/sites/TeamRocket-Projets/Documents%20partages/M%C3%A9thane/methane-gantt.drawio",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "adaptateur-gantt"
+   }
+  },
+  {
+   "id": "saisie.methane-p2.gantt.phase-ii.mise-en-production-apres-acceptation",
+   "item": "saisie.methane-p2",
+   "nom": "Mise en production après acceptation — Phase II",
+   "date": "2027-01-08",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "sharepoint",
+    "ref": "https://plq.sharepoint.com/sites/TeamRocket-Projets/Documents%20partages/M%C3%A9thane/methane-gantt.drawio",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "adaptateur-gantt"
+   }
+  },
+  {
+   "id": "saisie.methane-p2.gantt.corrections-phase-i.acceptation-en-prep-client",
+   "item": "saisie.methane-p2",
+   "nom": "Acceptation en PREP (client) — Corrections phase I",
+   "date": "2027-01-13",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "sharepoint",
+    "ref": "https://plq.sharepoint.com/sites/TeamRocket-Projets/Documents%20partages/M%C3%A9thane/methane-gantt.drawio",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "adaptateur-gantt"
+   }
+  },
+  {
+   "id": "saisie.methane-p2.gantt.corrections-phase-i.mise-en-production-apres-acceptation",
+   "item": "saisie.methane-p2",
+   "nom": "Mise en production après acceptation — Corrections phase I",
+   "date": "2027-01-14",
+   "statut": "a_venir",
+   "source": {
+    "systeme": "sharepoint",
+    "ref": "https://plq.sharepoint.com/sites/TeamRocket-Projets/Documents%20partages/M%C3%A9thane/methane-gantt.drawio",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "adaptateur-gantt"
+   }
+  }
+ ],
+ "risques": [
+  {
+   "id": "goutte21.l8.r-visibilite",
+   "item": "goutte21.l8",
+   "titre": "Manque de visibilité long terme suite au départ de François",
+   "probabilite": 4,
+   "impact": 4,
+   "score": 16,
+   "ouvert": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6026558968889220/Top risque",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-smartsheet"
+   }
+  },
+  {
+   "id": "feed.expertg1.r1",
+   "item": "feed.expertg1",
+   "titre": "Validateurs non confirmés avant le 4 nov. → go/no-go glisse",
+   "probabilite": 4,
+   "impact": 3,
+   "score": 12,
+   "mitigation": "Relance Alain / Marc-André cette semaine",
+   "ouvert": true,
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.r2",
+   "item": "feed.expertg1",
+   "titre": "Inventaire Access / Excel / extranets incomplet au 30 oct.",
+   "probabilite": 3,
+   "impact": 2,
+   "score": 6,
+   "mitigation": "Périmètre réduit aux 5 écrans du pilote",
+   "ouvert": true,
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "attentes": [
+  {
+   "id": "feed.expertg1.a1",
+   "item": "feed.expertg1",
+   "tiers": "DBA",
+   "objet": "DDL FPLQEntrepot + Mirroring.TBLMAPPINGS",
+   "attendue_le": "2026-10-28",
+   "recue_le": null,
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.a2",
+   "item": "feed.expertg1",
+   "tiers": "Architecte",
+   "objet": "CollecteLait, S7120 encore déployés ?",
+   "attendue_le": "2026-10-28",
+   "recue_le": null,
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "feed.expertg1.a3",
+   "item": "feed.expertg1",
+   "tiers": "DBA",
+   "objet": "Rapports déployés, tables Web*, colonnes absentes",
+   "attendue_le": "2026-10-30",
+   "recue_le": null,
+   "source": {
+    "systeme": "artefact",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "run.bitbucket.a1",
+   "item": "run.ti",
+   "tiers": "Personne_09",
+   "objet": "Validation de la bascule des repos vers Bitbucket Cloud",
+   "attendue_le": "2026-10-26",
+   "recue_le": null,
+   "source": {
+    "systeme": "ledger",
+    "ref": "2026-W44.md#2026-10-26 BLOQ",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "dependances": [
+  {
+   "id": "dep.adr-taxes-vers-decision-cdp",
+   "type": "bloque",
+   "de": {
+    "kind": "livrable",
+    "id": "feed.archi.adr-codes-taxes"
+   },
+   "vers": {
+    "kind": "jalon",
+    "id": "saisie.codes-taxes.decision-cdp"
+   },
+   "note": "Le CDP tranche sur l'option seulement avec l'ADR de l'intermédiaire ERP",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "dep.taxes-alimente-l8d",
+   "type": "alimente",
+   "de": {
+    "kind": "item",
+    "id": "saisie.codes-taxes"
+   },
+   "vers": {
+    "kind": "item",
+    "id": "goutte21.l8d"
+   },
+   "note": "Les taux de taxe alimentent la facturation de la paie transporteur",
+   "source": {
+    "systeme": "saisie",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  }
+ ],
+ "livrables": [
+  {
+   "id": "feed.archi.adr-codes-taxes",
+   "nom": "ADR codes de taxes (intermédiaire de communication ERP)",
+   "date": "2026-11-28",
+   "date_initiale": "2026-11-14",
+   "statut": "a_risque",
+   "responsable": "Personne_09",
+   "source": {
+    "systeme": "artefact",
+    "ref": "feed architecte (à brancher à l'étape 3)",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "meps": [
+  {
+   "id": "jira.sdd-2981",
+   "date": "2026-10-23",
+   "ticket": "SDD-2981",
+   "systeme": "G1",
+   "libelle": "Inactivation d'unités de production",
+   "statut": "planifiee",
+   "item": "run.ti",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "systeme": "ledger",
+    "ref": "2026-W44.md#2026-10-26",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "jira.plq-9437",
+   "date": "2026-10-26",
+   "ticket": "PLQ-9437",
+   "systeme": "IIS (G20, G21, Extranets)",
+   "libelle": "Migration serveurs IIS test QA vers Windows Core",
+   "statut": "planifiee",
+   "item": "run.ti",
+   "responsable": "Personne_04",
+   "source": {
+    "systeme": "ledger",
+    "ref": "2026-W44.md#2026-10-26",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "jira.gou21-11323",
+   "date": "2026-10-26",
+   "ticket": "GOU21-11323",
+   "systeme": "Extranet (cluster dev)",
+   "libelle": "Décommissionnement instances Extranet cluster dev",
+   "statut": "completee",
+   "item": "run.extranets",
+   "responsable": "Personne_04",
+   "source": {
+    "systeme": "ledger",
+    "ref": "2026-W44.md#2026-10-27",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "jira.gou21-11325",
+   "date": "2026-10-26",
+   "ticket": "GOU21-11325",
+   "systeme": "G2.1",
+   "libelle": "Correction association région - secrétaire de région",
+   "statut": "planifiee",
+   "item": "goutte21",
+   "source": {
+    "systeme": "ledger",
+    "ref": "2026-W44.md#2026-10-27",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "charges": [
+  {
+   "id": "goutte21.l8d.s20.dev",
+   "item": "goutte21.l8d",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s20"
+   },
+   "role": "dev",
+   "mode": "jours_personne",
+   "valeur": 10,
+   "source": {
+    "systeme": "saisie",
+    "ref": "valeur posée (maquette) — remplacée par le calcul Jira + absences à l'étape 3",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck"
+   }
+  },
+  {
+   "id": "run.ti.s19.dev",
+   "item": "run.ti",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s19"
+   },
+   "role": "dev",
+   "mode": "jours_personne",
+   "valeur": 4.5,
+   "source": {
+    "systeme": "calcul",
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "réserve run 15 % de 30 j"
+   }
+  },
+  {
+   "id": "jira.s19.equipe.saisie-codes-taxes",
+   "item": "saisie.codes-taxes",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s19"
+   },
+   "role": "dev",
+   "nom": "Équipe",
+   "mode": "points",
+   "valeur": 46,
+   "tickets": 14,
+   "sans_points": 1,
+   "source": {
+    "systeme": "jira",
+    "ref": "fixture",
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  },
+  {
+   "id": "jira.s19.equipe.goutte21",
+   "item": "goutte21",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s19"
+   },
+   "role": "dev",
+   "nom": "Équipe",
+   "mode": "points",
+   "valeur": 31,
+   "tickets": 6,
+   "sans_points": 0,
+   "source": {
+    "systeme": "jira",
+    "ref": "fixture",
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  },
+  {
+   "id": "jira.s19.personne-04.saisie-codes-taxes",
+   "item": "saisie.codes-taxes",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s19"
+   },
+   "role": "dev",
+   "personne": "team.personne-04",
+   "mode": "taches",
+   "valeur": 6,
+   "faites": 2,
+   "en_cours": 1,
+   "source": {
+    "systeme": "jira",
+    "ref": "fixture",
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  },
+  {
+   "id": "jira.s19.testeur-externe.saisie-codes-taxes",
+   "item": "saisie.codes-taxes",
+   "periode": {
+    "type": "sprint",
+    "ref": "jira.gou21-s19"
+   },
+   "role": "dev",
+   "nom": "Testeur Externe",
+   "mode": "taches",
+   "valeur": 4,
+   "faites": 1,
+   "en_cours": 2,
+   "source": {
+    "systeme": "jira",
+    "ref": "fixture",
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  }
+ ],
+ "sprints": [
+  {
+   "id": "jira.gou21-s19",
+   "nom": "G2.1 - S19",
+   "debut": "2026-10-20",
+   "fin": "2026-11-02",
+   "etat": "actif",
+   "jours_ouvres": 10,
+   "reserve_run_pct": 15,
+   "source": {
+    "systeme": "jira",
+    "ref": "board 38 / sprint 71",
+    "lu_le": "2026-10-27T15:40-04:00"
+   },
+   "objectif": "Terminer le sprint"
+  },
+  {
+   "id": "jira.gou21-s20",
+   "nom": "G2.1 - S20",
+   "debut": "2026-11-03",
+   "fin": "2026-11-16",
+   "etat": "futur",
+   "jours_ouvres": 10,
+   "reserve_run_pct": 15,
+   "source": {
+    "systeme": "jira",
+    "ref": "board 38 (dates déduites de S19 + 14 j, à confirmer à l'étape 3)",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "personnes": [
+  {
+   "id": "team.kowalczyk-franck",
+   "nom": "Franck Kowalczyk",
+   "role": "pm",
+   "voie": "flux",
+   "source": {
+    "systeme": "saisie",
+    "ref": "Team_G2.1_v1.xlsx",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "team.personne-09",
+   "nom": "Personne_09",
+   "role": "architecte",
+   "voie": "flux",
+   "source": {
+    "systeme": "saisie",
+    "ref": "Team_G2.1_v1.xlsx",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "team.personne-14",
+   "nom": "Personne_14",
+   "role": "coordo",
+   "voie": "flux",
+   "source": {
+    "systeme": "saisie",
+    "ref": "Team_G2.1_v1.xlsx",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  },
+  {
+   "id": "team.personne-04",
+   "nom": "Personne_04",
+   "role": "dev",
+   "voie": "scrum",
+   "source": {
+    "systeme": "saisie",
+    "ref": "Team_G2.1_v1.xlsx",
+    "lu_le": "2026-10-27T15:40-04:00"
+   }
+  }
+ ],
+ "instantanes": [
+  {
+   "id": "instantane.2026-10-27",
+   "date": "2026-10-27",
+   "pris_le": "2026-10-27T07:00-04:00",
+   "sources_ok": 1,
+   "sources_total": 5,
+   "items": [
+    {
+     "item": "feed.expertg1",
+     "etape": "actif",
+     "sante": "jaune",
+     "pct_avancement": 62.5,
+     "jalons_faits": 5,
+     "jalons_total": 8,
+     "risques_ouverts": 2,
+     "prochain_jalon": "2026-11-04",
+     "resume": "62 % · jaune · 2 risques"
+    }
+   ],
+   "source": {
+    "systeme": "calcul",
+    "ref": "tache-lundi",
+    "lu_le": "2026-10-27T07:00-04:00",
+    "par": "tache-lundi"
+   }
+  }
+ ],
+ "stats_jira": [
+  {
+   "id": "jira.stat.saisie.codes-taxes",
+   "item": "saisie.codes-taxes",
+   "epics": [
+    "GOU21-9199"
+   ],
+   "tickets": {
+    "total": 49,
+    "faits": 17,
+    "en_cours": 15,
+    "a_faire": 17
+   },
+   "sprint": {
+    "ref": "jira.gou21-s19",
+    "tickets": 14,
+    "faits": 4,
+    "points": 46,
+    "points_faits": 11
+   },
+   "source": {
+    "systeme": "jira",
+    "ref": "parent in (GOU21-9199)",
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  }
+ ],
+ "listes_jira": [
+  {
+   "id": "jira.liste.preparation",
+   "nature": "preparation",
+   "tickets": [
+    {
+     "cle": "GOU21-9889",
+     "titre": "[E-Producteur P2]  - Proaction - Affichage des sites d'exploitations en fin d'activité dans le sélecteur ",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 1,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-5946"
+    },
+    {
+     "cle": "GOU21-9983",
+     "titre": "Historiser tous changements des attributs des grilles de taxes",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 2,
+     "sprints": [],
+     "epic": "GOU21-9604",
+     "item": "goutte21.l8d1.1.3"
+    },
+    {
+     "cle": "GOU21-10412",
+     "titre": "Extranet Région - Liste des rappels - Demande de changement sur le tri de la colonne date de rappel  ",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 3,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "points": 1,
+     "epic": "GOU21-5466",
+     "item": "run.extranets"
+    },
+    {
+     "cle": "GOU21-11145",
+     "titre": "Requis plateforme - Toutes les validations front doivent être lancées à la sortie du champ, sauf pour la règle \"champ obligatoire\"",
+     "statut": "PrêtPourSprint🚀",
+     "type": "Story",
+     "rang": 4,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "points": 3,
+     "epic": "GOU21-9934",
+     "item": "goutte21.l0"
+    },
+    {
+     "cle": "GOU21-11335",
+     "titre": "Lorsque je supprime une période existante, la mauvaise période est sélectionnée lorsque j'enregistre",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Bug",
+     "rang": 5,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11051",
+     "titre": "Valider les périodes début et fin de taxes immédiatement plutôt qu'à l'enregistrement",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 6,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11244",
+     "titre": "Composante générique - Recherche par période",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 7,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9934",
+     "item": "goutte21.l0"
+    },
+    {
+     "cle": "GOU21-11336",
+     "titre": "Requis plateforme - Bouton Effacer les critères : Ne pas lancer la recherche au clic du bouton",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 8,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11251",
+     "titre": "Requis plateforme - Rendre tous les critères de recherche effaçables (\"clearable\")",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 9,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11237",
+     "titre": "Requis plateforme - Désactiver le bouton \"Lancer la recherche\" si les critères n'ont pas été modifiés depuis la dernière recherche",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 10,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11157",
+     "titre": "Requis plateforme - Réviser tous les messages et libellés pour appliquer les règles d'espacement du guide de l'office québécois",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 11,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11277",
+     "titre": "File d'exécution – Page de recherche",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 12,
+     "sprints": [],
+     "epic": "GOU21-11067"
+    },
+    {
+     "cle": "GOU21-11281",
+     "titre": "File d'exécution – Mise en file (modale)",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 13,
+     "sprints": [],
+     "epic": "GOU21-11067"
+    },
+    {
+     "cle": "GOU21-11286",
+     "titre": "Historique – Page de recherche",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 14,
+     "sprints": [],
+     "epic": "GOU21-11067"
+    },
+    {
+     "cle": "GOU21-11289",
+     "titre": "Historique – Détail d'une exécution",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Tâche",
+     "rang": 15,
+     "sprints": [],
+     "epic": "GOU21-11067"
+    },
+    {
+     "cle": "GOU21-11359",
+     "titre": "Requis plateforme - Rétablir le panneau réduit si je clique sur un item de la liste",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 16,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11366",
+     "titre": "Requis plateforme - Ajouter le nom du code de taxes au titre du panneau réduit",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 17,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-11375",
+     "titre": "Multiselect - Ne pas réafficher la dernière recherche lorsque j'ouvre le menu",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 18,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9934",
+     "item": "goutte21.l0"
+    },
+    {
+     "cle": "GOU21-11382",
+     "titre": "Panneaux - Gérer la dimension par orientation",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Story",
+     "rang": 19,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-9934",
+     "item": "goutte21.l0"
+    },
+    {
+     "cle": "GOU21-11316",
+     "titre": "ExInterprovinces- L'impression affiche les totaux en double lignes",
+     "statut": "PrêtPourGrooming✅",
+     "type": "Bug",
+     "rang": 20,
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "epic": "GOU21-5466",
+     "item": "run.extranets"
+    }
+   ],
+   "source": {
+    "systeme": "jira",
+    "ref": "getJiraBoardIssueData board 38 · project = GOU21 AND status in (10020, 10021) AND issuetype not in subTaskIssueTypes() ORDER BY Rank ASC · lu 2026-10-28T20:43-04:00",
+    "lu_le": "2026-10-28T16:20-04:00",
+    "par": "adaptateur-jira-data"
+   }
+  },
+  {
+   "id": "jira.liste.support",
+   "nature": "support",
+   "source": {
+    "systeme": "jira",
+    "ref": "test",
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data"
+   },
+   "tickets": [
+    {
+     "cle": "GOU21-10412",
+     "titre": "Extranet Région - tri date de rappel",
+     "categorie": "new",
+     "extranet": "Région",
+     "stg21": [
+      "STG21-226"
+     ],
+     "sprints": [
+      "jira.gou21-s20"
+     ],
+     "cree_le": "2026-07-27"
+    },
+    {
+     "cle": "GOU21-10413",
+     "titre": "[FE] Extranet Région - tri",
+     "categorie": "indeterminate",
+     "extranet": "Région",
+     "stg21": [
+      "STG21-226"
+     ],
+     "cree_le": "2026-07-27"
+    }
+   ]
+  },
+  {
+   "id": "jira.liste.bloques",
+   "nature": "bloques",
+   "source": {
+    "systeme": "jira",
+    "ref": "test",
+    "lu_le": "2026-10-29T09:55-04:00",
+    "par": "adaptateur-jira-data"
+   },
+   "tickets": [
+    {
+     "cle": "GOU21-9698",
+     "titre": "Rechercher un code de taxes",
+     "type": "Story",
+     "sous_tache": false,
+     "sprints": [
+      "jira.gou21-s19"
+     ],
+     "assigne": "Personne_14",
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    },
+    {
+     "cle": "GOU21-10591",
+     "titre": "[FE] - Rechercher un code de taxes",
+     "type": "Sous-Tâche Dev",
+     "sous_tache": true,
+     "parent": "GOU21-9698",
+     "sprints": [
+      "jira.gou21-s19"
+     ],
+     "assigne": "Personne_13",
+     "epic": "GOU21-9199",
+     "item": "saisie.codes-taxes"
+    }
+   ]
+  }
+ ],
+ "actions_retro": [
+  {
+   "id": "miro.t1",
+   "board": "b",
+   "texte": "Action S19 de test",
+   "statut": "a_faire",
+   "sprint": "jira.gou21-s19",
+   "source": {
+    "systeme": "miro",
+    "ref": "test",
+    "lu_le": "2026-10-28T10:00-04:00",
+    "par": "adaptateur-miro"
+   }
+  }
+ ],
+ "gantts": [
+  {
+   "id": "gantt.saisie.methane-p2",
+   "item": "saisie.methane-p2",
+   "format": "drawio",
+   "empreinte": "8a659a5b2e36a58d276053a282ebaa8b0e72913ed7e8f6e08fda2df80160cff5",
+   "onglets": [
+    {
+     "nom": "Phase II",
+     "debut": "2026-10-05",
+     "fin": "2027-01-08",
+     "groupes": [
+      {
+       "nom": "ANALYSE FONCTIONNELLE — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Figer les règles de calcul de la phase II",
+         "debut": "2026-10-16",
+         "fin": "2026-10-16",
+         "ref": "P2-AN1"
+        }
+       ]
+      },
+      {
+       "nom": "ARCHITECTE — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Remettre le contrat d'API et le kit de démarrage à l…",
+         "debut": "2026-10-14",
+         "fin": "2026-10-14",
+         "ref": "P2-KIT"
+        },
+        {
+         "nom": "Attestra — contrat de données de l'inventaire et règ…",
+         "debut": "2026-10-20",
+         "fin": "2026-10-21",
+         "ref": "P2-AN3"
+        },
+        {
+         "nom": "commun.domaine — traiter les messages de calcul Méth…",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "ref": "P2-SEQ"
+        },
+        {
+         "nom": "MsSecurite — permission de modification de la page…",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "ref": "P2-PERM"
+        },
+        {
+         "nom": "Moteur de calcul Méthane — prouver la parité avec…",
+         "debut": "2026-11-25",
+         "fin": "2026-11-27",
+         "ref": "P1C-PARI"
+        },
+        {
+         "nom": "Inventaire d'Attestra — lecture planifiée par msB2B,…",
+         "debut": "2026-11-30",
+         "fin": "2026-12-03",
+         "ref": "P2-ATT"
+        }
+       ]
+      },
+      {
+       "nom": "BACKEND — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Domaine Extranet Producteur — DTO, routes, droit et…",
+         "debut": "2026-10-19",
+         "fin": "2026-10-19",
+         "ref": "P2-DOM"
+        },
+        {
+         "nom": "Calcul Méthane de la phase II — tables, paramètres v…",
+         "debut": "2026-10-22",
+         "fin": "2026-10-28",
+         "ref": "P2-MOT"
+        },
+        {
+         "nom": "Moteur de calcul Méthane — porter le rattachement…",
+         "debut": "2026-10-29",
+         "fin": "2026-11-02",
+         "ref": "P1C-RATT"
+        },
+        {
+         "nom": "Habileté à calculer le lait corrigé pour le gras et…",
+         "debut": "2026-11-03",
+         "fin": "2026-11-04",
+         "ref": "P2-LCGP"
+        },
+        {
+         "nom": "msb2b — socle B2B générique : messages du bus, enreg…",
+         "debut": "2026-11-05",
+         "fin": "2026-11-11",
+         "ref": "P2-B2B"
+        },
+        {
+         "nom": "Résultats de méthane de Lactanet — basculer la ré…",
+         "debut": "2026-11-12",
+         "fin": "2026-11-19",
+         "ref": "P2-B2BLAC"
+        },
+        {
+         "nom": "Moteur de calcul Méthane — porter les moyennes de…",
+         "debut": "2026-11-20",
+         "fin": "2026-11-24",
+         "ref": "P1C-MMOY"
+        },
+        {
+         "nom": "msb2b — épuration mensuelle des lots B2B de plus…",
+         "debut": "2026-11-25",
+         "fin": "2026-11-26",
+         "ref": "P2-B2BEPUR"
+        },
+        {
+         "nom": "Endpoint methane-centile-province — centiles 25 et…",
+         "debut": "2026-11-27",
+         "fin": "2026-11-30",
+         "ref": "P2-P2575"
+        },
+        {
+         "nom": "Endpoint methane-parametre-producteur — lire et enre…",
+         "debut": "2026-12-01",
+         "fin": "2026-12-03",
+         "ref": "P2-PAR"
+        },
+        {
+         "nom": "Calcul Méthane de la phase II — émissions mensuelles…",
+         "debut": "2026-12-04",
+         "fin": "2026-12-07",
+         "ref": "P2-EMI"
+        },
+        {
+         "nom": "Calcul Méthane de la phase II — rang centile mensue…",
+         "debut": "2026-12-08",
+         "fin": "2026-12-09",
+         "ref": "P2-RANG"
+        },
+        {
+         "nom": "Endpoint methane-tableau-bord — rang centile du mois…",
+         "debut": "2026-12-10",
+         "fin": "2026-12-11",
+         "ref": "P2-TDB"
+        },
+        {
+         "nom": "Habileté à calculer la moyenne des vaches en lactat…",
+         "debut": "2026-12-14",
+         "fin": "2026-12-14",
+         "ref": "P2-MPER"
+        },
+        {
+         "nom": "Endpoint methane-emission-troupeau — série mensuelle…",
+         "debut": "2026-12-15",
+         "fin": "2026-12-16",
+         "ref": "P2-TRP"
+        },
+        {
+         "nom": "Phase II Méthane — déployer en TEST pour la QA (pla…",
+         "debut": "2026-12-18",
+         "fin": "2026-12-18",
+         "ref": "P2-DEPT"
+        },
+        {
+         "nom": "Historique initial de la phase II — charger l'inven…",
+         "debut": "2026-12-21",
+         "fin": "2026-12-22",
+         "ref": "P2-HIST"
+        },
+        {
+         "nom": "Calcul et endpoints Méthane — correctifs backend is…",
+         "debut": "2026-12-23",
+         "fin": "2026-12-23",
+         "ref": "P2-CORR"
+        },
+        {
+         "nom": "Phase II Méthane — déployer en PREP pour l'acceptati…",
+         "debut": "2026-12-30",
+         "fin": "2027-01-05",
+         "ref": "P2-DEP"
+        }
+       ]
+      },
+      {
+       "nom": "BD / SQL — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "BDExtraProducteur — versionner la structure Méthane…",
+         "debut": "2026-10-19",
+         "fin": "2026-10-19",
+         "ref": "P1C-01"
+        },
+        {
+         "nom": "BDExtraProducteur — dédoublonner les tables Méthane,…",
+         "debut": "2026-10-20",
+         "fin": "2026-10-21",
+         "ref": "P1C-02"
+        },
+        {
+         "nom": "BDExtraProducteur — ajouter le pointeur Mirroring db…",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "ref": "P2-PTR"
+        },
+        {
+         "nom": "BDB2B — créer la base de staging B2B, ses cinq tab…",
+         "debut": "2026-10-23",
+         "fin": "2026-10-26",
+         "ref": "P2-B2BBD"
+        }
+       ]
+      },
+      {
+       "nom": "FRONTEND (ÉQUIPE UI) — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Finaliser l'UI Méthane de la phase II (i18n, impress…",
+         "debut": "2026-10-20",
+         "fin": "2026-11-05",
+         "ref": "P2-UIX"
+        },
+        {
+         "nom": "Hosts Producteur et Région — servir la version du dom…",
+         "debut": "2026-10-20",
+         "fin": "2026-10-20",
+         "ref": "UI-08"
+        },
+        {
+         "nom": "Graphique de la moyenne mobile — ajouter les lignes d…",
+         "debut": "2026-10-21",
+         "fin": "2026-10-21",
+         "ref": "UI-01"
+        },
+        {
+         "nom": "Tableau de bord méthane — carte du troupeau, jauge du…",
+         "debut": "2026-10-22",
+         "fin": "2026-10-26",
+         "ref": "UI-02"
+        },
+        {
+         "nom": "Graphique mensuel des émissions du troupeau par catég…",
+         "debut": "2026-10-27",
+         "fin": "2026-10-29",
+         "ref": "UI-03"
+        },
+        {
+         "nom": "Fenêtre modale « Modifier les paramètres du troupeau…",
+         "debut": "2026-10-30",
+         "fin": "2026-11-03",
+         "ref": "UI-04"
+        },
+        {
+         "nom": "Page méthane — textes FR/EN, mode sombre et affichage…",
+         "debut": "2026-11-04",
+         "fin": "2026-11-05",
+         "ref": "UI-05"
+        },
+        {
+         "nom": "Page méthane — retirer les données simulées et branch…",
+         "debut": "2026-12-17",
+         "fin": "2026-12-17",
+         "ref": "UI-06"
+        },
+        {
+         "nom": "Page méthane — correctifs issus de la validation en T…",
+         "debut": "2026-12-21",
+         "fin": "2026-12-21",
+         "ref": "UI-07"
+        }
+       ]
+      },
+      {
+       "nom": "QA EN TEST (INSTANCE DISTINCTE DE L'ASSISTANT IA, APPROBATION DE L'ARCHITECTE) — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "QA des calculs, du rendu et du flux B2B en TEST (rapp…",
+         "debut": "2026-12-23",
+         "fin": "2026-12-29",
+         "ref": "P2-QA"
+        }
+       ]
+      },
+      {
+       "nom": "VALIDATION ET MISE EN PRODUCTION",
+       "taches": [
+        {
+         "nom": "Acceptation en PREP (client)",
+         "debut": "2027-01-06",
+         "fin": "2027-01-07",
+         "jalon": true
+        },
+        {
+         "nom": "Mise en production après acceptation",
+         "debut": "2027-01-08",
+         "fin": "2027-01-08",
+         "jalon": true
+        },
+        {
+         "nom": "Gestion de projet",
+         "debut": "2026-10-14",
+         "fin": "2027-01-08"
+        }
+       ]
+      }
+     ],
+     "titre": "Méthane — phase II",
+     "sous_titre": "Dates calculées à partir des estimations, des dépendances et d'un développeur par rôle ; contour rouge = chemin critique",
+     "hors_planning": "P2-INT."
+    },
+    {
+     "nom": "Corrections phase I",
+     "debut": "2026-10-05",
+     "fin": "2027-01-15",
+     "groupes": [
+      {
+       "nom": "ANALYSE FONCTIONNELLE — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Mettre à jour la documentation de l'API B2B et les c…",
+         "debut": "2027-01-06",
+         "fin": "2027-01-06",
+         "ref": "P1C-17"
+        },
+        {
+         "nom": "Décider du sélecteur de site (granularité producteur…",
+         "debut": "2027-01-07",
+         "fin": "2027-01-07",
+         "ref": "P1C-19"
+        }
+       ]
+      },
+      {
+       "nom": "ARCHITECTE — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Compléter la validation B2B et limiter le volume (41…",
+         "debut": "2027-01-06",
+         "fin": "2027-01-06",
+         "ref": "P1C-12"
+        },
+        {
+         "nom": "Restreindre la portée du jeton B2B et durcir l'authe…",
+         "debut": "2027-01-07",
+         "fin": "2027-01-08",
+         "ref": "P1C-15"
+        },
+        {
+         "nom": "Retirer les secrets versionnés (msb2b, mssecurite, a…",
+         "debut": "2027-01-11",
+         "fin": "2027-01-11",
+         "ref": "P1C-16"
+        }
+       ]
+      },
+      {
+       "nom": "BACKEND — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Automatiser les tests de la phase I",
+         "debut": "2027-01-06",
+         "fin": "2027-01-06",
+         "ref": "P1C-18"
+        }
+       ]
+      },
+      {
+       "nom": "FRONTEND (ÉQUIPE UI) — 1 DÉV.",
+       "taches": [
+        {
+         "nom": "Afficher la note « Les résultats sont sujets à chang…",
+         "debut": "2027-01-06",
+         "fin": "2027-01-06",
+         "ref": "P1C-14"
+        }
+       ]
+      },
+      {
+       "nom": "VALIDATION ET MISE EN PRODUCTION",
+       "taches": [
+        {
+         "nom": "Acceptation en PREP (client)",
+         "debut": "2027-01-12",
+         "fin": "2027-01-13",
+         "jalon": true
+        },
+        {
+         "nom": "Mise en production après acceptation",
+         "debut": "2027-01-14",
+         "fin": "2027-01-14",
+         "jalon": true
+        }
+       ]
+      }
+     ],
+     "titre": "Méthane — corrections de la phase I",
+     "sous_titre": "Planifiées après la phase II ; P1C-01 et P1C-02, prérequis de la phase II, figurent dans l'onglet 1"
+    }
+   ],
+   "source": {
+    "systeme": "sharepoint",
+    "ref": "https://plq.sharepoint.com/sites/TeamRocket-Projets/Documents%20partages/M%C3%A9thane/methane-gantt.drawio",
+    "lu_le": "2026-10-29T10:16-04:00",
+    "par": "adaptateur-gantt"
+   },
+   "titre": "Méthane — phase II",
+   "fichier_modifie_le": "2026-10-28T10:10-04:00",
+   "calcule_le": "2026-10-14"
+  },
+  {
+   "id": "feed.expertg1.gantt",
+   "item": "feed.expertg1",
+   "format": "json",
+   "titre": "Expert G1 — Gantt S1 (phase locale)",
+   "empreinte": "6dee40706d548f808f3da30762c0d2a391e062745ac6ee310b50015eaef5f8dd",
+   "calcule_le": "2026-10-29",
+   "onglets": [
+    {
+     "nom": "S1 (phase locale)",
+     "debut": "2026-10-21",
+     "fin": "2026-11-20",
+     "groupes": [
+      {
+       "nom": "Démarrage",
+       "taches": [
+        {
+         "nom": "J0 : Linux + Neo4j sur le poste",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Clone Bitbucket des 36 dépôts GT1",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "fait": true
+        },
+        {
+         "nom": "Inventaire du code",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "fait": true
+        },
+        {
+         "nom": "DDL FPLQLait (export 2026-08-12)",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "J1 : début de construction",
+         "debut": "2026-10-22",
+         "fin": "2026-10-22",
+         "jalon": true,
+         "fait": true
+        }
+       ]
+      },
+      {
+       "nom": "Construction du graphe",
+       "taches": [
+        {
+         "nom": "Parseur SQL v1.1 (16 bases) — CONFORME ×2",
+         "debut": "2026-10-22",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Parseur VB6 v1.0 + mesure — CONFORME ×2",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Aivosto : non-achat (998 / 998 VB6 lus ≥ 90 %)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Parseur VB6 v1.1 (colonnes) — CONFORME ×2",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Parseur C# (tree-sitter) — CONFORME ×2",
+         "debut": "2026-10-23",
+         "fin": "2026-10-24",
+         "fait": true
+        },
+        {
+         "nom": "Parseur SSRS (90 rapports) — CONFORME ×2",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Réconciliation WBS ↔ code (173 / 177)",
+         "debut": "2026-10-23",
+         "fin": "2026-10-24",
+         "fait": true
+        },
+        {
+         "nom": "Parseur SQL v1.2 (vues, FROM (t1 JOIN…)) — CONFORME ×4",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "fait": true
+        },
+        {
+         "nom": "Texte du code dans le graphe (TexteCode)",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "fait": true
+        },
+        {
+         "nom": "Couverture + code mort v1.0 — CONFORME ×2 (WSL)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Décision : texte C# dans le graphe, sous réserve du dimensionnement",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Texte C# : dimensionnement (15,3 Mo, 177 lignes à secret)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Texte C# v1.0 + caviardage C# + couverture v1.1 : code livré",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "run_etape5.sh : DoD atteinte (corpus, texte ×2, couverture 9/9)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Correctifs C1-C4 + M2 : code livré (44487fe), C# morts 264",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "run_correctifs.sh : DoD atteinte (doc 151 / 155, C# morts 264)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Parseur C# v1.1 : SQL AppendCmdText → RequeteCS (5d89b17)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "run_m2.sh : DoD atteinte (M2 28 → 5, non-régression 0)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        }
+       ]
+      },
+      {
+       "nom": "Entrées attendues",
+       "taches": [
+        {
+         "nom": "DDL FPLQProducteur + 9 BDExtra (reçus)",
+         "debut": "2026-10-21",
+         "fin": "2026-10-21",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "DDL FPLQEntrepot + Mirroring.TBLMAPPINGS",
+         "debut": "2026-10-23",
+         "fin": "2026-10-28"
+        },
+        {
+         "nom": "Architecte : CollecteLait, S7120 encore déployés ?",
+         "debut": "2026-10-26",
+         "fin": "2026-10-28"
+        },
+        {
+         "nom": "DBA : rapports déployés, tables Web*, colonnes absentes",
+         "debut": "2026-10-26",
+         "fin": "2026-10-30"
+        },
+        {
+         "nom": "Inventaire Access / Excel / extranets",
+         "debut": "2026-10-22",
+         "fin": "2026-10-30"
+        },
+        {
+         "nom": "Choix des 5 écrans du pilote",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Clé API Anthropic (plafond 500 $)",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Sauvegarde du graphe : 1re faite, puis lundi 12:00 (planifiée)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        }
+       ]
+      },
+      {
+       "nom": "Usage par Claude",
+       "taches": [
+        {
+         "nom": "Connecteur MCP + import WBS (local)",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "fait": true
+        },
+        {
+         "nom": "1er test 5 questions : 1 juste, 3 incompl., 1 fausse",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "fait": true
+        },
+        {
+         "nom": "Skill fiche v1.0 → v1.1",
+         "debut": "2026-10-26",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "2e test 3 / 5 justes ; Q2-Q3 rejouées sans résumés",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Résumés S1332 (462, 6,20 $) + test 4 : Q2-Q3 incomplètes",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Décision résumés : B définitif (pas d'A ciblée)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "1re question au graphe (engagement 11-04)",
+         "debut": "2026-10-26",
+         "fin": "2026-10-26",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Skill g1-fiche v1.3 : doc + texte C#, 2 essais (E5, E6)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Skill g1-fiche : zone M2 (sql_accumule) ajoutée",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Skill g1-fiche v1.4 : M1-M7 + validation métier, 3 essais, enregistrée",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Remise en état du graphe : 0 réponse d'essai (5d259ff)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "B1 parseur C# v1.2 + B2 constat_metier : code livré (d4eb0f1)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Skill g1-fiche v1.4.1 (constat_metier, execution) enregistrée",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "run_b1b2.sh : DoD atteinte (ECRIT 45 → 44 = prévision, constats 21)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Essais skill Q4 (S3560) 7 / 7 + Q5 (S1332) 7 / 7 au 3e rejeu, skill v1.4.2",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Remise en état du graphe après l'essai Q5 : 0 réponse d'essai (MCP)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Skill g1-fiche v1.5.1 : 15 requêtes prêtes, ad hoc 0 (Q4 8 / 8, Q5 9 / 9)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Remise en état après les essais v1.5 : 0 réponse d'essai (MCP)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        }
+       ]
+      },
+      {
+       "nom": "Couche doc historique",
+       "taches": [
+        {
+         "nom": "Espaces, sites, epics + exclusions (A10-A13)",
+         "debut": "2026-10-22",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Collecte Jira / Confluence (API) / SharePoint",
+         "debut": "2026-10-22",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "5 écrans : assertions → confrontation (82, puis 175)",
+         "debut": "2026-10-23",
+         "fin": "2026-10-23",
+         "fait": true
+        },
+        {
+         "nom": "Chargement Neo4j (load_doc.py) + dates git",
+         "debut": "2026-10-26",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Lot doc ≤ 2019 : classé, extrait (851), +93 assertions",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "2 .af3 relus : sans texte utile",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Jeux d'essai score_ecrans / extraire_pilote",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Corpus doc2019 dans le graphe : 851 docs, 4 834 sections",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Pilote couche doc v0.3 (175) + 5 dossiers de validation",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Rejeu Neo4j pilote_v03 = run MCP (0 écart)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Relecture des réponses : lire_validation.py prêt, essai conforme",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "fait": true
+        },
+        {
+         "nom": "Essai WSL run_lire_validation.sh --essai : CONFORME (5fe4c35)",
+         "debut": "2026-10-27",
+         "fin": "2026-10-27",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Validateur = Marc-André (décidé 10-29) ; inviter à R0 (texte prêt, Rencontres v1.2)",
+         "debut": "2026-10-26",
+         "fin": "2026-11-04"
+        },
+        {
+         "nom": "Sauvegarde manuelle du graphe : faite 10-29 14:31 (dump 143 Mo, log OK)",
+         "debut": "2026-10-29",
+         "fin": "2026-10-29",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Courriel DBA consolidé (7 demandes) envoyé",
+         "debut": "2026-10-30",
+         "fin": "2026-10-30"
+        },
+        {
+         "nom": "Vague 2 : classeurs S5241 + S5222 (S5422 remplacé), lire_validation sur 5 écrans (56276b1)",
+         "debut": "2026-10-29",
+         "fin": "2026-10-29",
+         "fait": true
+        },
+        {
+         "nom": "run_vague2.sh : CONFORME au 2e run (239 assertions chargées, C5 corrigé 3fb5344)",
+         "debut": "2026-10-29",
+         "fin": "2026-10-29",
+         "jalon": true,
+         "fait": true
+        },
+        {
+         "nom": "Envoi S5241 + S5222 (onglet 2 rendu 11-06)",
+         "debut": "2026-11-04",
+         "fin": "2026-11-04"
+        },
+        {
+         "nom": "Index plein texte TexteCode : R2 4,7× (sans perte), skill v1.6",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Réenregistrer la skill g1-fiche v1.6 (diff compte / copie = 0)",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "jalon": true,
+         "fait": true
+        }
+       ]
+      },
+      {
+       "nom": "Pilote",
+       "taches": [
+        {
+         "nom": "Entrevues vague 1 : S1133, S3223, S3559",
+         "debut": "2026-11-05",
+         "fin": "2026-11-06"
+        },
+        {
+         "nom": "Entrevues vague 2 : S5241, S5222",
+         "debut": "2026-11-09",
+         "fin": "2026-11-10"
+        },
+        {
+         "nom": "3 vues de la carte (livraisons, impact, vulgarisation) — CONFORME",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "4e vue : cadrage des options — non construite (47 % < 70 %), essai mesuré",
+         "debut": "2026-10-28",
+         "fin": "2026-10-28",
+         "fait": true
+        },
+        {
+         "nom": "Glossaire v0.1 pour les entrevues (1 093 termes, 315 lignes pilote) — CONFORME, G10 à la 5e relecture",
+         "debut": "2026-10-29",
+         "fin": "2026-10-29",
+         "fait": true
+        },
+        {
+         "nom": "Vues v1.2 : Impact cliquable + tables de frontière nommées — CONFORME 14/14, 0 lien mort",
+         "debut": "2026-10-29",
+         "fin": "2026-10-29",
+         "fait": true
+        },
+        {
+         "nom": "Relire les réponses réelles (run_lire_validation.sh)",
+         "debut": "2026-11-10",
+         "fin": "2026-11-11"
+        },
+        {
+         "nom": "Go/no-go pilote + couche doc",
+         "debut": "2026-11-11",
+         "fin": "2026-11-11",
+         "jalon": true
+        }
+       ]
+      },
+      {
+       "nom": "Après le pilote",
+       "taches": [
+        {
+         "nom": "Ré-index, export Jira/Confluence, ouverture",
+         "debut": "2026-11-12",
+         "fin": "2026-11-20"
+        },
+        {
+         "nom": "Bascule VM (non datée, avant les analystes)",
+         "debut": "2026-11-12",
+         "fin": "2026-11-20"
+        },
+        {
+         "nom": "Vue graphe (souhait de Franck) : nouvel essai avec critère empreinté",
+         "debut": "2026-11-12",
+         "fin": "2026-11-20"
+        }
+       ]
+      }
+     ],
+     "titre": "Expert G1 — Gantt S1 (phase locale)",
+     "sous_titre": "Du J1 au pilote, d'après le Choix v1.3 §4 et §6 et les Besoins v1.2. Semaines de projet comptées depuis J1."
+    }
+   ],
+   "source": {
+    "systeme": "artefact",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg",
+    "lu_le": "2026-10-29T16:30-04:00",
+    "par": "feed Expert G1 — Gantt S1"
+   }
+  }
+ ]
+}

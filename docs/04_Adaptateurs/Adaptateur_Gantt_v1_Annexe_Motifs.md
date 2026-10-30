@@ -1,0 +1,16 @@
+# Adaptateur Gantt v1 · Annexe motifs
+
+> À n'ouvrir que pour rouvrir un choix. Un motif ne se supprime jamais : il se déplace.
+
+| # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
+|---|---|---|---|---|
+| G1 | Reproduire le Gantt depuis ses données | Franck, 30 oct. : le producteur passera au JSON ; une image ne nourrit ni santé ni alertes et ne suit pas le design system | Copier l'image (SVG/PNG) du drawio | — |
+| G2 | Parser la mise en page PLQ-Forge, avec refus strict | Le drawio est généré (agent « PLQ-Forge ») : grille régulière 140 px / semaine, 28 px / jour ; un écart de grille signale un autre générateur, deviner fabriquerait de fausses dates | Lecture tolérante (arrondi au jour le plus proche) | — |
+| G3 | Navigateur intégré pour le `.drawio` | Constaté le 30 oct. : `read_resource` répond « type application/octet-stream non lisible » ; la recherche SharePoint ne trouve pas le fichier ; le navigateur intégré est déjà connecté à SharePoint | Téléchargement manuel par Franck chaque lundi | Connecteur M365 : `.drawio` illisible, `.json` lisible |
+| G4 | Transcription gzip + base64 vérifiée par sha256 | Le contenu passe du navigateur au disque par la conversation ; 118 Ko → 11 Ko compressés ; le sha256 du navigateur, revérifié par l'adaptateur, prouve l'absence de faute de copie | Copier le XML en clair (35 k jetons, risque de faute non détecté) | — |
+| G5 | Jalons = lignes sans réf. du groupe « validation / mise en production », ≤ 5 j o. | Dans le Gantt Méthane, ces lignes sont l'acceptation PREP et la MEP (oui/non à une date, D4) ; « Gestion de projet » (63 j o.) est sans réf. dans le même groupe mais n'est pas un jalon | Toutes les lignes sans réf. · aucune | — |
+| G6 | Année déduite de la date du fichier | Les en-têtes portent « 5 oct. » sans année ; le lundi le plus proche de la date du fichier parmi trois années est univoque, puis chaque semaine doit suivre la précédente de 7 j (passage d'année compris) | Année du jour de lecture seule (faux pour un Gantt de décembre lu en janvier) | — |
+| G7 | Item créé avant le Gantt | Un Gantt orphelin ne s'affiche nulle part ; l'adaptateur l'ignore et le signale plutôt que de créer un item (les champs possédés sont à Franck, D3) | Créer l'item depuis le Gantt | — |
+| G9 | Relecture au contexte neuf (30 oct.) : 5 écarts corrigés | sha256 facultatif (contrôle codé « si différent »), dates impossibles admises (le schéma ne vérifie que la forme), `fait_le` dans le futur (le JSON n'a pas de date de fin réelle), jalon JSON sans plafond de durée (plafond codé côté drawio seulement), heure SharePoint en Z recopiée (conversion laissée à l'agent) | Laisser l'agent du lundi garantir ces points | Un contrôle de transcription « si présent » ne prouve rien : l'exiger |
+| G10 | Id de jalon tiré de la réf. quand la ligne en a une | Le libellé change plus souvent que la réf. ; un id qui change perd la date initiale et laisse un jalon orphelin | Id tiré du rang de la ligne (change à chaque insertion) | — |
+| G8 | Aucun recalcul des dates (fériés, congés) | Le Gantt est le plan du producteur : le portefeuille l'affiche tel quel et signale l'écart (plan ancien, recul) | Recalculer avec les fériés du Québec | — |

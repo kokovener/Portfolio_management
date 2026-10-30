@@ -129,4 +129,25 @@ ok('R27 blocking comments on an item row → attentes (bloquant, BLOQ, bloque, b
   const b2 = clone(base); b2.attentes = A; const y = clone(x); y.commentaires = y.commentaires.filter(([, c]) => c !== 11);
   const A2 = adapt(y, b2, {}).doc.attentes; assert.strictEqual(A2.find((a) => a.id === 'smartsheet.att.11').recue_le, raw.read_at.slice(0, 10));
 });
+ok('R49 ticked L / Sub-L in Backlog or Done is created (qualifié / terminé); unticked stays ignored', () => {
+  const x = clone(raw); ['L9', 'L1', 'L8C'].forEach((k) => { x.rows.find((y) => y.id === k).portefeuille = true; });
+  const rr = adapt(x, base, {});
+  assert.deepStrictEqual(['goutte21.l9', 'goutte21.l1', 'goutte21.l8c'].map((k) => [it(rr, k).etape, it(rr, k).parent]), [['qualifie', 'goutte21'], ['termine', 'goutte21'], ['qualifie', 'goutte21.l8']]);
+  assert(!it(rr, 'goutte21.l10') && !it(rr, 'goutte21.l2'));
+});
+ok('R49 parent of an existing Smartsheet item follows the sheet once its sheet parent becomes an item', () => {
+  const x = clone(raw); ['L8D1.1', 'L8D1.1.3'].forEach((k) => { x.rows.find((y) => y.id === k).portefeuille = true; });
+  const b2 = clone(base); b2.items.push({ id: 'goutte21.l8d1.1.3', nom: 'L8D1.1.3 x', type: 'projet', parent: 'goutte21.l8d', voie: 'scrum', etape: 'actif', promu: true });
+  const rr = adapt(x, b2, {});
+  assert.strictEqual(it(rr, 'goutte21.l8d1.1.3').parent, 'goutte21.l8d1.1');
+  assert(rr.report.signals.some((s) => s.kind === 'parent' && /goutte21\.l8d → goutte21\.l8d1\.1/.test(s.texte)));
+});
+ok('R50 sheet hierarchy wins over the ID: L8B at top level → parent programme, out of L8 phase deduction; no profondeur = ID rule', () => {
+  const x = clone(raw); const top = ['L0', 'L1', 'L2', 'L3-L4', 'L5', 'L6', 'L8', 'L8A', 'L8B', 'L8C'];
+  x.rows.forEach((y) => { y.profondeur = top.includes(y.id) || /^L\d+$/.test(y.id) ? 0 : 1; });
+  const rr = adapt(x, base, {});
+  assert.strictEqual(it(rr, 'goutte21.l8b').parent, 'goutte21');
+  assert.notStrictEqual(it(rr, 'goutte21.l8').phase_source, 'BA');
+  assert.strictEqual(it(r, 'goutte21.l8b').parent, 'goutte21.l8');
+});
 console.log(`\n${n} adapter tests OK`);

@@ -1,6 +1,6 @@
 # Adaptateur Jira v1 · Annexe motifs
 
-> À n'ouvrir que pour rouvrir un choix. Un motif ne se supprime jamais : il se déplace. Références : code `Projets_Dev\Portefeuille_PLQ\tools\adapt_jira.js` · tests `tests/test_adapt_jira.js` · exécutions `dist/runs/2026-10-27/jira_*` · interface A8 = `03_Interface/Interface_Specification_v1.md`.
+> À n'ouvrir que pour rouvrir un choix. Un motif ne se supprime jamais : il se déplace. Références : code `Projets_Dev\Portefeuille_PLQ\tools\adapt_jira.js` · tests `tests/test_adapt_jira.js` · exécutions `dist/runs/2026-10-27/jira_*` · interface A8 = `03_Interface/Interface_Specification_v3.md (A8 inchangée)`.
 
 | # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
 |---|---|---|---|---|
@@ -74,3 +74,19 @@ Voir `02_Modele/Modele_Canonique_v7_Annexe_Motifs.md` M42–M44.
 ## v9 (R43, 2026-10-29)
 
 Voir `02_Modele/Modele_Canonique_v14_Annexe_Motifs.md` M56.
+
+## v9 · correctif K13 dans `versions` (2026-10-30)
+
+| # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
+|---|---|---|---|---|
+| J-K13b | `versions` applique la règle K13 de `writes` via une fonction partagée (`isK13Purge`) ; une clé purgée est retirée, une recréation repart à 1 | Une règle d'exception (K13) doit être appliquée par toutes les commandes qui lisent un batch, pas seulement par celle qui écrit | Batch filtré à la main (`batch_sans_k13.json`, gardé comme trace) · garder la clé purgée dans les versions | Passage quotidien du 30 oct. 9 h 02 : `versions` a refusé 4 purges K13 que `writes` acceptait — l'exception avait été codée à un seul endroit ; la tâche du lundi 2 nov. aurait bloqué |
+
+## v10 (2026-10-30) — sources MEP M365 (Kickoff D18 v8)
+
+| # | Choix | Motif | Options écartées | Erreur déjà payée (réutilisable) |
+|---|---|---|---|---|
+| J17–J22 | Preuves extraites par un script (`mep_preuves.js`) depuis le brut lu, pas par l'agent | Même règle qu'ailleurs : l'agent lit, le script décide ; la décision se rejoue et se teste | Laisser l'agent classer les courriels (non reproductible) | — |
+| J18 | Clôture avant 6 h = veille | « MEP complétée » de GOU21-11185 envoyé à 00h10 le 15 oct. pour une MEP du 14 au soir | Date brute du courriel | GOU21-11185 aurait été datée du 15 |
+| J19 | Fil de discussion pour les réponses sans clé | Les réponses « MEP terminée » ne citent pas le billet ; l'annonce du même fil le cite | Ignorer les réponses (perd la preuve de réalisation) | — |
+| — | « SDD-1981.sql » n'est pas un billet | Nom de fichier dans le courriel SDD-2981 | Toute chaîne SDD-n = billet | Lecture du 30 oct. |
+| — | 6 preuves orphelines au 30 oct. (annonces sans billet) | Rien à écrire sans identifiant ; le signal suffit à Franck | Créer une MEP « sans billet » (doublons) | — |

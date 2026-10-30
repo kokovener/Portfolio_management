@@ -1,0 +1,23 @@
+{
+  "_doc": "Contrat JSON d'un Gantt de projet lu par le Portefeuille PLQ (adaptateur Gantt, modèle v15). Déposer le fichier .json à côté du .drawio dans SharePoint. Dates AAAA-MM-JJ ; fin = dernier jour travaillé, inclus. Champs facultatifs : ref, critique, jalon, fait, segments, titre, sous_titre, hors_planning, calcule_le. Une tâche « jalon »: true devient un jalon du portefeuille (date = fin) et compte dans la santé du projet.",
+  "titre": "Méthane — phase II",
+  "calcule_le": "2026-10-14",
+  "onglets": [
+    {
+      "nom": "Phase II",
+      "titre": "Méthane — phase II",
+      "sous_titre": "Dates calculées à partir des estimations et des dépendances",
+      "groupes": [
+        { "nom": "Backend — 1 dév.", "taches": [
+          { "ref": "P2-MOT", "nom": "Calcul Méthane de la phase II — tables, paramètres", "debut": "2026-10-22", "fin": "2026-10-28", "critique": true },
+          { "ref": "P2-B2B", "nom": "Socle B2B générique", "debut": "2026-11-05", "fin": "2026-11-11", "segments": [ { "debut": "2026-11-05", "fin": "2026-11-06" }, { "debut": "2026-11-09", "fin": "2026-11-11" } ] }
+        ] },
+        { "nom": "Validation et mise en production", "taches": [
+          { "nom": "Acceptation en PREP (client)", "debut": "2027-01-06", "fin": "2027-01-07", "jalon": true },
+          { "nom": "Mise en production après acceptation", "debut": "2027-01-08", "fin": "2027-01-08", "jalon": true, "fait": false }
+        ] }
+      ],
+      "hors_planning": "P2-INT."
+    }
+  ]
+}

@@ -23,7 +23,7 @@ except ImportError:  # pragma: no cover
     sys.exit("pip install jsonschema --break-system-packages")
 
 COLLECTIONS = ["items", "jalons", "risques", "attentes", "dependances", "livrables", "meps",
-               "actions_retro", "charges", "sprints", "personnes", "absences", "stats_jira", "instantanes", "lectures", "listes_jira"]
+               "actions_retro", "charges", "sprints", "personnes", "absences", "stats_jira", "instantanes", "lectures", "listes_jira", "gantts"]
 
 
 def load(path: Path) -> dict:
@@ -79,7 +79,7 @@ def check_refs(docs, ids, errors):
             need("item", it.get("parent"), f"{name}/item {it['id']}")
             for p in it.get("personnes", []):
                 need("personne", p, f"{name}/item {it['id']}")
-        for coll in ("jalons", "risques", "attentes", "charges", "stats_jira"):
+        for coll in ("jalons", "risques", "attentes", "charges", "stats_jira", "gantts"):
             for rec in doc.get(coll, []):
                 need("item", rec["item"], f"{name}/{coll} {rec['id']}")
         for rec in doc.get("charges", []):

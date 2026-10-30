@@ -1,0 +1,325 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Expert G1 — Gantt S1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one header band, legend row, then a horizontally scrollable grid (label column + one column per calendar day) */
+:root{
+  --bg:#f5f7f9; --surface:#ffffff; --fg:#17212b; --muted:#5b6b7a; --line:#dde3e9; --weekend:#eef1f4;
+  --accent:#1f5f8b; --accent-soft:#c9dcea; --done:#2f7d5b; --risk:#b7791f; --wait:#8a97a5; --today:#c2410c;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --day:30px; --label:300px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --surface:#161e26; --fg:#e4eaf0; --muted:#93a3b3; --line:#28333e; --weekend:#121a21;
+  --accent:#6aa9d6; --accent-soft:#24435a; --done:#5bbf8e; --risk:#e0a64a; --wait:#6e7c8a; --today:#f97a45; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#161e26; --fg:#e4eaf0; --muted:#93a3b3; --line:#28333e; --weekend:#121a21;
+  --accent:#6aa9d6; --accent-soft:#24435a; --done:#5bbf8e; --risk:#e0a64a; --wait:#6e7c8a; --today:#f97a45; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);line-height:1.45}
+.wrap{max-width:1400px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+.wrap>*{min-width:0}
+header{display:grid;gap:6px}
+h1{font-size:1.5rem;font-weight:600;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:75ch}
+.kpis{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.85rem;color:var(--muted)}
+.kpis b{color:var(--fg);font-family:var(--f-mono);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.8rem;color:var(--muted);align-items:center}
+.sw{display:inline-block;width:22px;height:10px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.grid{display:grid;grid-template-columns:var(--label) repeat(var(--n),var(--day));min-width:max-content;position:relative}
+.cell{border-bottom:1px solid var(--line);height:34px}
+.we{background:var(--weekend)}
+.lab{position:sticky;left:0;z-index:2;background:var(--surface);border-right:1px solid var(--line);padding:0 10px;display:flex;align-items:center;gap:8px;font-size:.84rem;min-width:0}
+.lab span.t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.own{font-family:var(--f-mono);font-size:.68rem;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 4px;flex:none}
+.grp{grid-column:1/-1;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:14px 10px 6px;border-bottom:1px solid var(--line)}
+.hd{font-family:var(--f-mono);font-size:.66rem;color:var(--muted);text-align:center;display:flex;flex-direction:column;justify-content:center;height:44px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.wkrow{font-family:var(--f-mono);font-size:.7rem;color:var(--fg);padding:6px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);white-space:nowrap;overflow:hidden}
+.bar{height:16px;align-self:center;border-radius:3px;z-index:1;margin:0 2px}
+.s-done{background:var(--done)}
+.s-doing{background:var(--accent)}
+.s-todo{background:var(--accent-soft);border:1px solid var(--accent)}
+.s-risk{background:var(--accent-soft);border:2px solid var(--risk)}
+.s-wait{background:repeating-linear-gradient(135deg,var(--wait) 0 4px,transparent 4px 8px);border:1px solid var(--wait)}
+.s-open{background:linear-gradient(90deg,var(--accent-soft),transparent);border:1px dashed var(--accent);border-right:none}
+.ms{width:13px;height:13px;transform:rotate(45deg);align-self:center;justify-self:center;z-index:1;border:2px solid var(--fg);background:var(--surface)}
+.ms.done{background:var(--done);border-color:var(--done)}
+.ms.risk{border-color:var(--risk)}
+.todayline{position:absolute;top:0;bottom:0;width:2px;background:var(--today);z-index:3;pointer-events:none;opacity:.8}
+.notes{display:grid;gap:10px;font-size:.85rem;max-width:90ch}
+.notes h2{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 0 0}
+.notes table{border-collapse:collapse;width:100%}
+.notes td,.notes th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.notes th{color:var(--muted);font-weight:500;font-size:.78rem}
+.tblwrap{overflow-x:auto}
+footer{font-size:.75rem;color:var(--muted)}
+@media (max-width:600px){:root{--label:190px;--day:26px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Expert G1 — Gantt S1 (phase locale)</h1>
+    <p class="sub">Du J1 au pilote, d'après le Choix v1.3 §4 et §6 et les Besoins v1.2. Semaines de projet comptées depuis J1.</p>
+    <div class="kpis">
+      <span>J1 <b>2026-10-22</b></span>
+      <span>1re question <b>faite 2026-10-26</b> (engagement 11-04)</span>
+      <span>Graphe <b>117 010</b> nœuds · <b>4 834</b> sections doc · texte C# chargé</span>
+      <span>Étape 5 <b>atteinte 10-27</b> (−4 j)</span>
+      <span>C# morts <b>264</b> · doc dans le graphe <b>151 / 155</b></span>
+      <span>M2 : SQL C# <code>AppendCmdText</code> hors graphe <b>28 → 5</b> méthodes (run 10-27)</span>
+      <span>Pilote doc v0.4 <b>10-29</b> (−5 j) : <b>239</b> assertions chargées, <code>run_vague2.sh</code> <b>CONFORME</b> ; <b>5</b> classeurs envoyables (vague 2 : S5241, <b>S5222</b> — S5422 sans matière go, remplacé) ; ≤ 20 lignes à trancher</span>
+      <span>Validateur : <b>Marc-André</b> seul (Franck, 10-29) ; entrevues 11-05 → 11-10</span>
+      <span>Relecture des réponses : script <b>prêt 10-27</b> (−8 j), essai WSL <b>CONFORME</b></span>
+      <span>Skill g1-fiche <b>v1.4 10-28</b> (−3 j) : validation métier lue, 3 essais passés</span>
+      <span>B1 + B2 <b>code 10-28</b> (−1 j) : faux <code>ECRIT</code> C# 45 → 44, <b>21</b> constats métier sur l'assertion ; <code>run_b1b2.sh</code> <b>CONFORME 10-28</b></span>
+      <span>Essais skill Q4 / Q5 <b>10-28</b> (−2 j) : <b>7 / 7</b> chacun (Q5 au 3e rejeu) ; skill <b>v1.4.2</b></span>
+      <span>Skill <b>v1.5.1 10-28</b> (−2 j) : 15 requêtes prêtes ; requêtes improvisées Q4 <b>10 → 0</b>, Q5 <b>11 → 0</b> ; Q4 8 / 8, Q5 9 / 9</span>
+      <span>Index plein texte du code <b>10-28</b> (−6 j) : recherche globale <b>10,9 → 2,3 s</b>, 0 ligne perdue ; skill <b>v1.6</b></span>
+      <span>3 vues de la carte <b>10-28</b> (−8 j) : <a href="https://claude.ai/artifact/VZ3gpHVAGQ6qjrC57B9Jb6" target="_blank" rel="noopener" style="color:var(--accent)">livraisons · impact · vulgarisation</a> ; cœur G1 = <b>11</b> modules en dépendance mutuelle</span>
+      <span>4e vue (graphe) <b>non construite 10-28</b> : séparation des modules <b>47 %</b> &lt; 70 % ; Vues v1.2 le 11-02</span>
+      <span>Glossaire v0.1 <b>10-29</b> (−1 j) : <b>1 093</b> termes, <b>315</b> lignes pour les 5 écrans, sens jamais rédigé (<b>120</b> recopiés)</span>
+      <span>Vues v1.2 <b>10-29</b> (−4 j) : Impact cliquable (<b>14 328</b> liens, 0 mort), <b>120</b> tables de frontière nommées</span>
+      <span>Go/no-go pilote <b>2026-11-11</b></span>
+      <span>Bascule VM <b>non datée</b></span>
+      <span>Architecture : <a href="https://claude.ai/artifact/EHnLV4jNSTWnGK1MFv9VhM" target="_blank" rel="noopener" style="color:var(--accent)">schéma S1 et avancement par boîte</a></span>
+    </div>
+  </header>
+
+  <div class="legend" aria-label="Légende">
+    <span><i class="sw s-done"></i>Fait</span>
+    <span><i class="sw s-doing"></i>En cours</span>
+    <span><i class="sw s-todo"></i>À faire</span>
+    <span><i class="sw s-risk"></i>À risque</span>
+    <span><i class="sw s-wait"></i>Attente d'un tiers</span>
+    <span><i class="sw s-open"></i>Continu / non daté</span>
+    <span><i class="sw" style="background:var(--today);width:3px"></i>Aujourd'hui</span>
+  </div>
+
+  <div class="scroll"><div class="grid" id="g"></div></div>
+
+  <section class="notes">
+    <h2>Arbitrages portés par ce Gantt</h2>
+    <div class="tblwrap"><table>
+      <tr><th>Quoi</th><th>Pourquoi</th></tr>
+      <tr><td>2026-10-29 (soir) : vague 2 prête (prévu 10-30 → 11-03) ; S5422 Usine remplacé par S5222 Plan d'assignation</td><td>S5422 confronté (10 règles) : aucune contradiction ni règle absente du code, il ne peut pas compter pour le go ; repli prévu appliqué. S5241 : 15 lignes à trancher, S5222 : 12 (plafond 20). Lecture des réponses limitée aux 5 écrans retenus, 1 validateur. Relecture neuve : 5 majeurs, 4 corrigés, 1 rejeté avec cause. Reste un run WSL de Franck (chargement + rejeu + essai) avant l'envoi du 11-04.</td></tr>
+      <tr><td>2026-10-29 (fin) : un seul validateur, Marc-André ; écrans de gestion du lait seulement</td><td>Décision de Franck après avoir vu le rôle exact. Paie (S1332) et frais de transport (S5332) retirés : finance (S12 / S13 / S53, règle du script de choix). Remplacés par Programme des livraisons (S5241) et Usine (S5422 — remplacé le soir même par S5222, ligne ci-dessus), choix de Franck parmi les candidats conformes (non finance, 1 par module) ; repli S5222 / S5421 si un écran n'a pas de matière go ; Marc-André démarre sur les 3 classeurs prêts, les 2 autres suivent. Plus d'écran en double : un seul avis métier (risque consigné). Go/no-go du 11-11 inchangé ; majorité selon les écrans entrevus (3 / 5, 3 / 4, 2 / 3).</td></tr>
+      <tr><td>2026-10-29 : Vues de la carte v1.2 livrée (prévu 11-02), 4 jours d'avance</td><td>Même données que v1.1 (extraction neuve identique, graphe inchangé). Impact : chaque écran a sa ligne, chaque code écran et chaque table est un lien (14 328 liens, 0 mort, réciprocité vérifiée, tous cliqués dans le navigateur). Livraisons : les tables qui lient deux modules ou deux lots sont nommées dans des listes dépliables, avec qui écrit et qui lit. 5 relectures d'usage au lieu de 2 prévues (4 majeurs trouvés puis fermés) : la dernière, 0 majeur.</td></tr>
+      <tr><td>2026-10-29 : glossaire v0.1 livré (prévu 10-29 → 10-30), 1 jour d'avance</td><td>Un classeur pour l'atelier : 1 093 termes tirés du graphe (461 libellés WBS, 371 sigles, 225 mots des règles du pilote, 36 définitions de la doc 2019), dont 315 lignes rangées par écran du pilote. Le sens n'est jamais écrit par Claude : recopié d'une source (120 cas, contrôlé par script) ou « à valider ». 90 % restent à valider : l'atelier donnera le sens. 5 relectures d'usage ont été nécessaires (15 majeurs trouvés puis fermés) alors que le contrôle scripté était vert dès le 1er run.</td></tr>
+      <tr><td>2026-10-28 (nuit) : 4e vue (explorateur de graphe) non construite ; Vues v1.2 à la place (11-02) ; souhait maintenu, réessai après le pilote</td><td>Essai mesuré avant de cadrer la construction : disposition par forces sur les 657 nœuds écrans ↔ tables (communes retirées, graine fixe) ; 47 % des écrans tombent près de leur module, seuil écrit avant : 70 %. Le cœur de G1 est un petit monde : la vue montrerait un amas, pas une carte. Bloom = 1 personne / 1 machine ; Gephi offert sur demande (export GraphML). Décision de Franck : Vues v1.2 (1 j), et garder l'envie d'une vue visuelle : pistes (couleur par étape, 72 % ; disposition hiérarchique ; regroupement des liens) après le pilote. Cadrage : 04_Visuels/ExpertG1_Vue_Graphe_Options_v0.1.md.</td></tr>
+      <tr><td>2026-10-28 (soir) : 4e vue ajoutée au plan, explorateur de graphe (nœuds-liens, façon Bloom / Gephi)</td><td>Demande de Franck. Cadrage d'abord (10-30) : pour qui, quel grain (le graphe complet, 117 063 nœuds, ne tient pas dans une page), où (4e onglet de l'artefact visé, ou Neo4j Browser / Bloom, ou Gephi), sans prestataire captif. Construction seulement si la vue montre ce que les 3 autres ne montrent pas ; hors chemin critique.</td></tr>
+      <tr><td>2026-10-28 (soir) : 3 vues de la carte livrées, prévu 11-05 → 11-10, 8 jours d'avance</td><td>Une page à 3 onglets tirée du graphe par script : étapes et lots de migration face aux livraisons G2.1, impact par table, G1 en 16 tuiles pour la direction. Résultat clé : le cœur de G1 (11 modules) se lit en boucle, aucun ordre strict n'existe ; un lot de 6 modules écrit les mêmes tables et couvre 9 livraisons G2.1. Correspondance L ↔ modules = hypothèse à confirmer. 3 relectures neuves (9 majeurs trouvés puis fermés : déclencheurs, C# de classe, projets sans code…), 0 ouvert.</td></tr>
+      <tr><td>2026-10-28 : index plein texte du code en place, recherche globale (R2) 4,7× plus rapide, skill v1.6 ; prévu 11-03 → 11-09, 6 jours d'avance</td><td>Sans perte : 0 texte perdu sur 10 motifs et 100 comparaisons, un témoin volontairement faux détecté. Seule la recherche dans tout le code gagne (10,9 → 2,3 s) ; les recherches bornées à un écran gardent la regex (index plus lent). La relecture neuve a trouvé 2 cas où la règle d'écriture de l'index perdait des lignes : règle corrigée, 8 pièges repassés sans perte. Compte de la skill à réenregistrer par Franck (envoi coupé).</td></tr>
+      <tr><td>2026-10-28 : skill g1-fiche v1.5.1 enregistrée, 2 jours d'avance</td><td>Chaque besoin qui faisait improviser une requête a sa requête prête, testée sur le graphe (type d'écran, texte d'un objet, motif dans un texte, plusieurs lignes, comptages, assertions par identifiant…). Essais d'abord en échec avec l'ancienne skill (Q4 4, Q5 3 requêtes improvisées), puis 0 avec la nouvelle, justesse intacte (Q4 8 / 8, Q5 9 / 9). La fiche ne redit plus une règle validée avec la phrase du constat : mesurée par similarité. Relecture neuve : 0 verdict infirmé, 1 défaut de traçabilité des critères levé par recalcul.</td></tr>
+      <tr><td>2026-10-28 : essais de la skill après le run, 2 jours d'avance ; skill v1.4.2 enregistrée</td><td>S3560 : la fiche ne compte plus la suppression jamais exécutée (clsCtrlTechBLL.cs:189) et cite la ligne qui exécute chaque écriture ; elle en tire une question métier (supprimer une ferme ne supprime pas ses collectes filtrées). S1332 : le texte montré au validateur est cité mot pour mot dans la seule section Validation ; 3 défauts de la skill (consigne recopiée comme gabarit, « règle non donnée » omise, note absente d'une requête) corrigés, Q5 rejouée 3 fois jusqu'à 7 / 7 ; la relecture neuve a infirmé un premier « 7 / 7 ». Reste au backlog v1.5 : requêtes improvisées (Q4 10, Q5 11).</td></tr>
+      <tr><td>2026-10-28 : B1 (parseur C# v1.2) + B2 (constat métier) livrés en code, 1 jour d'avance ; preuve = <code>run_b1b2.sh</code></td><td>Une table nommée par le cadriciel n'est plus « écrite » si l'objet ne s'exécute jamais (témoin S3560 clsCtrlTechBLL.cs:189) ; dans le doute le lien reste et se signale. Le texte exact montré au validateur est sur l'assertion (21 / 21, = classeurs). Tests d'abord en échec, non-régression 0 sur les 5 projets réels, 2 relectures neuves (code 12 écarts, documents 15) : toutes traitées. Skill v1.4.1 enregistrée ; ses essais suivent le run.</td></tr>
+      <tr><td>2026-10-28 : skill g1-fiche v1.4 enregistrée, 3 jours d'avance</td><td>La fiche lit la validation métier : une règle « supprimée » n'est plus citée comme vraie, la règle en vigueur prime, un désaccord n'est pas tranché. Essais d'abord en échec avec l'ancienne skill (S1332, S5332), puis passés ; S3560 (C#) : 24 / 24 objets SQL sans requête improvisée. Relecture neuve : 2 majeurs corrigés et rejoués.</td></tr>
+      <tr><td>2026-10-27 (nuit) : relecture des réponses de validation prête, 8 jours d'avance ; preuve = essai WSL</td><td><code>lire_validation.py</code> relit les classeurs : statut validée / améliorée / supprimée, taux d'accord, critère go, verdict GO / NO-GO / INCOMPLET, puis recharge la couche doc dans Neo4j. Essai sur copies réelles remplies : chiffres = calcul à la main et = formules du classeur. Relecture neuve : 1 majeur (« Utile » oublié → NO-GO au lieu d'INCOMPLET) corrigé avec 7 mineurs. Le chemin critique reste les validateurs.</td></tr>
+      <tr><td>2026-10-27 (nuit) : pilote couche doc v0.3 + 5 dossiers de validation livrés, 1 semaine d'avance</td><td>175 assertions confrontées au graphe par script : 271 / 277 preuves relues mot pour mot, matière go 3 / 5 → 5 / 5 écrans. Le .NET touche les données des règles de 3 écrans (9 questions). 83 questions en entrevue + 141 règles à cocher. 2 relectures neuves, écarts corrigés. Reste le chemin critique : confirmer Alain / Marc-André.</td></tr>
+      <tr><td>2026-10-27 19:17 : <code>run_m2.sh</code> DoD atteinte, 1 jour d'avance</td><td>Non-régression 0 sur tout le code, C# CONFORME ×2, M2 28 → 5 = prévision, couverture inchangée. Précision : liens 8 / 8 sur 5 requêtes tirées.</td></tr>
+      <tr><td>2026-10-27 (nuit) : parseur C# v1.1 (M2) livré en code, 2 jours d'avance ; preuve = <code>run_m2.sh</code></td><td>Le SQL écrit ligne à ligne par <code>AppendCmdText</code> devient une requête dans le graphe. Prévision sur les textes réels : méthodes sans requête 28 → 5 (les 5 reçoivent leur SQL en paramètre). Test S3560 d'abord en échec, non-régression 0, relecture neuve : 3 majeurs corrigés. La skill v1.4 peut démarrer.</td></tr>
+      <tr><td>2026-10-27 18:14 : <code>run_correctifs.sh</code> DoD atteinte, 1 jour d'avance</td><td>Corpus CONFORME ×2, couverture 9/9, contrôle C1-C3 CONFORME : 151 / 155 écrans documentés dans le graphe, 264 méthodes C# mortes. 2 défauts payés en route (67 liens doublons, requête M2 mal échappée), corrigés avec leur test.</td></tr>
+      <tr><td>2026-10-27 (nuit) : correctifs C1-C4 + mesure M2 livrés en code</td><td>C1 : cause prouvée (le texte propre de la méthode comptait comme mention) ; 264 méthodes C# mortes, 179 candidats. C3 rejoué. C2 attend le rechargement du corpus (149 → 151 / 155 attendu). M2 : 28 méthodes C# construisent leur SQL par <code>AppendCmdText</code> sans requête dans le graphe → parseur C# avant la skill v1.4.</td></tr>
+      <tr><td>2026-10-27 (après le run) : étape 5 atteinte, 4 jours d'avance ; skill v1.3 faite 2 jours avant</td><td><code>run_etape5.sh</code> : corpus et texte CONFORME ×2, non-régression VB6/SQL, couverture 9/9. Documentés dans le graphe : 5 → 149 / 155 écrans. Les correctifs ne touchent ni le pilote doc v0.3 ni le go/no-go.</td></tr>
+      <tr><td>2026-10-27 (soir, 2e passe) : étape 5, texte C# et couverture v1.1 livrés en code, 3 à 6 jours d'avance ; preuve = un seul run WSL</td><td>Corpus doc2019 (FPLQ.HLP d'abord) et texte C# testés sur des copies réelles dans le bac à sable : contrôles CONFORME, 0 mot de passe visible sur les 177 lignes signalées. Neo4j n'y est pas joignable : la DoD ×2 passe par <code>run_etape5.sh</code>.</td></tr>
+      <tr><td>2026-10-27 (soir) : couverture + code mort livrés, 1 jour d'avance</td><td>Run WSL CONFORME 9/9. VB6 374 procédures + 5 formulaires morts (minimum), SQL G1 226 ; C# et SSRS = candidats faute de texte C#. 153 / 155 écrans documentés, 5 / 155 dans le graphe.</td></tr>
+      <tr><td>2026-10-27 (soir) : texte C# ajouté au plan, après l'étape 5, hors chemin critique</td><td>Rend concluants 1 364 méthodes C# et 39 rapports candidats, et lisible le code des écrans portés en C#. Dimensionnement d'abord (sandbox déjà saturée 2 fois) ; ne retarde ni le pilote doc v0.3 ni le go/no-go du 11-11.</td></tr>
+      <tr><td>2026-10-27 (fin) : décision résumés close, B définitif, 2 jours d'avance</td><td>Règle fixée avant : A ciblée VB6 seulement si Q2-Q3 deviennent justes avec résumés. Test 4 : toutes deux incomplètes (rien de contredit) → aucune dépense de résumés à prévoir. Les 462 résumés S1332 restent dans le graphe.</td></tr>
+      <tr><td>2026-10-27 (fin) : lot doc ≤ 2019 traité en un jour</td><td>2 616 fichiers classés (879 gardés + 15 convertis), 851 extraits ; +93 assertions sur les 5 écrans → couche doc 175, CONFORME.</td></tr>
+      <tr><td>2026-10-27 : Aivosto fermé, non-achat</td><td>Règle du Choix §6 : achat si les parseurs lisent moins de 90 % des fichiers VB6. Mesuré : 998 / 998.</td></tr>
+      <tr><td>2026-10-27 : chemin critique = validateurs (Alain et/ou Marc-André)</td><td>Sans validateur confirmé avant le 11-04, l'étape 8 et le go/no-go du 11-11 glissent. Sauvegarde : risque levé le 10-27 (1re faite, hebdo planifiée).</td></tr>
+      <tr><td>Parseurs SQL et VB6 terminés le 2026-10-23 (VB6 : 2 jours d'avance)</td><td>DoD atteintes, chargement Neo4j CONFORME ×2 sur le clone. Le risque n°1 (lecture VB6) est levé : 100 % des fichiers lus.</td></tr>
+      <tr><td>4 couches livrées le 2026-10-24, 3 à 5 jours d'avance</td><td>Toutes CONFORME ×2 et déterministes sur le clone. 173 / 177 codes WBS retrouvés dans au moins une couche (<code>_verif/wbs_couverture.md</code>).</td></tr>
+      <tr><td>Bascule VM sortie du calendrier</td><td>Décision de Franck (2026-10-22). Seul déclencheur : ouvrir le graphe aux analystes. Sans VM, le pilote se fait sur le poste de Franck (Choix §6).</td></tr>
+    </table></div>
+  </section>
+
+  <footer>Sources : ExpertG1_Point_Etape_2026-10-29_vague2.md, 03_Doc_Historique/ExpertG1_Pilote_CoucheDoc_v0.4.md, _verif/pilote_v03/controle_vague2.md, ExpertG1_Point_Etape_2026-10-29_checkpoint.md, 03_Doc_Historique/ExpertG1_Rencontres_Experts_v1.2.md, ExpertG1_Point_Etape_2026-10-29_vues_v1_2.md, 04_Visuels/ExpertG1_Vues_Carte_v1.2.md, _verif/vues_carte_v1_2/, 03_Doc_Historique/ExpertG1_Glossaire_v0.1.md, _verif/glossaire_v0_1/, ExpertG1_Point_Etape_2026-10-29_glossaire.md, 04_Visuels/ExpertG1_Vue_Graphe_Options_v0.1.md, _verif/vue_graphe_options/, ExpertG1_Point_Etape_2026-10-28_vues_carte.md, 04_Visuels/ExpertG1_Vues_Carte_v1.1.md, _verif/vues_carte_v1_1/, ExpertG1_Point_Etape_2026-10-28_index_texte.md, ExpertG1_Skill_Fiche_v1.6.md, _verif/index_texte/, ExpertG1_Point_Etape_2026-10-28_skill_v1_5.md, ExpertG1_Skill_Fiche_v1.5.md, _verif/skill_v1_5/resultats.md, ExpertG1_Point_Etape_2026-10-28_essais.md, ExpertG1_Skill_Fiche_v1.4.2.md, _verif/skill_v1_4_1/resultats.md, ExpertG1_Point_Etape_2026-10-28_B1B2.md, ExpertG1_Parseur_CSharp_v1.2.md, ExpertG1_Skill_Fiche_v1.4.1.md, _verif/b1/, ExpertG1_Point_Etape_2026-10-28_skill.md, _verif/skill_v1_4/resultats.md, ExpertG1_Point_Etape_2026-10-27_validation.md, _verif/validation_v03/essai/attendu_essai.md, ExpertG1_Pilote_CoucheDoc_v0.3.md, _verif/pilote_v03_synthese.md, 03_Doc_Historique/Validation_Pilote_v0.3/, ExpertG1_Point_Etape_2026-10-27_M2.md, ExpertG1_Parseur_CSharp_v1.1.md, _verif/m2/poc_m2_prevision.json, ExpertG1_Point_Etape_2026-10-27_correctifs.md, ExpertG1_Couverture_CodeMort_v1.2.md, _verif/correctifs_preuves.md, _verif/m2_appendcmdtext.md, ExpertG1_Point_Etape_2026-10-27_run.md, _verif/etape5_dod.md, _verif/etape5_ecarts.md, ExpertG1_Skill_Fiche_v1.3.md, ExpertG1_Point_Etape_2026-10-27_soir.md, ExpertG1_Corpus_Doc2019_v1.0.md, ExpertG1_Texte_CSharp_v1.0.md, ExpertG1_Point_Etape_2026-10-27_fin.md, ExpertG1_Connecteur_MCP_v1.3.md, ExpertG1_Entrant_doc2019_Classement_v1.2.md, ExpertG1_Parseur_SQL_v1.2.md, ExpertG1_Texte_Code_v1.0.md, ExpertG1_Choix_Solution_v1.3.md (§4, §6), ExpertG1_Besoins_Architecte_v1.2.md · Mis à jour le 2026-10-29 (vague 2 : run WSL CONFORME, classeurs envoyables)</footer>
+</div>
+
+<script>
+// Calendar window and "today" marker
+const START = "2026-10-19", END = "2026-11-20", TODAY = "2026-10-29";
+const W = [ // project weeks, counted from J1
+  ["Sem. 1", "2026-10-22", "2026-10-28"], ["Sem. 2", "2026-10-29", "2026-11-04"],
+  ["Sem. 3", "2026-11-05", "2026-11-11"], ["Sem. 4+", "2026-11-12", "2026-11-20"]
+];
+// [group] or [label, owner, start, end, status]; end null = milestone; status: done|doing|todo|risk|wait|open
+const ROWS = [
+  ["Démarrage"],
+  ["J0 : Linux + Neo4j sur le poste", "Franck", "2026-10-22", null, "done"],
+  ["Clone Bitbucket des 36 dépôts GT1", "Franck", "2026-10-22", "2026-10-22", "done"],
+  ["Inventaire du code", "Claude", "2026-10-22", "2026-10-22", "done"],
+  ["DDL FPLQLait (export 2026-08-12)", "DBA", "2026-10-22", null, "done"],
+  ["J1 : début de construction", "—", "2026-10-22", null, "done"],
+
+  ["Construction du graphe"],
+  ["Parseur SQL v1.1 (16 bases) — CONFORME ×2", "Claude", "2026-10-22", "2026-10-23", "done"],
+  ["Parseur VB6 v1.0 + mesure — CONFORME ×2", "Claude", "2026-10-23", "2026-10-23", "done"],
+  ["Aivosto : non-achat (998 / 998 VB6 lus ≥ 90 %)", "Franck", "2026-10-27", null, "done"],
+  ["Parseur VB6 v1.1 (colonnes) — CONFORME ×2", "Claude", "2026-10-23", "2026-10-23", "done"],
+  ["Parseur C# (tree-sitter) — CONFORME ×2", "Claude", "2026-10-23", "2026-10-24", "done"],
+  ["Parseur SSRS (90 rapports) — CONFORME ×2", "Claude", "2026-10-23", "2026-10-23", "done"],
+  ["Réconciliation WBS ↔ code (173 / 177)", "Claude", "2026-10-23", "2026-10-24", "done"],
+  ["Parseur SQL v1.2 (vues, FROM (t1 JOIN…)) — CONFORME ×4", "Claude", "2026-10-26", "2026-10-26", "done"],
+  ["Texte du code dans le graphe (TexteCode)", "Claude", "2026-10-26", "2026-10-26", "done"],
+  ["Couverture + code mort v1.0 — CONFORME ×2 (WSL)", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Décision : texte C# dans le graphe, sous réserve du dimensionnement", "Franck", "2026-10-27", null, "done"],
+  ["Texte C# : dimensionnement (15,3 Mo, 177 lignes à secret)", "Franck", "2026-10-27", null, "done"],
+  ["Texte C# v1.0 + caviardage C# + couverture v1.1 : code livré", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["run_etape5.sh : DoD atteinte (corpus, texte ×2, couverture 9/9)", "Franck", "2026-10-27", null, "done"],
+  ["Correctifs C1-C4 + M2 : code livré (44487fe), C# morts 264", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["run_correctifs.sh : DoD atteinte (doc 151 / 155, C# morts 264)", "Franck", "2026-10-27", null, "done"],
+  ["Parseur C# v1.1 : SQL AppendCmdText → RequeteCS (5d89b17)", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["run_m2.sh : DoD atteinte (M2 28 → 5, non-régression 0)", "Franck", "2026-10-27", null, "done"],
+
+  ["Entrées attendues"],
+  ["DDL FPLQProducteur + 9 BDExtra (reçus)", "DBA", "2026-10-21", null, "done"],
+  ["DDL FPLQEntrepot + Mirroring.TBLMAPPINGS", "DBA", "2026-10-23", "2026-10-28", "wait"],
+  ["Architecte : CollecteLait, S7120 encore déployés ?", "Archi.", "2026-10-26", "2026-10-28", "wait"],
+  ["DBA : rapports déployés, tables Web*, colonnes absentes", "DBA", "2026-10-26", "2026-10-30", "wait"],
+  ["Inventaire Access / Excel / extranets", "Franck", "2026-10-22", "2026-10-30", "risk"],
+  ["Choix des 5 écrans du pilote", "Franck", "2026-10-23", null, "done"],
+  ["Clé API Anthropic (plafond 500 $)", "Franck", "2026-10-26", null, "done"],
+  ["Sauvegarde du graphe : 1re faite, puis lundi 12:00 (planifiée)", "Franck", "2026-10-27", null, "done", ["2026-11-02", "2026-11-09", "2026-11-16"]],
+
+  ["Usage par Claude"],
+  ["Connecteur MCP + import WBS (local)", "Claude", "2026-10-26", "2026-10-26", "done"],
+  ["1er test 5 questions : 1 juste, 3 incompl., 1 fausse", "Claude", "2026-10-26", "2026-10-26", "done"],
+  ["Skill fiche v1.0 → v1.1", "Claude", "2026-10-26", "2026-10-27", "done"],
+  ["2e test 3 / 5 justes ; Q2-Q3 rejouées sans résumés", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Résumés S1332 (462, 6,20 $) + test 4 : Q2-Q3 incomplètes", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Décision résumés : B définitif (pas d'A ciblée)", "Franck", "2026-10-27", null, "done"],
+  ["1re question au graphe (engagement 11-04)", "Franck", "2026-10-26", null, "done"],
+  ["Skill g1-fiche v1.3 : doc + texte C#, 2 essais (E5, E6)", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Skill g1-fiche : zone M2 (sql_accumule) ajoutée", "Claude", "2026-10-27", null, "done"],
+  ["Skill g1-fiche v1.4 : M1-M7 + validation métier, 3 essais, enregistrée", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Remise en état du graphe : 0 réponse d'essai (5d259ff)", "Franck", "2026-10-28", null, "done"],
+  ["B1 parseur C# v1.2 + B2 constat_metier : code livré (d4eb0f1)", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Skill g1-fiche v1.4.1 (constat_metier, execution) enregistrée", "Claude", "2026-10-28", null, "done"],
+  ["run_b1b2.sh : DoD atteinte (ECRIT 45 → 44 = prévision, constats 21)", "Franck", "2026-10-28", null, "done"],
+  ["Essais skill Q4 (S3560) 7 / 7 + Q5 (S1332) 7 / 7 au 3e rejeu, skill v1.4.2", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Remise en état du graphe après l'essai Q5 : 0 réponse d'essai (MCP)", "Franck", "2026-10-28", null, "done"],
+  ["Skill g1-fiche v1.5.1 : 15 requêtes prêtes, ad hoc 0 (Q4 8 / 8, Q5 9 / 9)", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Remise en état après les essais v1.5 : 0 réponse d'essai (MCP)", "Franck", "2026-10-28", null, "done"],
+
+  ["Couche doc historique"],
+  ["Espaces, sites, epics + exclusions (A10-A13)", "Franck", "2026-10-22", "2026-10-23", "done"],
+  ["Collecte Jira / Confluence (API) / SharePoint", "Franck", "2026-10-22", "2026-10-23", "done"],
+  ["5 écrans : assertions → confrontation (82, puis 175)", "Claude", "2026-10-23", "2026-10-23", "done"],
+  ["Chargement Neo4j (load_doc.py) + dates git", "Claude", "2026-10-26", "2026-10-27", "done"],
+  ["Lot doc ≤ 2019 : classé, extrait (851), +93 assertions", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["2 .af3 relus : sans texte utile", "Claude", "2026-10-27", null, "done"],
+  ["Jeux d'essai score_ecrans / extraire_pilote", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Corpus doc2019 dans le graphe : 851 docs, 4 834 sections", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Pilote couche doc v0.3 (175) + 5 dossiers de validation", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Rejeu Neo4j pilote_v03 = run MCP (0 écart)", "Franck", "2026-10-27", null, "done"],
+  ["Relecture des réponses : lire_validation.py prêt, essai conforme", "Claude", "2026-10-27", "2026-10-27", "done"],
+  ["Essai WSL run_lire_validation.sh --essai : CONFORME (5fe4c35)", "Franck", "2026-10-27", null, "done"],
+  ["Validateur = Marc-André (décidé 10-29) ; inviter à R0 (texte prêt, Rencontres v1.2)", "Franck", "2026-10-26", "2026-11-04", "doing"],
+  ["Sauvegarde manuelle du graphe : faite 10-29 14:31 (dump 143 Mo, log OK)", "Franck", "2026-10-29", null, "done"],
+  ["Courriel DBA consolidé (7 demandes) envoyé", "Franck", "2026-10-30", "2026-10-30", "todo"],
+  ["Vague 2 : classeurs S5241 + S5222 (S5422 remplacé), lire_validation sur 5 écrans (56276b1)", "Claude", "2026-10-29", "2026-10-29", "done"],
+  ["run_vague2.sh : CONFORME au 2e run (239 assertions chargées, C5 corrigé 3fb5344)", "Franck", "2026-10-29", null, "done"],
+  ["Envoi S5241 + S5222 (onglet 2 rendu 11-06)", "Franck", "2026-11-04", "2026-11-04", "todo"],
+  ["Index plein texte TexteCode : R2 4,7× (sans perte), skill v1.6", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Réenregistrer la skill g1-fiche v1.6 (diff compte / copie = 0)", "Franck", "2026-10-28", null, "done"],
+
+  ["Pilote"],
+  ["Entrevues vague 1 : S1133, S3223, S3559", "Marc-André", "2026-11-05", "2026-11-06", "todo"],
+  ["Entrevues vague 2 : S5241, S5222", "Marc-André", "2026-11-09", "2026-11-10", "todo"],
+  ["3 vues de la carte (livraisons, impact, vulgarisation) — CONFORME", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["4e vue : cadrage des options — non construite (47 % < 70 %), essai mesuré", "Claude", "2026-10-28", "2026-10-28", "done"],
+  ["Glossaire v0.1 pour les entrevues (1 093 termes, 315 lignes pilote) — CONFORME, G10 à la 5e relecture", "Claude", "2026-10-29", "2026-10-29", "done"],
+  ["Vues v1.2 : Impact cliquable + tables de frontière nommées — CONFORME 14/14, 0 lien mort", "Claude", "2026-10-29", "2026-10-29", "done"],
+  ["Relire les réponses réelles (run_lire_validation.sh)", "Franck", "2026-11-10", "2026-11-11", "todo"],
+  ["Go/no-go pilote + couche doc", "Franck", "2026-11-11", null, "todo"],
+
+  ["Après le pilote"],
+  ["Ré-index, export Jira/Confluence, ouverture", "Claude", "2026-11-12", "2026-11-20", "open"],
+  ["Bascule VM (non datée, avant les analystes)", "Archi.", "2026-11-12", "2026-11-20", "open"],
+  ["Vue graphe (souhait de Franck) : nouvel essai avec critère empreinté", "Claude", "2026-11-12", "2026-11-20", "open"]
+];
+
+const d = s => new Date(s + "T00:00:00Z");
+const days = [];
+for (let t = d(START); t <= d(END); t = new Date(t.getTime() + 864e5)) days.push(t);
+const idx = s => Math.round((d(s) - d(START)) / 864e5);
+const col = s => idx(s) + 2; // column 1 = labels
+const isWE = t => [0, 6].includes(t.getUTCDay());
+const g = document.getElementById("g");
+g.style.setProperty("--n", days.length);
+const el = (cls, css, html) => { const e = document.createElement("div"); if (cls) e.className = cls; if (css) e.style.cssText = css; if (html != null) e.innerHTML = html; g.appendChild(e); return e; };
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+// Week row
+let r = 1;
+el("lab", `grid-row:${r};grid-column:1;height:30px`, "<span class='t' style='color:var(--muted);font-size:.75rem'>Semaine de projet</span>");
+W.forEach(([n, a, b]) => el("wkrow", `grid-row:${r};grid-column:${col(a)}/${col(b) + 1}`, n));
+// Day header
+r++;
+el("lab", `grid-row:${r};grid-column:1;height:44px`, "<span class='t' style='color:var(--muted);font-size:.75rem'>Tâche</span>");
+const J = ["D","L","M","M","J","V","S"];
+days.forEach((t, i) => el("hd" + (isWE(t) ? " we" : ""), `grid-row:${r};grid-column:${i + 2}`, `<span>${J[t.getUTCDay()]}</span><span>${t.getUTCDate()}</span>`));
+
+const ms = (row, s, st, label) => { el("ms " + (st === "done" ? "done" : st === "risk" ? "risk" : ""), `grid-row:${row};grid-column:${col(s)}`).title = `${label} — ${s}`; };
+ROWS.forEach(rw => {
+  r++;
+  if (rw.length === 1) { el("grp", `grid-row:${r}`, esc(rw[0])); return; }
+  const [label, owner, s, e, st, extra] = rw;
+  el("lab cell", `grid-row:${r};grid-column:1`, `<span class="t" title="${esc(label)}">${esc(label)}</span><span class="own">${esc(owner)}</span>`);
+  days.forEach((t, i) => el("cell" + (isWE(t) ? " we" : ""), `grid-row:${r};grid-column:${i + 2}`));
+  if (e === null) { ms(r, s, st, label); (extra || []).forEach(x => ms(r, x, st, label)); }
+  else el("bar s-" + st, `grid-row:${r};grid-column:${col(s)}/${col(e) + 1}`).title = `${label} — ${s} → ${e}`;
+});
+
+// Today line, positioned after layout
+const line = document.createElement("div"); line.className = "todayline"; g.appendChild(line);
+const place = () => { const lab = g.querySelector(".lab").getBoundingClientRect().width; const day = (g.scrollWidth - lab) / days.length; line.style.left = (lab + day * (idx(TODAY) + 0.5)) + "px"; };
+place(); addEventListener("resize", place);
+</script>
+
+<!-- Portfolio PLQ feed (canonical model v1): regenerate it whenever ROWS changes -->
+<script type="application/json" id="portfolio-feed">
+{"modele":"1","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:30-04:00","par":"feed Expert G1 — Gantt S1"},
+"items":[
+ {"id":"feed.expertg1","nom":"Expert G1 — graphe de connaissance","type":"projet","parent":null,"voie":"flux","etape":"actif","promu":false,"responsable":"Franck Kowalczyk","fenetre":{"debut":"2026-10-22","fin":"2026-11-20"},"liens":[{"libelle":"Gantt S1","url":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg"},{"libelle":"Architecture S1","url":"https://claude.ai/artifact/EHnLV4jNSTWnGK1MFv9VhM"},{"libelle":"Vues de la carte G1","url":"https://claude.ai/artifact/VZ3gpHVAGQ6qjrC57B9Jb6"}],"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00","par":"feed Expert G1 — Gantt S1"},"updated_at":"2026-10-29T16:30-04:00"}
+],
+"jalons":[
+ {"id":"feed.expertg1.j1","item":"feed.expertg1","nom":"J1 : début de construction","date":"2026-10-22","statut":"fait","fait_le":"2026-10-22","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.parseurs","item":"feed.expertg1","nom":"Parseurs SQL · VB6 · C# · SSRS conformes","date":"2026-10-24","date_initiale":"2026-10-27","statut":"fait","fait_le":"2026-10-24","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.q1","item":"feed.expertg1","nom":"1re question au graphe (engagement 4 nov.)","date":"2026-10-26","date_initiale":"2026-11-04","statut":"fait","fait_le":"2026-10-26","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.resumes","item":"feed.expertg1","nom":"Décision résumés : B définitif","date":"2026-10-27","statut":"fait","fait_le":"2026-10-27","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.aivosto","item":"feed.expertg1","nom":"Aivosto : non-achat","date":"2026-10-27","statut":"fait","fait_le":"2026-10-27","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.m2","item":"feed.expertg1","nom":"Parseur C# v1.1 (M2) chargé : run_m2.sh","date":"2026-10-28","statut":"fait","fait_le":"2026-10-27","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:10-04:00"}},
+ {"id":"feed.expertg1.validateurs","item":"feed.expertg1","nom":"Validateur confirmé (Marc-André seul)","date":"2026-11-04","date_initiale":"2026-11-04","statut":"fait","fait_le":"2026-10-29","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:00-04:00"}},
+ {"id":"feed.expertg1.vague2","item":"feed.expertg1","nom":"Vague 2 du pilote : classeurs S5241 + S5222 envoyables (S5422 remplacé), run WSL CONFORME","date":"2026-11-04","date_initiale":"2026-11-04","statut":"fait","fait_le":"2026-10-29","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:30-04:00"}},
+ {"id":"feed.expertg1.pilote-doc","item":"feed.expertg1","nom":"Pilote couche doc v0.3 + dossier de validation","date":"2026-11-04","date_initiale":"2026-11-04","statut":"fait","fait_le":"2026-10-27","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.lecture-validation","item":"feed.expertg1","nom":"Relecture des réponses de validation (script + essai)","date":"2026-11-04","date_initiale":"2026-11-04","statut":"fait","fait_le":"2026-10-27","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T00:30-04:00"}},
+ {"id":"feed.expertg1.skill-v14","item":"feed.expertg1","nom":"Skill g1-fiche v1.4 (validation métier lue)","date":"2026-10-31","date_initiale":"2026-10-31","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T10:31-04:00"}},
+ {"id":"feed.expertg1.b1b2","item":"feed.expertg1","nom":"B1 parseur C# v1.2 + B2 constat métier : run_b1b2.sh","date":"2026-10-28","date_initiale":"2026-10-30","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T12:10-04:00"}},
+ {"id":"feed.expertg1.essais-skill","item":"feed.expertg1","nom":"Essais skill g1-fiche Q4 + Q5 (v1.4.2)","date":"2026-10-28","date_initiale":"2026-10-30","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T13:00-04:00"}},
+ {"id":"feed.expertg1.skill-v15","item":"feed.expertg1","nom":"Skill g1-fiche v1.5.1 (requêtes prêtes, ad hoc 0)","date":"2026-10-28","date_initiale":"2026-10-30","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T14:10-04:00"}},
+ {"id":"feed.expertg1.index-texte","item":"feed.expertg1","nom":"Index plein texte TexteCode + skill g1-fiche v1.6","date":"2026-11-09","date_initiale":"2026-11-09","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T15:45-04:00"}},
+ {"id":"feed.expertg1.vues-carte","item":"feed.expertg1","nom":"3 vues de la carte (livraisons, impact, vulgarisation)","date":"2026-11-10","date_initiale":"2026-11-10","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T19:50-04:00"}},
+ {"id":"feed.expertg1.vue-graphe","item":"feed.expertg1","nom":"4e vue (explorateur de graphe) : décision sur le cadrage — non construite, Vues v1.2 à la place","date":"2026-10-30","date_initiale":"2026-10-30","statut":"fait","fait_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-28T21:00-04:00"}},
+ {"id":"feed.expertg1.glossaire","item":"feed.expertg1","nom":"Glossaire v0.1 pour les entrevues du pilote","date":"2026-10-30","date_initiale":"2026-10-30","statut":"fait","fait_le":"2026-10-29","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T11:30-04:00"}},
+ {"id":"feed.expertg1.vues-v12","item":"feed.expertg1","nom":"Vues v1.2 : Impact cliquable + tables de frontière nommées","date":"2026-11-02","date_initiale":"2026-11-02","statut":"fait","fait_le":"2026-10-29","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T13:40-04:00"}},
+ {"id":"feed.expertg1.go-nogo","item":"feed.expertg1","nom":"Go / no-go pilote + couche doc","date":"2026-11-11","date_initiale":"2026-11-11","statut":"a_venir","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}}
+],
+"risques":[
+ {"id":"feed.expertg1.r1","item":"feed.expertg1","titre":"Marc-André seul indisponible avant le 10 nov. → go/no-go glisse","probabilite":3,"impact":3,"mitigation":"R0 avant le 4 nov. ; vague 1 seule si besoin (go sur 3 écrans, consigné)","ouvert":true,"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:00-04:00"}},
+ {"id":"feed.expertg1.r29","item":"feed.expertg1","titre":"Un seul avis métier devient la vérité du graphe","probabilite":3,"impact":2,"mitigation":"Marquer validateur unique ; 2e avis à la généralisation","ouvert":true,"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:00-04:00"}},
+ {"id":"feed.expertg1.r30","item":"feed.expertg1","titre":"Vague 2 pas prête au 4 nov. ou sans matière go","probabilite":1,"impact":2,"mitigation":"Clos le 29 oct. : repli appliqué (S5422 → S5222), run_vague2.sh CONFORME","ouvert":false,"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:30-04:00"}},
+ {"id":"feed.expertg1.r4","item":"feed.expertg1","titre":"DBA / architecte sans réponse (3 attentes échues)","probabilite":4,"impact":2,"mitigation":"Courriel DBA consolidé daté ; escalade au sponsor si rien au 4 nov.","ouvert":true,"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-29T16:00-04:00"}},
+ {"id":"feed.expertg1.r2","item":"feed.expertg1","titre":"Inventaire Access / Excel / extranets incomplet au 30 oct.","probabilite":3,"impact":2,"mitigation":"Périmètre réduit aux 5 écrans du pilote","ouvert":true,"source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}}
+],
+"attentes":[
+ {"id":"feed.expertg1.a1","item":"feed.expertg1","tiers":"DBA","objet":"DDL FPLQEntrepot + Mirroring.TBLMAPPINGS","attendue_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.a2","item":"feed.expertg1","tiers":"Architecte","objet":"CollecteLait, S7120 encore déployés ?","attendue_le":"2026-10-28","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}},
+ {"id":"feed.expertg1.a3","item":"feed.expertg1","tiers":"DBA","objet":"Rapports déployés, tables Web*, colonnes absentes","attendue_le":"2026-10-30","source":{"systeme":"artefact","ref":"https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg","lu_le":"2026-10-27T23:59-04:00"}}]
+}
+</script>
+
+</body></html>

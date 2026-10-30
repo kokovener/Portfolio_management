@@ -1,7 +1,7 @@
 # Instructions projet — Portefeuille PLQ
 
 Outil de visibilité du portefeuille TI (3 mois glissants, sprints, jalons, dépendances, risques, charge, MEP, run).
-Couche 0 au-dessus de Goutte 2.1. Décisions D1–D20 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v5.md` (motifs dans l'annexe).
+Couche 0 au-dessus de Goutte 2.1. Décisions D1–D22 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v9.md` (motifs dans l'annexe).
 Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant.
 
 ## Langue, heure, style
@@ -19,7 +19,7 @@ Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant
 ## Règles produit
 | Règle | Énoncé |
 |---|---|
-| Source de vérité | Le portefeuille ne modifie jamais Smartsheet, Jira, Outlook, Miro, ni un artefact source |
+| Source de vérité | Le portefeuille ne modifie jamais Smartsheet, Jira, Outlook, Miro, ni un artefact source ; seule exception : Franck prépare le bloc feed de ses propres artefacts (D12, D22 v7) |
 | Grain | Item = programme, projet ou run ; jalons, jamais tâches ; test : « oui/non à une date » = jalon |
 | Goutte 2.1 | Lu au grain L + items promus par Franck ; jamais d'entité ni de story |
 | Santé | Calculée (D8), jamais déclarée ; fraîcheur > 15 j ouvrés sans mise à jour Smartsheet ni activité Jira = alerte (D8 v4) |
@@ -27,6 +27,8 @@ Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant
 | Dépendances | Typées (bloque · alimente · attend) ; un prédécesseur qui recule met le successeur en alerte |
 | Feed | Un artefact projet n'est lu que s'il porte `<script type="application/json" id="portfolio-feed">` au modèle canonique ; sinon ignoré et signalé |
 | Droits | Artefact partagé en lecture ; écriture `db` réservée au niveau owner ; Gérer masqué si `user.canEdit()` est faux ; item masqué (`visible` false) = filtre d'affichage (vue visiteur + digest), jamais une confidentialité (D20 v3) |
+| Nouveau projet | Skill `ajout-projet-portefeuille` (D21) : item `saisie.<nom>`, épopées, Gantt inscrit dans `04_Adaptateurs/Gantts_Inscrits_v1.md` |
+| Gantt de projet | Reproduit depuis ses données (drawio PLQ-Forge, JSON, ou ligne `gantts` du bloc feed d'un artefact), jamais copié en image ; lignes jalon = jalons pour un Gantt de fichier (Gantt de feed : affichage) ; tâches = affichage seulement (D22 v9) |
 | Instantanés | Chaque lundi, instantané daté écrit avant tout recalcul ; jamais supprimé |
 | Données personnelles | Rien de `Goutte2.1/01_Gouvernance/Recrutements/` n'entre dans la base ni dans un digest |
 
@@ -57,7 +59,7 @@ Racine plafonnée à ces 7 entrées. Nouveau sujet → dans une phase existante.
 |---|---|
 | Goutte 2.1 (lecture) | `C:\Users\fkowalczyk\OneDrive - Les producteurs de lait du Québec\Documents\Claude\Goutte2.1\` |
 | Smartsheet | `Goutte21_Master` 230627583414148 · `Jalons_Entites` 2733930749841284 |
-| Jira | GOU21 seul (sprints, versions MEP, tickets liés aux demandes STG21) ; SDD et PLQ hors connecteur : MEP par le ledger (Kickoff D11 v5) |
+| Jira | GOU21 seul (sprints, versions MEP, tickets liés aux demandes STG21) ; SDD et PLQ hors connecteur ; MEP : calendrier MEP > Jira > courriel > Teams « 05 - Déploiements » > ledger (Kickoff D18 v8) |
 | Artefacts | Maquettes https://claude.ai/artifact/DSpedLCbm6enVxTz9cS9nd · Expert G1 Gantt S1 https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · Design system https://claude.ai/artifact/SW339XsDhEpz696xhonAC1 |
 | Miro | Dernier board de rétro GOU21, cadre « Actions du sprint suivant » |
 | Teams | Canal du digest : `G1_Agent_Analystes` (groupId `e3fe050d-5ad9-4bd4-a483-cc4e5413ac49`, canal `19:bxs3bIvPMcXuZc0tA9xidnPdhemHhzafgN1S5FuKPV81@thread.tacv2`) |

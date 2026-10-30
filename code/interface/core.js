@@ -7,12 +7,12 @@
   'use strict';
 
   const COLLECTIONS = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables', 'meps',
-    'actions_retro', 'charges', 'sprints', 'personnes', 'absences', 'stats_jira', 'instantanes', 'lectures', 'listes_jira'];
+    'actions_retro', 'charges', 'sprints', 'personnes', 'absences', 'stats_jira', 'instantanes', 'lectures', 'listes_jira', 'gantts'];
   // collection key -> schema $defs name
   const DEF_OF = {
     items: 'item', jalons: 'jalon', risques: 'risque', attentes: 'attente', dependances: 'dependance',
     livrables: 'livrable', meps: 'mep', actions_retro: 'action_retro', charges: 'charge',
-    sprints: 'sprint', personnes: 'personne', absences: 'absence', stats_jira: 'stat_jira', instantanes: 'instantane', lectures: 'lecture', listes_jira: 'liste_jira'
+    sprints: 'sprint', personnes: 'personne', absences: 'absence', stats_jira: 'stat_jira', instantanes: 'instantane', lectures: 'lecture', listes_jira: 'liste_jira', gantts: 'gantt'
   };
   const SEUILS = { fraicheur_jo: 15, recul_jo: 5, attente_jo: 5, risque_rouge: 15, risque_jaune: 10, mep_j: 7 };
   const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
@@ -332,7 +332,9 @@
   // Portfolio gates of a Goutte 2.1 deliverable (decision Franck 2026-10-28): 4 of the 18 entity milestones.
   const GATES = [['ba-3', 'BA-3 scope figé'], ['ac-4', 'AC-4 GO Dev'], ['qa-2', 'QA-2 UAT'], ['qa-3', 'QA-3 MEP']];
   const gateOf = (j) => { const m = String(j.id).match(/\.(ba-3|ac-4|qa-2|qa-3)$/); return m ? m[1] : null; };
-  function childrenOf(base, id) { return base.items.filter((i) => i.parent === id && i.etape !== 'termine'); }
+  // R49: idea / qualifié (Backlog, A Revoir) children no longer drive a parent's cascade (windows, gates), now that
+  // ticked Backlog rows become items
+  function childrenOf(base, id) { return base.items.filter((i) => i.parent === id && !['termine', 'idee', 'qualifie'].includes(i.etape)); }
   // Planned window: own (Smartsheet "Début prévu / Fin prévue" or Gérer) else cascade = earliest start, latest end of children.
   function fenetrePrevue(base, item, depth) {
     if (item.fenetre && item.fenetre.debut) return Object.assign({ origine: 'propre' }, item.fenetre);
@@ -426,7 +428,7 @@
     const ix = index(base); const b = Object.assign({}, base);
     const off = (ref) => !!ref && h.has(refItem(ix, ref) || '');
     b.items = base.items.filter((i) => !h.has(i.id));
-    ['jalons', 'risques', 'attentes', 'charges', 'stats_jira', 'livrables', 'meps'].forEach((c) => { b[c] = (base[c] || []).filter((r) => !h.has(r.item)); });
+    ['jalons', 'risques', 'attentes', 'charges', 'stats_jira', 'livrables', 'meps', 'gantts'].forEach((c) => { b[c] = (base[c] || []).filter((r) => !h.has(r.item)); });
     b.dependances = base.dependances.filter((d) => !off(d.de) && !off(d.vers));
     b.listes_jira = (base.listes_jira || []).map((l) => Object.assign({}, l, { tickets: l.tickets.filter((t) => !h.has(t.item)) }));
     return b;
@@ -455,7 +457,7 @@
   function sourcesOf(base, itemId) {
     const recs = [];
     const it = base.items.find((i) => i.id === itemId); if (it) recs.push(it);
-    ['jalons', 'risques', 'attentes', 'charges', 'stats_jira'].forEach((c) => (base[c] || []).filter((r) => r.item === itemId).forEach((r) => recs.push(r)));
+    ['jalons', 'risques', 'attentes', 'charges', 'stats_jira', 'gantts'].forEach((c) => (base[c] || []).filter((r) => r.item === itemId).forEach((r) => recs.push(r)));
     base.meps.filter((m) => m.item === itemId).forEach((m) => recs.push(m));
     const g = {};
     recs.forEach((r) => {

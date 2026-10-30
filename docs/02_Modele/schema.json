@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plq.local/portefeuille/schema/v2",
-  "title": "Portefeuille PLQ — modèle canonique v14",
+  "title": "Portefeuille PLQ — modèle canonique v17",
   "description": "Un document = un feed (bloc <script id=\"portfolio-feed\">), un adaptateur, ou la base complète. Toutes les collections sont optionnelles ; un document vide est valide. Dates : AAAA-MM-JJ ; horodatages : ISO 8601 avec décalage (heure du Québec : EDT -04:00, EST -05:00).",
   "type": "object",
   "additionalProperties": false,
@@ -26,9 +26,10 @@
         "11",
         "12",
         "13",
-        "14"
+        "14",
+        "15"
       ],
-      "description": "Version du modèle canonique ; v14 : tendance du support vs le lundi (support[].lundis, tendance_vs) ; v13 ajoute item.visible (masquage, R37) ; v10 ajoute la liste des bloqués du sprint ; v8 retire le WIP saisi (D7 volet flux, Franck 2026-10-28) ; v7 ⊃ … ⊃ v1"
+      "description": "Version du modèle canonique ; v17 : MEP lues aussi dans les courriels et Teams (source teams, Kickoff D18 v7) ; v16 : Gantt porté par un feed (schéma inchangé) ; v15 : Gantt de projet (collection gantts, jalons tirés du Gantt, source sharepoint) ; v14 : tendance du support vs le lundi (support[].lundis, tendance_vs) ; v13 ajoute item.visible (masquage, R37) ; v10 ajoute la liste des bloqués du sprint ; v8 retire le WIP saisi (D7 volet flux, Franck 2026-10-28) ; v7 ⊃ … ⊃ v1"
     },
     "source": {
       "$ref": "#/$defs/source",
@@ -129,6 +130,12 @@
       "items": {
         "$ref": "#/$defs/liste_jira"
       }
+    },
+    "gantts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/gantt"
+      }
     }
   },
   "$defs": {
@@ -161,8 +168,10 @@
         "outlook",
         "miro",
         "ledger",
+        "teams",
         "saisie",
-        "calcul"
+        "calcul",
+        "sharepoint"
       ]
     },
     "source": {
@@ -1318,7 +1327,8 @@
             "jira_data",
             "jira_data_reel",
             "artefacts",
-            "miro"
+            "miro",
+            "gantt"
           ],
           "description": "jira_data_reel = Jira data avec l'étape d (réel des épopées) ; outlook_equipe = Outlook en mode équipe"
         },
@@ -1454,6 +1464,168 @@
               },
               "sous_tache": {
                 "type": "boolean"
+              }
+            }
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "gantt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "format",
+        "empreinte",
+        "onglets",
+        "source"
+      ],
+      "description": "v15 — Gantt d'un projet, lu dans un fichier (drawio ou JSON) inscrit au registre Gantts_Inscrits ; affichage seulement : ses tâches ne deviennent ni items ni jalons (D4), sauf les lignes marquées jalon. Un document par item (id gantt.<item>), réécrit seulement quand le fichier change",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "item": {
+          "$ref": "#/$defs/id"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "drawio",
+            "json"
+          ]
+        },
+        "titre": {
+          "type": "string"
+        },
+        "empreinte": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 du fichier lu ; inchangée = aucune réécriture"
+        },
+        "fichier_modifie_le": {
+          "$ref": "#/$defs/horodatage",
+          "description": "Dernière modification du fichier dans SharePoint"
+        },
+        "calcule_le": {
+          "$ref": "#/$defs/date",
+          "description": "Jour où le producteur a calculé le plan (repère « aujourd'hui » du drawio, champ calcule_le du JSON)"
+        },
+        "onglets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nom",
+              "debut",
+              "fin",
+              "groupes"
+            ],
+            "properties": {
+              "nom": {
+                "type": "string",
+                "minLength": 1
+              },
+              "titre": {
+                "type": "string"
+              },
+              "sous_titre": {
+                "type": "string"
+              },
+              "debut": {
+                "$ref": "#/$defs/date"
+              },
+              "fin": {
+                "$ref": "#/$defs/date"
+              },
+              "hors_planning": {
+                "type": "string"
+              },
+              "groupes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "nom",
+                    "taches"
+                  ],
+                  "properties": {
+                    "nom": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "taches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "nom",
+                          "debut",
+                          "fin"
+                        ],
+                        "properties": {
+                          "ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Référence de la tâche dans le Gantt (ex. P2-AN1) ; absente pour une ligne sans référence"
+                          },
+                          "nom": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "debut": {
+                            "$ref": "#/$defs/date"
+                          },
+                          "fin": {
+                            "$ref": "#/$defs/date",
+                            "description": "Dernier jour travaillé, inclus"
+                          },
+                          "segments": {
+                            "type": "array",
+                            "minItems": 2,
+                            "items": {
+                              "type": "object",
+                              "additionalProperties": false,
+                              "required": [
+                                "debut",
+                                "fin"
+                              ],
+                              "properties": {
+                                "debut": {
+                                  "$ref": "#/$defs/date"
+                                },
+                                "fin": {
+                                  "$ref": "#/$defs/date"
+                                }
+                              }
+                            },
+                            "description": "Seulement quand la ligne porte plusieurs barres"
+                          },
+                          "critique": {
+                            "type": "boolean",
+                            "description": "Sur le chemin critique (contour rouge du Gantt)"
+                          },
+                          "jalon": {
+                            "type": "boolean",
+                            "description": "Ligne reprise comme jalon du portefeuille (date = fin)"
+                          },
+                          "fait": {
+                            "type": "boolean",
+                            "description": "Déclaré fait par la source (JSON seulement)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }

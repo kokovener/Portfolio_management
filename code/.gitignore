@@ -9,6 +9,9 @@ dist/runs/*/art_out*/docs/
 dist/runs/*/art_out*/feeds/_base.json
 # personal availability data (free/busy, work emails): kept locally as run evidence, never committed
 dist/runs/*/outlook_raw.json
+# MEP evidence (work emails, Teams posts): local run evidence, never committed (D18 v8)
+dist/**/mep_sources/
+dist/**/mep_sources.json
 dist/runs/*/outlook_directory.json
 dist/runs/*/team_raw.json
 dist/runs/*/outlook_out*/docs/
@@ -52,3 +55,4 @@ dist/runs/2026-10-28/r06d/versions.json
 # team records (names, roles) in run exports: local only (checkpoint 2026-10-29)
 dist/runs/**/personnes/
 dist/runs/*/suppressions/personnes__*
+dist/runs/**/*.gz.b64

@@ -12,11 +12,11 @@ const names = (p) => p.adaptateurs.map((a) => a.adaptateur);
 
 ok('lundi 2 nov. (pas un début de sprint) : photo sans Outlook, Jira data avec le réel (étape d), instantané + digest + Teams', () => {
   const p = plan(cad, 'lundi', '2026-11-02');
-  assert.deepStrictEqual(names(p), ['smartsheet', 'jira', 'jira_data_reel', 'artefacts', 'miro']);
+  assert.deepStrictEqual(names(p), ['smartsheet', 'jira', 'jira_data_reel', 'artefacts', 'gantt', 'miro']);
   assert(p.instantane && p.digest && p.teams); assert.deepStrictEqual(p.avertissements, []);
 });
 ok('lundi 9 nov. = début de sprint (F4) : Outlook ajouté, avant Jira (ordre C4)', () => {
-  assert.deepStrictEqual(names(plan(cad, 'lundi', '2026-11-09')), ['smartsheet', 'outlook', 'jira', 'jira_data_reel', 'artefacts', 'miro']);
+  assert.deepStrictEqual(names(plan(cad, 'lundi', '2026-11-09')), ['smartsheet', 'outlook', 'jira', 'jira_data_reel', 'artefacts', 'gantt', 'miro']);
 });
 ok('sprints de 3 semaines : 9 nov., 30 nov., 21 déc. ; S19 en cours = 19 oct. → 6 nov.', () => {
   ['2026-11-09', '2026-11-30', '2026-12-21'].forEach((d) => assert(sprintOf(cad, d).debut_sprint, d));

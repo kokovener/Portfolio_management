@@ -7,11 +7,12 @@
  *                      Claude with `Artifact read` (path index.html) — never WebFetch
  *   base_before_dir    ArtifactData export: <dir>/<collection>/*.json + versions.json {"<collection>/<id>": n}
  * Writes to out_dir: doc.json, batch.json (pinned ArtifactData writes), report.json, feeds/<dir>.json (extracted blocks).
- * Rules (fiche Adaptateur_Artefacts_v1):
+ * Rules (fiche Adaptateur_Artefacts_v2):
  *   - one <script type="application/json" id="portfolio-feed"> block; missing, duplicated, unparsable, invalid
  *     against the model (validate_model.py) or breaking the feed contract = feed ignored and reported, no write at all;
  *   - contract: source = artefact + registered URL; collections items, jalons, risques, attentes, dependances,
- *     livrables only; every id under the registered prefix; the expected item present;
+ *     livrables, gantts (Kickoff D22 v7) only; every id under the registered prefix; the expected item present;
+ *     at most one gantt, id <prefix>.gantt;
  *   - item: portfolio-owned fields taken at creation only (as Smartsheet S3), source fields at every read;
  *   - jalon / livrable: date_initiale kept when the date moves; risque.score computed;
  *   - base records of a feed absent from its read are kept and reported, never deleted.
@@ -22,7 +23,8 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const ALLOWED = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables'];
+// Kickoff D22 v7 (model v16): a feed may carry its project's Gantt (display only), one at most, id <prefix>.gantt
+const ALLOWED = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables', 'gantts'];
 const OWNED = ['nom', 'type', 'parent', 'voie', 'etape', 'promu', 'priorite', 'responsable', 'fenetre', 'note_lundi', 'liens', 'visible'];
 const ITEM_SOURCE = ['pct_avancement', 'phase_source', 'contenu_sprint', 'support']; // model §3 read-only fields (sante apart)
 const RE_BLOCK = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
@@ -81,7 +83,9 @@ function checkContract(feed, reg) {
   ALLOWED.forEach((c) => (feed[c] || []).forEach((r) => { if (r && r.id && !underPrefix(r.id, reg.prefixe)) errs.push(`${c} ${r.id} hors du préfixe ${reg.prefixe}`); }));
   // health-bearing records (jalon, risque, attente) may only attach to the feed's own items: a feed must not colour
   // an item of another source (review 3c). Dependances and livrables may point outside: that is their purpose.
-  ['jalons', 'risques', 'attentes'].forEach((c) => (feed[c] || []).forEach((r) => { if (r && r.item && !underPrefix(r.item, reg.prefixe)) errs.push(`${c} ${r.id} rattaché à ${r.item}, hors du préfixe ${reg.prefixe}`); }));
+  ['jalons', 'risques', 'attentes', 'gantts'].forEach((c) => (feed[c] || []).forEach((r) => { if (r && r.item && !underPrefix(r.item, reg.prefixe)) errs.push(`${c} ${r.id} rattaché à ${r.item}, hors du préfixe ${reg.prefixe}`); }));
+  const gs = feed.gantts || []; if (gs.length > 1) errs.push(`${gs.length} Gantts dans le bloc (un seul admis)`);
+  gs.forEach((g) => { if (g.id !== `${reg.prefixe}.gantt`) errs.push(`gantts ${g.id} : id attendu ${reg.prefixe}.gantt`); });
   if (reg.item && !(feed.items || []).some((i) => i.id === reg.item)) errs.push(`item attendu ${reg.item} absent du bloc`);
   const ids = {}; ALLOWED.forEach((c) => (feed[c] || []).forEach((r) => { const k = `${c}/${r.id}`; if (ids[k]) errs.push(`${k} en double`); ids[k] = 1; }));
   return errs;
@@ -132,6 +136,22 @@ function mapFeed(feed, reg, base, readAt, signals, rows) {
     const prev = prevOf('risques', r.id);
     out.risques.push(Object.assign({}, r, { score: r.probabilite * r.impact, source: src }));
     rows.push({ kind: 'risque', id: r.id, decision: prev ? 'mise à jour' : 'créé', lu: { p: r.probabilite, i: r.impact }, base: { score: r.probabilite * r.impact } });
+  });
+  (feed.gantts || []).filter(keep('gantts')).forEach((g) => {
+    // one Gantt per item: another source's Gantt for the same item is never doubled (review 30 oct., gap 2)
+    const other = (base.gantts || []).find((x) => x.item === g.item && x.id !== g.id);
+    if (other) { signals.push({ kind: 'gantt_double', row: g.id, texte: `${g.id} : l'item ${g.item} a déjà le Gantt ${other.id} — le Gantt du feed n'est pas écrit` }); return; }
+    // the Gantt line is written by a producer tool; a block regenerated without rerunning it keeps an old line (gap 4)
+    if (g.source && feed.source && feed.source.lu_le && g.source.lu_le && feed.source.lu_le.slice(0, 10) > g.source.lu_le.slice(0, 10))
+      signals.push({ kind: 'gantt_perime', row: g.id, texte: `${g.id} : ligne Gantt du ${g.source.lu_le.slice(0, 10)}, bloc du ${feed.source.lu_le.slice(0, 10)} — relancer l'outil producteur (feeds/expertg1_gantt.js) si ROWS a changé` });
+    // milestone rows are display only: a date that contradicts the block's own milestone of the same name is reported (gap 3)
+    const norm = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    g.onglets.forEach((o) => o.groupes.forEach((gr) => gr.taches.filter((x) => x.jalon).forEach((x) => {
+      const j = (feed.jalons || []).find((y) => norm(y.nom) === norm(x.nom) || norm(x.nom).startsWith(norm(y.nom)) || norm(y.nom).startsWith(norm(x.nom)));
+      if (j && j.date !== x.fin) signals.push({ kind: 'gantt_jalon_ecart', row: j.id, texte: `${j.id} : ${j.date} dans les jalons du bloc, ${x.fin} dans son Gantt` });
+    })));
+    const prev = prevOf('gantts', g.id); out.gantts.push(Object.assign({}, g, { source: src }));
+    rows.push({ kind: 'gantt', id: g.id, decision: prev ? (prev.empreinte === g.empreinte ? 'inchangé (réécrit)' : 'mis à jour') : 'créé', lu: { taches: g.onglets.reduce((n, o) => n + o.groupes.reduce((k, x) => k + x.taches.length, 0), 0) } });
   });
   ['attentes', 'dependances'].forEach((c) => (feed[c] || []).filter(keep(c)).forEach((r) => {
     const prev = prevOf(c, r.id); out[c].push(Object.assign({}, r, { source: src }));

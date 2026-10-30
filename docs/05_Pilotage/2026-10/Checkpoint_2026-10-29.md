@@ -17,7 +17,7 @@ Relecture à froid par un sous-agent au contexte neuf (lecture seule, sans le ra
 | C9 | Kickoff : SDD, PLQ, JSM STG21 lus ; connecteur = GOU21 seul | Périmètre réduit dans le modèle v2 sans réviser le Kickoff | S | **fait** : Kickoff v5 D11 D17 D18 (Franck : GOU21 seul) ; CLAUDE.md aligné |
 | C10 | Schéma de flux v3 et spécification d'interface v1 périmés | Changements tracés dans les retours et les commits seulement | C | **R47, R48** |
 | C11 | Liens d'annexes vers des versions archivées (Jira, Smartsheet) ; modèle v14 « −04:00 obligatoire » | En-têtes non réécrits à chaque vN+1 | C | **fait** (corrigé en place, documents non diffusés) |
-| C12 | Sauvegarde GitHub non relancée depuis le 28 oct. 14 h 32 | Lancement manuel, hors cadence | C | à relancer par Franck (poste Windows) |
+| C12 | Sauvegarde GitHub non relancée depuis le 28 oct. 14 h 32 ; push rejeté (force push du 28 oct. jamais fait) | Lancement manuel, hors cadence | C | **fait 29 oct.** : force push avec garde, GitHub = 2 sauvegardes neutres (14fe604, e7bef32) |
 
 ## 2. « Agent validateur »
 

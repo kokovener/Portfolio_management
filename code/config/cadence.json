@@ -1,11 +1,11 @@
 {
-  "_doc": "Cadence de rafraîchissement (R36, décisions Franck 2026-10-28). Cadrage : Portefeuille_PLQ/05_Pilotage/Cadence_Rafraichissement_v1.md. Modifier ici, jamais dans le code.",
+  "_doc": "Cadence de rafraîchissement (R36, décisions Franck 2026-10-28). Cadrage : Portefeuille_PLQ/05_Pilotage/Cadence_Rafraichissement_v3.md. Modifier ici, jamais dans le code.",
   "sprint": { "ancre": "2026-11-09", "duree_j": 21 },
-  "ordre": ["smartsheet", "outlook_equipe", "outlook", "jira", "jira_data", "jira_data_reel", "artefacts", "miro"],
+  "ordre": ["smartsheet", "outlook_equipe", "outlook", "jira", "jira_data", "jira_data_reel", "artefacts", "gantt", "miro"],
   "remplace": { "jira_data_reel": ["jira_data"], "outlook": ["outlook_equipe"] },
   "passages": {
     "lundi": { "tache": "portefeuille-plq-lundi", "heure": "07:00", "jours": [1],
-      "adaptateurs": ["smartsheet", "jira", "jira_data_reel", "artefacts", "miro"],
+      "adaptateurs": ["smartsheet", "jira", "jira_data_reel", "artefacts", "gantt", "miro"],
       "debut_sprint": ["outlook"], "instantane": true, "digest": true, "teams": true },
     "quotidien": { "tache": "portefeuille-plq-quotidien", "heure": "09:00", "jours": [1, 2, 3, 4, 5],
       "adaptateurs": ["jira", "jira_data"], "par_jour": { "3": ["artefacts"] },
@@ -19,6 +19,7 @@
     "smartsheet": ["smartsheet"],
     "absences": ["outlook"],
     "feeds": ["artefacts"],
+    "gantt": ["gantt"],
     "retro": ["miro"],
     "reel": ["jira", "jira_data_reel"]
   },
@@ -31,7 +32,8 @@
     { "ref": "B6", "nom": "Équipe", "adaptateurs": ["outlook_equipe"], "cible": {} },
     { "ref": "B7", "nom": "Absences", "adaptateurs": ["outlook"], "cible": { "outlook": { "jours": 21 } } },
     { "ref": "B8", "nom": "Actions de rétro", "adaptateurs": ["miro"], "cible": { "miro": { "jours": 21 } } },
-    { "ref": "B9", "nom": "Feeds d'artefacts", "adaptateurs": ["artefacts"], "cible": { "artefacts": { "jours": 5 } } }
+    { "ref": "B9", "nom": "Feeds d'artefacts", "adaptateurs": ["artefacts"], "cible": { "artefacts": { "jours": 5 } } },
+    { "ref": "B12", "nom": "Gantt de projet (fichier inscrit)", "adaptateurs": ["gantt"], "cible": { "gantt": { "jours": 7 } } }
   ],
-  "par": { "smartsheet": "adaptateur-smartsheet", "outlook": "adaptateur-outlook", "outlook_equipe": "adaptateur-outlook", "jira": "adaptateur-jira", "jira_data": "adaptateur-jira-data", "jira_data_reel": "adaptateur-jira-data", "artefacts": "adaptateur-artefacts", "miro": "adaptateur-miro" }
+  "par": { "smartsheet": "adaptateur-smartsheet", "outlook": "adaptateur-outlook", "outlook_equipe": "adaptateur-outlook", "jira": "adaptateur-jira", "jira_data": "adaptateur-jira-data", "jira_data_reel": "adaptateur-jira-data", "artefacts": "adaptateur-artefacts", "miro": "adaptateur-miro", "gantt": "adaptateur-gantt" }
 }

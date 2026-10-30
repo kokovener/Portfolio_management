@@ -130,6 +130,22 @@ ok('versions: pinned write +1, create = 1; delete refused', () => {
   const d = path.join(tmp, 'vd.json'); fs.writeFileSync(d, JSON.stringify([{ op: 'delete', collection: 'items', doc_id: 'a' }]));
   assert.notStrictEqual(run('versions', va, d).status, 0);
 });
+ok('versions: K13 purge accepted and key removed', () => {
+  const va = path.join(tmp, 'vk.json'); fs.writeFileSync(va, JSON.stringify({ 'charges/jira.s20.x.y': 2, 'items/a': 1 }));
+  const b = path.join(tmp, 'vkb.json'); fs.writeFileSync(b, JSON.stringify([{ op: 'delete', collection: 'charges', doc_id: 'jira.s20.x.y', purge: 'K13', if_version: 2 }]));
+  const r = run('versions', va, b); assert.strictEqual(r.status, 0, r.stderr);
+  assert.deepStrictEqual(JSON.parse(r.stdout), { 'items/a': 1 });
+});
+ok('versions: delete without purge refused', () => {
+  const va = path.join(tmp, 'vk.json');
+  const b = path.join(tmp, 'vkn.json'); fs.writeFileSync(b, JSON.stringify([{ op: 'delete', collection: 'charges', doc_id: 'jira.s20.x.y' }]));
+  const r = run('versions', va, b); assert.notStrictEqual(r.status, 0); assert.match(r.stderr, /holds a delete/);
+});
+ok('versions: K13 purge on another collection refused', () => {
+  const va = path.join(tmp, 'vk.json');
+  const b = path.join(tmp, 'vko.json'); fs.writeFileSync(b, JSON.stringify([{ op: 'delete', collection: 'items', doc_id: 'jira.s20.x.y', purge: 'K13' }]));
+  const r = run('versions', va, b); assert.notStrictEqual(r.status, 0); assert.match(r.stderr, /holds a delete/);
+});
 ok('writes: one file per write, chunks of 50, if_version kept, Windows path', () => {
   const b = path.join(tmp, 'wb.json'); fs.writeFileSync(b, JSON.stringify(Array.from({ length: 51 }, (_, k) => ({ op: 'set', collection: 'meps', doc_id: 'm' + k, data: { id: 'm' + k }, if_version: 2 }))));
   const r = run('writes', b, path.join(tmp, 'w'), tmp, 'C:\\X'); assert.strictEqual(r.status, 0, r.stderr);

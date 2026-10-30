@@ -1,0 +1,2154 @@
+{
+ "modele": "6",
+ "source": {
+  "systeme": "calcul",
+  "ref": "base avant (passage)",
+  "lu_le": "2026-10-29T16:11-04:00",
+  "par": "cadence"
+ },
+ "items": [
+  {
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-10-22",
+    "fin": "2026-11-20"
+   },
+   "id": "feed.expertg1",
+   "liens": [
+    {
+     "libelle": "Gantt S1",
+     "url": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg"
+    }
+   ],
+   "nom": "Expert G1 — graphe de connaissance",
+   "parent": null,
+   "priorite": {
+    "effort": 2,
+    "score": 6,
+    "urgence": 4,
+    "valeur": 4
+   },
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-27T23:59-04:00",
+   "voie": "flux"
+  },
+  {
+   "etape": "actif",
+   "id": "goutte21",
+   "nom": "Programme Goutte 2.1",
+   "parent": null,
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "type": "programme",
+   "updated_at": "2026-10-27T15:40-04:00",
+   "voie": "scrum"
+  },
+  {
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-07-01",
+    "fin": "2026-12-31"
+   },
+   "id": "goutte21.l0.1",
+   "nom": "L0.1 Coeur",
+   "parent": "goutte21.l0",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/1508372705378180",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-08T09:29-04:00",
+   "voie": "scrum",
+   "pct_avancement": 56,
+   "phase_source": "AF / UX",
+   "phase_deduite": true
+  },
+  {
+   "epics_jira": [
+    "GOU21-9934",
+    "GOU21-9781",
+    "GOU21-8354"
+   ],
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-07-01",
+    "fin": "2026-12-31"
+   },
+   "id": "goutte21.l0",
+   "nom": "L0 Plateform Générique UX/UI",
+   "parent": "goutte21",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/4056234131914628",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-08T09:29-04:00",
+   "voie": "scrum",
+   "pct_avancement": 56,
+   "phase_source": "Dev"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l3-l4",
+   "nom": "L3-L4 Producteur 1&2",
+   "parent": "goutte21",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/4900659062046596",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-08T14:35-04:00",
+   "voie": "scrum",
+   "pct_avancement": 55,
+   "phase_source": "A Revoir"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l5",
+   "nom": "L5 Transformateur",
+   "parent": "goutte21",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/2648859248361348",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-08T14:35-04:00",
+   "voie": "scrum",
+   "pct_avancement": 50,
+   "phase_source": "A Revoir"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l6",
+   "nom": "L6 Transporteur",
+   "parent": "goutte21",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/7152458875731844",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-08T14:35-04:00",
+   "voie": "scrum",
+   "pct_avancement": 36,
+   "phase_source": "A Revoir"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l8",
+   "nom": "L8 Paies",
+   "parent": "goutte21",
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6026558968889220",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 3,
+   "phase_source": "BA",
+   "phase_deduite": true
+  },
+  {
+   "etape": "actif",
+   "id": "goutte21.l8b",
+   "nom": "L8B Qualité",
+   "parent": "goutte21.l8",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/28269995818884",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-21T09:32-04:00",
+   "voie": "scrum",
+   "pct_avancement": 2,
+   "phase_source": "BA"
+  },
+  {
+   "contenu_sprint": "AF-2 · UX-2 validation client · gate AC-4",
+   "etape": "actif",
+   "id": "goutte21.l8d",
+   "nom": "L8D Paie Transporteur",
+   "note_lundi": "test note",
+   "parent": "goutte21.l8",
+   "priorite": {
+    "effort": 4,
+    "score": 5,
+    "urgence": 4,
+    "valeur": 5
+   },
+   "promu": false,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6709259052973956",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 4,
+   "phase_source": "Dev",
+   "phase_deduite": true
+  },
+  {
+   "epics_jira": [
+    "GOU21-9604"
+   ],
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-08-01",
+    "fin": "2026-11-30"
+   },
+   "id": "goutte21.l8d1.1.3",
+   "nom": "L8D1.1.3 Gestion des grilles de taxes",
+   "parent": "goutte21.l8d1.1",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/2255997088235396",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 86,
+   "phase_source": "AF / UX"
+  },
+  {
+   "etape": "actif",
+   "id": "goutte21.l8d1.1",
+   "nom": "L8D1.1 Données de référence",
+   "parent": "goutte21.l8d1",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/2726731300405124",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 57,
+   "phase_source": "AF / UX",
+   "phase_deduite": true
+  },
+  {
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-07-01",
+    "fin": "2026-12-31"
+   },
+   "id": "goutte21.l8d1",
+   "nom": "L8D1 Paie Acompte Transporteur",
+   "parent": "goutte21.l8d",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/3035956060815236",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 12,
+   "phase_source": "Dev"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l8e",
+   "nom": "L8E Paie Producteur",
+   "parent": "goutte21.l8",
+   "promu": false,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/4457459239288708",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-21T10:11-04:00",
+   "voie": "scrum",
+   "pct_avancement": 1,
+   "phase_source": "Backlog",
+   "phase_deduite": true
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l8e1",
+   "nom": "L8E1 Paie Acompte Producteur",
+   "parent": "goutte21.l8e",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/1607056948658052",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-21T10:11-04:00",
+   "voie": "scrum",
+   "pct_avancement": 1,
+   "phase_source": "Backlog"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l8e2",
+   "nom": "L8E2 Paie Finale Producteur",
+   "parent": "goutte21.l8e",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6110656576028548",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-21T10:11-04:00",
+   "voie": "scrum",
+   "pct_avancement": 1,
+   "phase_source": "Backlog"
+  },
+  {
+   "etape": "qualifie",
+   "id": "goutte21.l8e3",
+   "nom": "L8E3 Paie Correction Producteur",
+   "parent": "goutte21.l8e",
+   "promu": true,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/3858856762343300",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-07-21T10:11-04:00",
+   "voie": "scrum",
+   "pct_avancement": 1,
+   "phase_source": "Backlog"
+  },
+  {
+   "epics_jira": [
+    "GOU21-5466"
+   ],
+   "etape": "actif",
+   "id": "run.extranets",
+   "nom": "Run G2.1 — support extranets",
+   "parent": "goutte21",
+   "promu": false,
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21 → liens web STG21 · 52 tickets vérifiés · 3 ticket(s) GOU21 ouvert(s), 2 demande(s) STG21 : GOU21-10412↔STG21-226, GOU21-10413↔STG21-226, GOU21-9889↔STG21-206",
+    "systeme": "jira"
+   },
+   "support": [
+    {
+     "age_moyen_j": 167,
+     "extranet": "Producteur",
+     "lundis": [
+      {
+       "lundi": "2026-10-26",
+       "ouverts": 1
+      }
+     ],
+     "ouverts": 1,
+     "plus_vieux_j": 167,
+     "tendance": 0,
+     "tendance_vs": "2026-10-26"
+    },
+    {
+     "age_moyen_j": 94,
+     "extranet": "Région",
+     "lundis": [
+      {
+       "lundi": "2026-10-26",
+       "ouverts": 1
+      }
+     ],
+     "ouverts": 1,
+     "plus_vieux_j": 94,
+     "tendance": 0,
+     "tendance_vs": "2026-10-26"
+    }
+   ],
+   "type": "run",
+   "updated_at": "2026-10-29T09:14-04:00",
+   "voie": "flux"
+  },
+  {
+   "etape": "actif",
+   "id": "run.ti",
+   "nom": "Run TI — G1, IIS, extranets",
+   "parent": null,
+   "promu": false,
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "adaptateur-jira",
+    "ref": "SDD, PLQ",
+    "systeme": "jira"
+   },
+   "type": "run",
+   "updated_at": "2026-10-27T15:40-04:00",
+   "voie": "flux"
+  },
+  {
+   "epics_jira": [
+    "GOU21-9199"
+   ],
+   "etape": "actif",
+   "fenetre": {
+    "debut": "2026-07-01",
+    "fin": "2026-11-30"
+   },
+   "id": "saisie.codes-taxes",
+   "liens": [
+    {
+     "libelle": "Smartsheet L8D1.1.2",
+     "url": "https://app.smartsheet.com/sheets/2xqXgjQ4P7vVpGc423cRfpqrfMPw9QJwJpMF8h61?rowId=6759596715605892"
+    }
+   ],
+   "nom": "Gestion des codes de taxes",
+   "note_lundi": "Recommandation S2 (import + écran de visualisation) ; décision CDP attendue",
+   "parent": "goutte21.l8d1.1",
+   "priorite": {
+    "effort": 2,
+    "score": 5,
+    "urgence": 3,
+    "valeur": 4
+   },
+   "promu": true,
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6759596715605892",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "type": "projet",
+   "updated_at": "2026-10-29T15:51-04:00",
+   "voie": "scrum",
+   "pct_avancement": 89,
+   "phase_source": "AF / UX"
+  },
+  {
+   "id": "goutte21.l1",
+   "nom": "L1 PDA",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "termine",
+   "promu": false,
+   "pct_avancement": 100,
+   "phase_source": "Done",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/8559833759285124",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-08T14:35-04:00"
+  },
+  {
+   "id": "goutte21.l2",
+   "nom": "L2 Architecture",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "termine",
+   "promu": false,
+   "pct_avancement": 100,
+   "phase_source": "Done",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/397059434676100",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-08T14:35-04:00"
+  },
+  {
+   "id": "goutte21.l8c",
+   "nom": "L8C Composition",
+   "type": "projet",
+   "parent": "goutte21.l8",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 2,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/4531869623189380",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T10:11-04:00"
+  },
+  {
+   "id": "goutte21.l9",
+   "nom": "L9 Facturation Usines",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/3774759155203972",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l10",
+   "nom": "L10 Bassins et charte",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/8278358782574468",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l11",
+   "nom": "L11 Dons",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/960009388097412",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l12",
+   "nom": "L12 Approvisionnement Allocation",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/5463609015467908",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l13",
+   "nom": "L13 Approvisionnement Vol historique",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/3211809201782660",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l14",
+   "nom": "L14 Gestion Transport",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/7715408829153156",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l15",
+   "nom": "L15 Quota",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/2085909294940036",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l16",
+   "nom": "L16 Assurance Qualité (Pro action)",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6589508922310532",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  },
+  {
+   "id": "goutte21.l17",
+   "nom": "L17 Marketing et Communication",
+   "type": "projet",
+   "parent": "goutte21",
+   "voie": "scrum",
+   "etape": "qualifie",
+   "promu": false,
+   "pct_avancement": 0,
+   "phase_source": "Backlog",
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/4337709108625284",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "updated_at": "2026-07-21T09:47-04:00"
+  }
+ ],
+ "jalons": [
+  {
+   "date": "2026-10-27",
+   "fait_le": "2026-10-27",
+   "id": "feed.expertg1.aivosto",
+   "item": "feed.expertg1",
+   "nom": "Aivosto : non-achat",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-11-11",
+   "date_initiale": "2026-11-11",
+   "id": "feed.expertg1.go-nogo",
+   "item": "feed.expertg1",
+   "nom": "Go / no-go pilote + couche doc",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "a_venir"
+  },
+  {
+   "date": "2026-10-22",
+   "fait_le": "2026-10-22",
+   "id": "feed.expertg1.j1",
+   "item": "feed.expertg1",
+   "nom": "J1 : début de construction",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-10-28",
+   "fait_le": "2026-10-27",
+   "id": "feed.expertg1.m2",
+   "item": "feed.expertg1",
+   "nom": "Parseur C# v1.1 (M2) chargé : run_m2.sh",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-10-24",
+   "date_initiale": "2026-10-27",
+   "fait_le": "2026-10-24",
+   "id": "feed.expertg1.parseurs",
+   "item": "feed.expertg1",
+   "nom": "Parseurs SQL · VB6 · C# · SSRS conformes",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-11-04",
+   "date_initiale": "2026-11-04",
+   "fait_le": "2026-10-27",
+   "id": "feed.expertg1.pilote-doc",
+   "item": "feed.expertg1",
+   "nom": "Pilote couche doc v0.3 + dossier de validation",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-10-26",
+   "date_initiale": "2026-11-04",
+   "fait_le": "2026-10-26",
+   "id": "feed.expertg1.q1",
+   "item": "feed.expertg1",
+   "nom": "1re question au graphe (engagement 4 nov.)",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-10-27",
+   "fait_le": "2026-10-27",
+   "id": "feed.expertg1.resumes",
+   "item": "feed.expertg1",
+   "nom": "Décision résumés : B définitif",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "fait"
+  },
+  {
+   "date": "2026-11-04",
+   "date_initiale": "2026-11-04",
+   "id": "feed.expertg1.validateurs",
+   "item": "feed.expertg1",
+   "nom": "Validateurs confirmés (Alain, Marc-André)",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "statut": "a_risque"
+  },
+  {
+   "date": "2026-12-18",
+   "id": "saisie.codes-taxes.brd",
+   "item": "saisie.codes-taxes",
+   "nom": "BRD validé",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "statut": "a_venir"
+  },
+  {
+   "date": "2026-12-04",
+   "date_initiale": "2026-11-20",
+   "id": "saisie.codes-taxes.decision-cdp",
+   "item": "saisie.codes-taxes",
+   "nom": "Décision CDP (scénario retenu)",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "statut": "a_risque"
+  },
+  {
+   "date": "2027-01-22",
+   "id": "saisie.codes-taxes.mep",
+   "item": "saisie.codes-taxes",
+   "nom": "MEP",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "statut": "a_venir"
+  },
+  {
+   "date": "2026-06-09",
+   "fait_le": "2026-06-09",
+   "id": "saisie.codes-taxes.preread",
+   "item": "saisie.codes-taxes",
+   "nom": "Pré-lecture CDP envoyée",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "statut": "fait"
+  }
+ ],
+ "risques": [
+  {
+   "id": "feed.expertg1.r1",
+   "impact": 3,
+   "item": "feed.expertg1",
+   "mitigation": "Relance Alain / Marc-André cette semaine ; dossiers prêts à envoyer dès confirmation",
+   "ouvert": true,
+   "probabilite": 4,
+   "score": 12,
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "titre": "Validateurs non confirmés avant le 4 nov. → go/no-go glisse"
+  },
+  {
+   "id": "feed.expertg1.r2",
+   "impact": 2,
+   "item": "feed.expertg1",
+   "mitigation": "Périmètre réduit aux 5 écrans du pilote",
+   "ouvert": true,
+   "probabilite": 3,
+   "score": 6,
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "titre": "Inventaire Access / Excel / extranets incomplet au 30 oct."
+  },
+  {
+   "id": "goutte21.l8.r-visibilite",
+   "impact": 4,
+   "item": "goutte21.l8",
+   "ouvert": true,
+   "probabilite": 4,
+   "score": 16,
+   "source": {
+    "systeme": "smartsheet",
+    "ref": "230627583414148/row/6026558968889220/Top risque",
+    "lu_le": "2026-10-29T15:56-04:00",
+    "par": "adaptateur-smartsheet"
+   },
+   "titre": "Manque de visibilité long terme suite au départ de François"
+  }
+ ],
+ "attentes": [
+  {
+   "attendue_le": "2026-10-28",
+   "id": "feed.expertg1.a1",
+   "item": "feed.expertg1",
+   "objet": "DDL FPLQEntrepot + Mirroring.TBLMAPPINGS",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "tiers": "DBA"
+  },
+  {
+   "attendue_le": "2026-10-28",
+   "id": "feed.expertg1.a2",
+   "item": "feed.expertg1",
+   "objet": "CollecteLait, S7120 encore déployés ?",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "tiers": "Architecte"
+  },
+  {
+   "attendue_le": "2026-10-30",
+   "id": "feed.expertg1.a3",
+   "item": "feed.expertg1",
+   "objet": "Rapports déployés, tables Web*, colonnes absentes",
+   "source": {
+    "lu_le": "2026-10-27T20:16-04:00",
+    "par": "adaptateur-artefacts",
+    "ref": "https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · bloc du 2026-10-27T23:59-04:00",
+    "systeme": "artefact"
+   },
+   "tiers": "DBA"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10436",
+   "item": "run.extranets",
+   "objet": "GOU21-10436 Extranet ProAction - Transfert des utilisateurs depuis G1 (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10436 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10531",
+   "item": "run.extranets",
+   "objet": "GOU21-10531 [E-Producteur OPS] Votre entreprise - Accès Application tierce - Accès pas affichés",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10531 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10558",
+   "item": "run.extranets",
+   "objet": "GOU21-10558 [E-Région OPS] Autres - Téléchargement - Utiliser les descriptions anglaises pour le type de document",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10558 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10575",
+   "item": "saisie.codes-taxes",
+   "objet": "GOU21-10575 Bouton pour rétablir le tri par défaut des résultats de recherche d'un code de taxes  (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10575 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10634",
+   "item": "run.extranets",
+   "objet": "GOU21-10634 Supprimer la cache de 60min sur la page bibliothèque de l'extranet producteur (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10634 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-10686",
+   "item": "saisie.codes-taxes",
+   "objet": "GOU21-10686 Utiliser le composant multiselect de recherche pour la recherche du nom du code de taxes (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-10686 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-11133",
+   "item": "goutte21.l0",
+   "objet": "GOU21-11133 Composante générique - Modifier l'affichage des messages d'erreur retournés par le serveur à l'enregistrement",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-11133 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-7752",
+   "item": "run.extranets",
+   "objet": "GOU21-7752 [E-Producteur/région OPS] Section ProAction - pages manquantes",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-7752 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-7771",
+   "item": "goutte21.l0",
+   "objet": "GOU21-7771 Implémentation des CICD",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-7771 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-9698",
+   "item": "saisie.codes-taxes",
+   "objet": "GOU21-9698 Rechercher un code de taxes (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-9698 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-9715",
+   "item": "saisie.codes-taxes",
+   "objet": "GOU21-9715 Trier la liste des résultats de la recherche des codes de taxes sur tous les attributs (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-9715 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-29",
+   "id": "jira.att.gou21-9720",
+   "item": "saisie.codes-taxes",
+   "objet": "GOU21-9720 Audit - Historiser tous changements des attributs des codes de taxes (1 sous-tâche bloquée)",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "GOU21-9720 · Bloqué",
+    "systeme": "jira"
+   },
+   "tiers": "Jira · statut Bloqué"
+  },
+  {
+   "attendue_le": "2026-10-26",
+   "id": "run.bitbucket.a1",
+   "item": "run.ti",
+   "objet": "Validation de la bascule des repos vers Bitbucket Cloud",
+   "recue_le": null,
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "ref": "2026-W44.md#2026-10-26 BLOQ",
+    "systeme": "ledger"
+   },
+   "tiers": "Personne_09"
+  }
+ ],
+ "dependances": [
+  {
+   "de": {
+    "id": "feed.archi.adr-codes-taxes",
+    "kind": "livrable"
+   },
+   "id": "dep.adr-taxes-vers-decision-cdp",
+   "note": "Le CDP tranche sur l'option seulement avec l'ADR de l'intermédiaire ERP",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "type": "bloque",
+   "vers": {
+    "id": "saisie.codes-taxes.decision-cdp",
+    "kind": "jalon"
+   }
+  },
+  {
+   "de": {
+    "id": "saisie.codes-taxes",
+    "kind": "item"
+   },
+   "id": "dep.taxes-alimente-l8d",
+   "note": "Les taux de taxe alimentent la facturation de la paie transporteur",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "par": "Franck",
+    "systeme": "saisie"
+   },
+   "type": "alimente",
+   "vers": {
+    "id": "goutte21.l8d",
+    "kind": "item"
+   }
+  }
+ ],
+ "livrables": [
+  {
+   "date": "2026-11-28",
+   "date_initiale": "2026-11-14",
+   "id": "feed.archi.adr-codes-taxes",
+   "nom": "ADR codes de taxes (intermédiaire de communication ERP)",
+   "responsable": "Personne_09",
+   "source": {
+    "lu_le": "2026-10-27T15:40-04:00",
+    "ref": "feed architecte (à brancher à l'étape 3)",
+    "systeme": "artefact"
+   },
+   "statut": "a_risque"
+  }
+ ],
+ "meps": [
+  {
+   "date": "2026-10-20",
+   "id": "jira.gou21-10582",
+   "item": "run.extranets",
+   "libelle": "Extranet usine version OPS_ExUsine_2609 et OPS_ExUsine_2610",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-10582 · version OPS_ExUsine_2609, OPS_ExUsine_2610 · date : passage à Terminé",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Usine",
+   "ticket": "GOU21-10582"
+  },
+  {
+   "date": "2026-10-20",
+   "id": "jira.gou21-10585",
+   "item": "run.extranets",
+   "libelle": "Extranet région et producteur version OPS_ExProductRegion_2609 et OPS_ExProductRegion_2610",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-10585 · version OPS_ExProductRegion_2609, OPS_ExProductRegion_2610 · date : passage à Terminé",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Région / Producteur",
+   "ticket": "GOU21-10585"
+  },
+  {
+   "date": "2026-09-29",
+   "id": "jira.gou21-10748",
+   "item": "run.ti",
+   "libelle": "Déploiement de la nouvelle mécanique de mappage et nettoyage des comptes dans les BD extranet sur le serveur G1",
+   "responsable": "Personne_04",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-10748 · date : passage à Terminé",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "GOU21-10748"
+  },
+  {
+   "date": "2026-10-14",
+   "id": "jira.gou21-11185",
+   "item": "run.ti",
+   "libelle": "Remplacer notre serveur SQL Extranet Windows 2022(SQL-G2Prod-w02) par le nouveau serveur extranet Windows 2025 (SQL-G2Prod-w03).",
+   "responsable": "Franck Kowalczyk",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11185 · date : 2026-W42.md#2026-10-15",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Infra (SQL, serveurs)",
+   "ticket": "GOU21-11185"
+  },
+  {
+   "date": "2026-10-15",
+   "id": "jira.gou21-11200",
+   "item": "run.extranets",
+   "libelle": "E-Region - Correction du problème d'ajout d'un délégué",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11200 · date : 2026-W42.md#2026-10-16",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Région",
+   "ticket": "GOU21-11200"
+  },
+  {
+   "date": "2026-10-20",
+   "id": "jira.gou21-11224",
+   "item": "run.extranets",
+   "libelle": "Extranet Inter Province OPS_ExPInterProvince_001",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11224 · version OPS_ExPInterProvince_001 · date : 2026-W43.md#2026-10-21",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Interprovince",
+   "ticket": "GOU21-11224"
+  },
+  {
+   "date": "2026-10-20",
+   "id": "jira.gou21-11236",
+   "item": "run.ti",
+   "libelle": "Installation des mises a jour des serveurs SQL G2",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11236 · date : 2026-W43.md#2026-10-21",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Infra (SQL, serveurs)",
+   "ticket": "GOU21-11236"
+  },
+  {
+   "date": "2026-10-22",
+   "id": "jira.gou21-11300",
+   "item": "run.extranets",
+   "libelle": "ExRegion : Correction des notes au dossier",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11300 · date : 2026-W43.md#2026-10-23",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Région",
+   "ticket": "GOU21-11300"
+  },
+  {
+   "date": "2026-10-26",
+   "id": "jira.gou21-11323",
+   "item": "run.extranets",
+   "libelle": "Décommissionnement instances Extranet cluster dev",
+   "responsable": "Personne_04",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W44.md#2026-10-27 · statut : Jira GOU21-11323",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "Extranet (commun)",
+   "ticket": "GOU21-11323"
+  },
+  {
+   "date": "2026-10-27",
+   "id": "jira.gou21-11325",
+   "item": "run.extranets",
+   "libelle": "Correction association région - secrétaire de région",
+   "responsable": "Personne_14",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11325 · version OPS_ExRegion_2610 · date : 2026-W44.md#2026-10-28",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Région",
+   "ticket": "GOU21-11325"
+  },
+  {
+   "date": "2026-10-27",
+   "id": "jira.gou21-11326",
+   "item": "run.ti",
+   "libelle": "Travaux de maintenance sur les serveurs SQL G2",
+   "responsable": "Personne_04",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "GOU21-11326 · date : 2026-W44.md#2026-10-28",
+    "systeme": "jira"
+   },
+   "statut": "completee",
+   "systeme": "Infra (SQL, serveurs)",
+   "ticket": "GOU21-11326"
+  },
+  {
+   "date": "2026-10-26",
+   "id": "jira.plq-9437",
+   "item": "run.ti",
+   "libelle": "Migration serveurs IIS test QA vers Windows Core (G20, G21, Extranets)",
+   "responsable": "Personne_04",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W44.md#2026-10-26",
+    "systeme": "ledger"
+   },
+   "statut": "planifiee",
+   "systeme": "Infra (SQL, serveurs)",
+   "ticket": "PLQ-9437"
+  },
+  {
+   "date": "2026-10-06",
+   "id": "jira.sdd-2495",
+   "item": "run.ti",
+   "libelle": "G1 SQL, VB et gabarits Word",
+   "responsable": "Gino Riccio",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W41.md#2026-10-07",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2495"
+  },
+  {
+   "date": "2026-10-07",
+   "id": "jira.sdd-2942",
+   "item": "run.ti",
+   "libelle": "Correction de signatures officielles",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W41.md#2026-10-08",
+    "systeme": "ledger"
+   },
+   "statut": "planifiee",
+   "systeme": "G1",
+   "ticket": "SDD-2942"
+  },
+  {
+   "date": "2026-10-05",
+   "id": "jira.sdd-2953",
+   "item": "run.ti",
+   "libelle": "VB (déplacée du cycle initial)",
+   "responsable": "Gino Riccio",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W41.md#2026-10-07",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2953"
+  },
+  {
+   "date": "2026-10-20",
+   "id": "jira.sdd-2960",
+   "item": "run.ti",
+   "libelle": "G1 - Correction traitements réception composition jusqu'à approbation",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W43.md#2026-10-21",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2960"
+  },
+  {
+   "date": "2026-09-29",
+   "id": "jira.sdd-2963",
+   "item": "run.ti",
+   "libelle": "Injection données courbes S5260 (SDD-2963)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W40.md#2026-09-29",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2963"
+  },
+  {
+   "date": "2026-10-01",
+   "id": "jira.sdd-2967",
+   "item": "run.ti",
+   "libelle": "Instructions MEP SQL doublon producteur",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W40.md#2026-10-02",
+    "systeme": "ledger"
+   },
+   "statut": "planifiee",
+   "systeme": "G1",
+   "ticket": "SDD-2967"
+  },
+  {
+   "date": "2026-10-06",
+   "id": "jira.sdd-2969",
+   "item": "run.ti",
+   "libelle": "Import rapports de validation - G1",
+   "responsable": "Glauber Figueiredo",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W41.md#2026-10-07",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2969"
+  },
+  {
+   "date": "2026-10-06",
+   "id": "jira.sdd-2970",
+   "item": "run.extranets",
+   "libelle": "Correction intégrité interventions qualité - Extranet Qualité",
+   "responsable": "Claude Daigneault",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W41.md#2026-10-07",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "Extranet Qualité",
+   "ticket": "SDD-2970"
+  },
+  {
+   "date": "2026-10-13",
+   "id": "jira.sdd-2978",
+   "item": "run.ti",
+   "libelle": "Changement mot de passe SQL utilisatrice SQL00173 (G1)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W42.md#2026-10-15",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2978"
+  },
+  {
+   "date": "2026-10-15",
+   "id": "jira.sdd-2979",
+   "item": "run.ti",
+   "libelle": "Correction urgente génération lettres - Gestion des retards (G1)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W42.md#2026-10-16",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2979"
+  },
+  {
+   "date": "2026-10-16",
+   "id": "jira.sdd-2980",
+   "item": "run.ti",
+   "libelle": "Corrections de volume - Allocations aux Entreprises (G1)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W43.md#2026-10-19",
+    "systeme": "ledger"
+   },
+   "statut": "planifiee",
+   "systeme": "G1",
+   "ticket": "SDD-2980"
+  },
+  {
+   "date": "2026-10-23",
+   "id": "jira.sdd-2981",
+   "item": "run.ti",
+   "libelle": "G1 - Inactivation d'unités de production",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W44.md#2026-10-26",
+    "systeme": "ledger"
+   },
+   "statut": "planifiee",
+   "systeme": "G1",
+   "ticket": "SDD-2981"
+  },
+  {
+   "date": "2026-10-22",
+   "id": "jira.sdd-2985",
+   "item": "run.ti",
+   "libelle": "G1 - Changement période d'accréditation (SQL)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W43.md#2026-10-23",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2985"
+  },
+  {
+   "date": "2026-10-28",
+   "id": "jira.sdd-2990",
+   "item": "run.ti",
+   "libelle": "(SQL) - Ajout contrat d'innovation usine 301 (G1)",
+   "responsable": "Richard Tremblay",
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "2026-W44.md#2026-10-29",
+    "systeme": "ledger"
+   },
+   "statut": "completee",
+   "systeme": "G1",
+   "ticket": "SDD-2990"
+  }
+ ],
+ "actions_retro": [
+  {
+   "board": "https://miro.com/app/board/uXjVEYiDVMw=/",
+   "id": "miro.retro-s18.3458764687505150080",
+   "owner": "Franck",
+   "source": {
+    "lu_le": "2026-10-27T19:38-04:00",
+    "par": "adaptateur-miro",
+    "ref": "Rétro G2.1 S18 · cadre « 8. Actions » · Action 1 · échéance 23 Oct",
+    "systeme": "miro"
+   },
+   "sprint": "jira.gou21-s19",
+   "statut": "fait",
+   "texte": "Mise en place Bitbucket cloud pour test"
+  },
+  {
+   "board": "https://miro.com/app/board/uXjVEYiDVMw=/",
+   "id": "miro.retro-s18.3458764687505150081",
+   "owner": "Franck",
+   "source": {
+    "lu_le": "2026-10-27T19:38-04:00",
+    "par": "adaptateur-miro",
+    "ref": "Rétro G2.1 S18 · cadre « 8. Actions » · Action 2 · échéance 21 Oct",
+    "systeme": "miro"
+   },
+   "sprint": "jira.gou21-s19",
+   "statut": "fait",
+   "texte": "Mise en place Equipe Teams"
+  },
+  {
+   "board": "https://miro.com/app/board/uXjVEYiDVMw=/",
+   "id": "miro.retro-s18.3458764687505150082",
+   "owner": "David / Alain / Franck",
+   "source": {
+    "lu_le": "2026-10-27T19:38-04:00",
+    "par": "adaptateur-miro",
+    "ref": "Rétro G2.1 S18 · cadre « 8. Actions » · Action 3",
+    "systeme": "miro"
+   },
+   "sprint": "jira.gou21-s19",
+   "statut": "fait",
+   "texte": "Rencontre pour repasser les règles de validation des critères d'acceptions dans les tickets et les statuts"
+  },
+  {
+   "board": "https://miro.com/app/board/uXjVEYiDVMw=/",
+   "id": "miro.retro-s18.3458764687508093983",
+   "source": {
+    "lu_le": "2026-10-27T19:38-04:00",
+    "par": "adaptateur-miro",
+    "ref": "Rétro G2.1 S18 · cadre « 8. Actions » · Action 4",
+    "systeme": "miro"
+   },
+   "sprint": "jira.gou21-s19",
+   "statut": "a_faire",
+   "texte": "Alertes pour les déploiements"
+  },
+  {
+   "board": "https://miro.com/app/board/uXjVEYiDVMw=/",
+   "id": "miro.retro-s18.3458764687508094021",
+   "owner": "Yacine",
+   "source": {
+    "lu_le": "2026-10-27T19:38-04:00",
+    "par": "adaptateur-miro",
+    "ref": "Rétro G2.1 S18 · cadre « 8. Actions » · Action 5 · échéance S19",
+    "systeme": "miro"
+   },
+   "sprint": "jira.gou21-s19",
+   "statut": "a_faire",
+   "texte": "Rencontre d'uniformisation des règles de code"
+  }
+ ],
+ "charges": [],
+ "sprints": [
+  {
+   "debut": "2026-09-29",
+   "etat": "clos",
+   "fin": "2026-10-15",
+   "id": "jira.gou21-s18",
+   "jours_ouvres": 13,
+   "nom": "G2.1 - S18",
+   "reserve_run_pct": 15,
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "board 38 / sprint 22",
+    "systeme": "jira"
+   }
+  },
+  {
+   "debut": "2026-10-19",
+   "etat": "actif",
+   "fin": "2026-11-06",
+   "id": "jira.gou21-s19",
+   "jours_ouvres": 15,
+   "nom": "G2.1 - S19",
+   "objectif": "Terminer le sprint",
+   "reserve_run_pct": 15,
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "board 38 / sprint 71",
+    "systeme": "jira"
+   }
+  },
+  {
+   "debut": "2026-11-09",
+   "etat": "futur",
+   "fin": "2026-11-27",
+   "id": "jira.gou21-s20",
+   "jours_ouvres": 15,
+   "nom": "G2.1 - S20",
+   "reserve_run_pct": 15,
+   "source": {
+    "lu_le": "2026-10-29T09:04-04:00",
+    "par": "adaptateur-jira",
+    "ref": "board 38 / sprint 104 — dates absentes dans Jira, déduites (lundi suivant + durée du sprint actif)",
+    "systeme": "jira"
+   }
+  }
+ ],
+ "personnes": [],
+ "absences": [
+  {
+   "debut": "2026-12-25",
+   "fin": "2026-12-25",
+   "id": "ferie.2026-12-25",
+   "jours_ouvres": 1,
+   "libelle": "Noël",
+   "personne": null,
+   "source": {
+    "lu_le": "2026-10-29T13:25-04:00",
+    "par": "adaptateur-feries",
+    "ref": "config/feries.json · Noël",
+    "systeme": "calcul"
+   }
+  },
+  {
+   "debut": "2027-01-01",
+   "fin": "2027-01-01",
+   "id": "ferie.2027-01-01",
+   "jours_ouvres": 1,
+   "libelle": "Jour de l'An",
+   "personne": null,
+   "source": {
+    "lu_le": "2026-10-29T13:25-04:00",
+    "par": "adaptateur-feries",
+    "ref": "config/feries.json · Jour de l'An",
+    "systeme": "calcul"
+   }
+  },
+  {
+   "debut": "2027-03-26",
+   "fin": "2027-03-26",
+   "id": "ferie.2027-03-26",
+   "jours_ouvres": 1,
+   "libelle": "Vendredi saint",
+   "personne": null,
+   "source": {
+    "lu_le": "2026-10-29T13:25-04:00",
+    "par": "adaptateur-feries",
+    "ref": "config/feries.json · Vendredi saint",
+    "systeme": "calcul"
+   }
+  }
+ ],
+ "stats_jira": [
+  {
+   "epics": [
+    "GOU21-9934",
+    "GOU21-9781",
+    "GOU21-8354"
+   ],
+   "fenetre_reelle": {
+    "debut": "2025-12-08",
+    "fin": null,
+    "jusqu_au": "2026-12-18",
+    "ouverts": 53,
+    "sprints": [
+     "S6",
+     "S7",
+     "S8",
+     "S9",
+     "S10",
+     "S13",
+     "S14",
+     "S15",
+     "S16",
+     "S17",
+     "S18",
+     "S19",
+     "S20",
+     "S21"
+    ]
+   },
+   "id": "jira.stat.goutte21.l0",
+   "item": "goutte21.l0",
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "parent in (GOU21-9934, GOU21-9781, GOU21-8354)",
+    "systeme": "jira"
+   },
+   "sprint": {
+    "faits": 3,
+    "points": 21,
+    "points_faits": 18,
+    "ref": "jira.gou21-s19",
+    "tickets": 4
+   },
+   "tickets": {
+    "a_faire": 42,
+    "en_cours": 13,
+    "faits": 55,
+    "total": 110
+   }
+  },
+  {
+   "epics": [
+    "GOU21-9604"
+   ],
+   "fenetre_reelle": {
+    "debut": "2026-08-18",
+    "fin": null,
+    "jusqu_au": null,
+    "ouverts": 34,
+    "sprints": [
+     "S16",
+     "S17",
+     "S18",
+     "S19"
+    ]
+   },
+   "id": "jira.stat.goutte21.l8d1.1.3",
+   "item": "goutte21.l8d1.1.3",
+   "source": {
+    "lu_le": "2026-10-28T17:10-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "parent in (GOU21-9604)",
+    "systeme": "jira"
+   },
+   "sprint": {
+    "faits": 1,
+    "points": 5,
+    "points_faits": 5,
+    "ref": "jira.gou21-s19",
+    "tickets": 1
+   },
+   "tickets": {
+    "a_faire": 30,
+    "en_cours": 4,
+    "faits": 2,
+    "total": 36
+   }
+  },
+  {
+   "epics": [
+    "GOU21-5466"
+   ],
+   "id": "jira.stat.run.extranets",
+   "item": "run.extranets",
+   "source": {
+    "lu_le": "2026-10-28T12:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "parent in (GOU21-5466)",
+    "systeme": "jira"
+   },
+   "sprint": {
+    "faits": 1,
+    "points": 4,
+    "points_faits": 0,
+    "ref": "jira.gou21-s19",
+    "tickets": 3
+   },
+   "tickets": {
+    "a_faire": 3,
+    "en_cours": 7,
+    "faits": 86,
+    "total": 96
+   }
+  },
+  {
+   "epics": [
+    "GOU21-9199"
+   ],
+   "fenetre_reelle": {
+    "debut": "2026-07-28",
+    "fin": null,
+    "jusqu_au": "2026-11-27",
+    "ouverts": 32,
+    "sprints": [
+     "S15",
+     "S16",
+     "S17",
+     "S18",
+     "S19",
+     "S20"
+    ]
+   },
+   "id": "jira.stat.saisie.codes-taxes",
+   "item": "saisie.codes-taxes",
+   "source": {
+    "lu_le": "2026-10-29T09:14-04:00",
+    "par": "adaptateur-jira-data",
+    "ref": "parent in (GOU21-9199)",
+    "systeme": "jira"
+   },
+   "sprint": {
+    "faits": 4,
+    "points": 52,
+    "points_faits": 11,
+    "ref": "jira.gou21-s19",
+    "tickets": 16
+   },
+   "tickets": {
+    "a_faire": 18,
+    "en_cours": 17,
+    "faits": 12,
+    "total": 47
+   }
+  }
+ ],
+ "instantanes": [
+  {
+   "date": "2026-10-27",
+   "id": "instantane.2026-10-27",
+   "items": [
+    {
+     "etape": "actif",
+     "item": "feed.expertg1",
+     "jalons_faits": 5,
+     "jalons_total": 8,
+     "pct_avancement": 62.5,
+     "prochain_jalon": "2026-11-04",
+     "resume": "62 % · jaune · 2 risques",
+     "risques_ouverts": 2,
+     "sante": "jaune"
+    }
+   ],
+   "pris_le": "2026-10-27T07:00-04:00",
+   "source": {
+    "lu_le": "2026-10-27T07:00-04:00",
+    "par": "tache-lundi",
+    "ref": "tache-lundi",
+    "systeme": "calcul"
+   },
+   "sources_ok": 1,
+   "sources_total": 5
+  },
+  {
+   "date": "2026-10-27",
+   "id": "snap.2026-10-27",
+   "items": [
+    {
+     "etape": "actif",
+     "item": "feed.expertg1",
+     "jalons_faits": 5,
+     "jalons_total": 8,
+     "pct_avancement": 62.5,
+     "prochain_jalon": "2026-11-04",
+     "resume": "62,5 % · jaune · 2 risques",
+     "risques_ouverts": 2,
+     "sante": "jaune"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21",
+     "resume": "— % · vert · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "vert"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l0",
+     "pct_avancement": 56,
+     "resume": "56 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l0.1",
+     "pct_avancement": 56,
+     "resume": "56 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l3-l4",
+     "pct_avancement": 55,
+     "resume": "55 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l5",
+     "pct_avancement": 50,
+     "resume": "50 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l6",
+     "pct_avancement": 36,
+     "resume": "36 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l8",
+     "pct_avancement": 2,
+     "resume": "2 % · rouge · 1 risque",
+     "risques_ouverts": 1,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l8b",
+     "pct_avancement": 2,
+     "resume": "2 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l8d",
+     "jalons_faits": 0,
+     "jalons_total": 1,
+     "pct_avancement": 3,
+     "prochain_jalon": "2026-11-14",
+     "resume": "3 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "goutte21.l8e",
+     "pct_avancement": 1,
+     "resume": "1 % · rouge · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "rouge"
+    },
+    {
+     "etape": "actif",
+     "item": "run.extranets",
+     "resume": "— % · vert · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "vert"
+    },
+    {
+     "etape": "actif",
+     "item": "run.ti",
+     "resume": "— % · vert · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "vert"
+    },
+    {
+     "etape": "planifie",
+     "item": "saisie.codes-taxes",
+     "jalons_faits": 1,
+     "jalons_total": 4,
+     "pct_avancement": 25,
+     "prochain_jalon": "2026-12-04",
+     "resume": "25 % · vert · 0 risque",
+     "risques_ouverts": 0,
+     "sante": "vert"
+    }
+   ],
+   "pris_le": "2026-10-27T20:11-04:00",
+   "source": {
+    "lu_le": "2026-10-27T20:11-04:00",
+    "par": "tache-lundi",
+    "ref": "tache-lundi · base avant adaptateurs",
+    "systeme": "calcul"
+   },
+   "sources_ok": 5,
+   "sources_total": 5
+  }
+ ],
+ "lectures": [
+  {
+   "adaptateur": "jira_data",
+   "ecrits": 39,
+   "id": "lecture.jira-data",
+   "lu_le": "2026-10-29T09:16-04:00",
+   "passage": "quotidien",
+   "source": {
+    "lu_le": "2026-10-29T09:16-04:00",
+    "par": "cadence",
+    "ref": "tâche quotidien",
+    "systeme": "calcul"
+   },
+   "statut": "ok"
+  },
+  {
+   "adaptateur": "jira",
+   "ecrits": 29,
+   "id": "lecture.jira",
+   "lu_le": "2026-10-29T09:08-04:00",
+   "passage": "quotidien",
+   "source": {
+    "lu_le": "2026-10-29T09:08-04:00",
+    "par": "cadence",
+    "ref": "tâche quotidien",
+    "systeme": "calcul"
+   },
+   "statut": "ok"
+  },
+  {
+   "adaptateur": "outlook_equipe",
+   "ecrits": 6,
+   "id": "lecture.outlook-equipe",
+   "lu_le": "2026-10-28T20:22-04:00",
+   "passage": "demande",
+   "source": {
+    "lu_le": "2026-10-28T20:22-04:00",
+    "par": "cadence",
+    "ref": "tâche demande",
+    "systeme": "calcul"
+   },
+   "statut": "ok"
+  },
+  {
+   "adaptateur": "smartsheet",
+   "ecrits": 12,
+   "id": "lecture.smartsheet",
+   "lu_le": "2026-10-29T13:07-04:00",
+   "passage": "jeudi",
+   "source": {
+    "lu_le": "2026-10-29T13:07-04:00",
+    "par": "cadence",
+    "ref": "tâche jeudi",
+    "systeme": "calcul"
+   },
+   "statut": "ok"
+  }
+ ],
+ "listes_jira": []
+}

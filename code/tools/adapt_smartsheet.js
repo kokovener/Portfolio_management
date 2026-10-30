@@ -54,8 +54,16 @@ function etapeOf(phase) {
 }
 
 // Phase of a row: its own, else deduced from children (recursive). Returns {phase, deduite}.
+// R50 (Franck 2026-10-29): the sheet's real hierarchy wins over the ID pattern. raw rows may carry `profondeur`
+// (number of ancestors in Goutte21_Master, 3 = 3 or more, read with COUNT(ANCESTORS())): a top-level row has no parent
+// even when its ID looks like a child (L8A, L8B, L8C sit beside L8, not under it). Without the field: ID pattern only.
+function makeSheetParent(rows) {
+  const top = new Set((rows || []).filter((r) => r.profondeur === 0).map((r) => r.id));
+  return (sid) => (top.has(sid) ? null : sheetParent(sid));
+}
 function phaseResolver(rows) {
-  const kids = {}; rows.forEach((r) => { const p = sheetParent(r.id); if (p) (kids[p] = kids[p] || []).push(r); });
+  const sp = makeSheetParent(rows);
+  const kids = {}; rows.forEach((r) => { const p = sp(r.id); if (p) (kids[p] = kids[p] || []).push(r); });
   const memo = {};
   function resolve(r) {
     if (memo[r.id]) return memo[r.id];
@@ -78,7 +86,7 @@ function adapt(raw, base, versions) {
   const out = { items: [], risques: [] }; const rows = []; const signals = [];
   const src = (rowId, suffix) => ({ systeme: 'smartsheet', ref: `${raw.sheet_id}/row/${rowId}${suffix || ''}`, lu_le: now, par: 'adaptateur-smartsheet' });
   const byId = Object.fromEntries(raw.rows.map((r) => [r.id, r]));
-  const resolve = phaseResolver(raw.rows);
+  const resolve = phaseResolver(raw.rows); const SP = makeSheetParent(raw.rows);
 
   // saisie items already linked to a row (liens url with rowId=<id>)
   const linked = {};
@@ -91,7 +99,7 @@ function adapt(raw, base, versions) {
   const portfolioIdOf = (r) => (linked[r.rowId] ? linked[r.rowId].id : itemId(r.id));
   // nearest ancestor that is itself a portfolio item; none -> programme
   function portfolioParent(sid) {
-    for (let p = sheetParent(sid); p; p = sheetParent(p)) { const pr = byId[p]; if (pr && inPortfolio(pr)) return portfolioIdOf(pr); }
+    for (let p = SP(sid); p; p = SP(p)) { const pr = byId[p]; if (pr && inPortfolio(pr)) return portfolioIdOf(pr); }
     return 'goutte21';
   }
 
@@ -134,7 +142,8 @@ function adapt(raw, base, versions) {
       if (r.niveau !== expectedNiveau) signals.push({ kind: 'niveau', row: r.id, texte: `${r.id} : Niveau « ${r.niveau} » dans Smartsheet, ${expectedNiveau} par son ID — traité au grain ${expectedNiveau}` });
     }
     const ph = resolve(r); const etape = etapeOf(ph.phase);
-    if (!prev && etape !== 'actif' && !promo) { rows.push({ id: r.id, decision: `ignorée (phase ${ph.phase})` }); return; }
+    // R49 (Franck 2026-10-29): a ticked L / Sub-L row is always an item, even in Backlog or Done (étape qualifié / terminé)
+    if (!prev && etape !== 'actif' && !promo && r.portefeuille !== true) { rows.push({ id: r.id, decision: `ignorée (phase ${ph.phase})` }); return; }
 
     const f = freshness(r);
     const rec = prev ? Object.assign({}, prev) : {
@@ -144,6 +153,8 @@ function adapt(raw, base, versions) {
     // étape follows the source phase for Smartsheet items: Done -> terminé, Backlog / A Revoir -> qualifié, active -> actif
     // (R30, model v5: the source wins, including over a hand-set 'planifié')
     if (prev) followSource(rec, r, ph);
+    // R49: parent follows the sheet structure for every Smartsheet item, as for linked saisie items (R06)
+    if (prev) { const parent = portfolioParent(r.id); if (rec.parent !== parent) { signals.push({ kind: 'parent', row: r.id, texte: `${id} : parent ${rec.parent} → ${parent} (structure de la feuille)` }); rec.parent = parent; } }
     rec.source = src(r.rowId); rec.updated_at = f.ts;
     delete rec.sante; // computed by the portfolio, never written by an adapter (D8)
     if (ph.deduite) signals.push({ kind: 'phase_deduite', row: r.id, texte: `${r.id} : phase vide, déduite des enfants = ${ph.phase}` });
@@ -152,7 +163,7 @@ function adapt(raw, base, versions) {
       signals.push({ kind: 'parent', row: r.id, texte: `${r.id} : parent ${rec.parent} absent → rattaché au programme` }); rec.parent = 'goutte21';
     }
     out.items.push(rec);
-    rows.push({ id: r.id, item: id, decision: prev ? 'mise à jour' : (promo ? 'créée (cochée Portefeuille)' : 'créée'), lu: { nom: r.nom, phase: r.phase || '(vide)', pct: r.pct, maj: f.ts, maj_origine: f.origine }, base: { phase_source: rec.phase_source || '(absent)', phase_deduite: !!rec.phase_deduite, pct_avancement: rec.pct_avancement, updated_at: rec.updated_at, etape: rec.etape, parent: rec.parent }, avant: prev ? { phase_source: prev.phase_source || '(absent)', pct_avancement: prev.pct_avancement, updated_at: prev.updated_at, etape: prev.etape } : null });
+    rows.push({ id: r.id, item: id, decision: prev ? 'mise à jour' : (promo || etape !== 'actif' ? 'créée (cochée Portefeuille)' : 'créée'), lu: { nom: r.nom, phase: r.phase || '(vide)', pct: r.pct, maj: f.ts, maj_origine: f.origine }, base: { phase_source: rec.phase_source || '(absent)', phase_deduite: !!rec.phase_deduite, pct_avancement: rec.pct_avancement, updated_at: rec.updated_at, etape: rec.etape, parent: rec.parent }, avant: prev ? { phase_source: prev.phase_source || '(absent)', pct_avancement: prev.pct_avancement, updated_at: prev.updated_at, etape: prev.etape } : null });
 
     if (r.top_risque) {
       const rk = base.risques.find((x) => x.item === id && x.source && x.source.systeme === 'smartsheet');
@@ -237,4 +248,4 @@ if (require.main === module) {
   fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2));
   console.log(`grain ${report.grain} · écrits ${report.ecrits} · signaux ${report.signals.length} · promus reliés ${report.promus_relies}`);
 }
-module.exports = { adapt, sheetParent, phaseResolver, som, eom, RE_L, RE_SUBL };
+module.exports = { adapt, sheetParent, makeSheetParent, phaseResolver, som, eom, RE_L, RE_SUBL };
