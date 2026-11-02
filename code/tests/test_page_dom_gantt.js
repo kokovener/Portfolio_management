@@ -29,7 +29,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // bar position: P2-AN1 on Fri 16 Oct in a grid starting Mon 5 Oct, 14 weeks (98 days) -> left = 11/98
   const an1 = [...card.querySelectorAll('.gtr')].find((r) => /P2-AN1/.test(r.textContent)).querySelector('.gb');
   assert(Math.abs(parseFloat(an1.style.left) - 100 * 11 / 98) < 0.01 && Math.abs(parseFloat(an1.style.width) - 100 / 98) < 0.01, 'P2-AN1 position ' + an1.style.left);
-  assert(/16 oct\. → 16 oct\. 2026 · 1 j o\./.test(an1.title), 'bar tooltip');
+  assert(/16 oct\. 2026 → 16 oct\. 2026 · 1 j o\./.test(an1.title), 'bar tooltip (R51: year shown)');
   assert(card.querySelector('.gnow'), 'today line (29 Oct is inside the grid)');
   ok('projet: bars placed on the calendar (P2-AN1 = 16 oct.), tooltip, today line');
 
@@ -48,7 +48,26 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // no Gantt card on an item without gantt; visitor sees it
   click(d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
   click(d.querySelector('[data-act="open-item"][data-id="saisie.codes-taxes"]')); await sleep(20);
-  assert(!/Gantt du projet/.test(txt())); ok('projet without gantt: no card');
+  // R52/R54/R56 (Franck 2 Nov.): a Goutte 2.1 delivery without a Gantt file shows its part of the programme Gantt,
+  // computed from planned / Jira actual windows, with a link that opens the programme on its Gantt
+  { const gx = d.getElementById('gantt');
+    assert(gx && /Gantt du projet · extrait/.test(gx.textContent) && /Calculé à l’affichage/.test(gx.textContent), 'extract card on codes-taxes');
+    assert(gx.querySelector('.gb.pv'), 'planned bar'); assert(/\d{4}/.test(gx.querySelector('.gtr.h .gtk span').textContent), 'first week label carries the year');
+    const lk = gx.querySelector('[data-act="open-gantt"]'); assert(lk && lk.dataset.id === 'goutte21', 'link to the programme Gantt');
+    click(lk); await sleep(20);
+    const gp = d.getElementById('gantt'); assert(gp && /Gantt du programme/.test(gp.textContent) && !gp.querySelector('[data-act="open-gantt"]'), 'programme fiche with its computed Gantt');
+    assert(gp.querySelectorAll('.gtr:not(.g):not(.h)').length > 1, 'one row per delivery');
+    assert.strictEqual(d.defaultView.getComputedStyle(gp.querySelector('.gtl')).position, 'sticky', 'R53 frozen title column');
+    ok('R52/R54/R56: delivery extract of the computed programme Gantt, link opens the programme Gantt; R53 sticky titles'); }
+  // R51 year on milestone dates, R55 foldable sections and empty ones on one line
+  click(d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
+  click(d.querySelector('[data-act="open-item"][data-id="saisie.methane-p2"]')); await sleep(20);
+  { const jr = d.querySelector('.lrow.jal'); assert(/\d{1,2} \S+ 20\d\d/.test(jr.textContent), 'R51 year: ' + jr.textContent);
+    assert(/Rien de rattaché/.test(txt()), 'empty sections grouped');
+    click(d.querySelector('[data-act="toggle"][data-id="sec:jalons"]')); await sleep(20);
+    assert(!d.querySelector('.lrow.jal') && /Jalons · 4/.test(txt()), 'jalons folded, header kept');
+    click(d.querySelector('[data-act="toggle"][data-id="sec:jalons"]')); await sleep(20); assert(d.querySelector('.lrow.jal'), 'unfolded');
+    ok('R51 year on milestones; R55 sections fold, empty ones on one line'); }
   // Expert G1: Gantt carried by its feed block (one tab, done rows faded, milestone diamonds)
   click(d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
   click(d.querySelector('[data-act="open-item"][data-id="feed.expertg1"]')); await sleep(20);

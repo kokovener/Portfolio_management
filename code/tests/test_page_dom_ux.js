@@ -103,7 +103,7 @@ let n = 0; const ok = (m) => { n++; console.log('ok  ' + m); };
 
   // Manual MEP (Franck 30 Oct.): « + MEP » tab in the modal, card « MEP · n » in the project, read tickets refused
   { const cardMep = () => [...d.querySelectorAll('.card')].find((x) => x.querySelector('.eyebrow') && /^MEP · \d+$/.test(x.querySelector('.eyebrow').textContent.trim()));
-    const nMep = () => +cardMep().querySelector('.eyebrow').textContent.trim().match(/(\d+)$/)[1];
+    const nMep = () => cardMep() ? +cardMep().querySelector('.eyebrow').textContent.trim().match(/(\d+)$/)[1] : 0; // R55: no card when empty
     const n0 = nMep();
     await P.click(d.querySelector('[data-act="modal"]')); await P.click(d.querySelector('[data-act="gtab"][data-t="meps"]'));
     const fill = (f, vals) => Object.entries(vals).forEach(([k, v]) => { f.querySelector(`[name="${k}"]`).value = v; });

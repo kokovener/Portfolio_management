@@ -27,7 +27,7 @@
  *   node tools/lundi.js pagecheck <built.html> <published.html>
  *       exit 0 = same page (no republication), exit 10 = page changed (republish), 2 = unreadable.
  * Times are never computed here: <pris_le> and <now_ts> come from `TZ=America/Toronto date`.
- * Never writes a source; deletes no db document itself (only Jira data deletions K13 pass `writes`); nothing from Recrutements/ is read.
+ * Never writes a source; deletes no db document itself (only Jira data deletions K13 and architect-roadmap deletions K14 pass `writes`); nothing from Recrutements/ is read.
  */
 'use strict';
 const fs = require('fs');
@@ -113,8 +113,8 @@ const ORDRE = ['recul', 'jalon', 'bloque', 'risque', 'attente', 'mep', 'fraicheu
 const REGLE = { recul: 'Recul ≥ 5 j o. et ce qu\'il entraîne', jalon: 'Jalon dépassé', bloque: 'Bloqués du sprint', risque: 'Risque ≥ 15', attente: 'Attente > 5 j o.', mep: 'MEP ≤ 7 j sans « prêt »', fraicheur: 'Fraîcheur : ni Smartsheet ni Jira depuis > 15 j o.', phase: 'Phase vide' };
 const ADAPT = { smartsheet: 'Smartsheet', jira: 'Jira', jira_data: 'Jira (data)', jira_data_reel: 'Jira (data + réel)', artefacts: 'Artefacts', outlook: 'Outlook', outlook_equipe: 'Outlook (équipe)', miro: 'Miro', gantt: 'Gantt' };
 // Signals Franck asked to see first (prompt step 4), then the rest grouped by kind.
-const PRIO_SIG = ['feed_ignore', 'gantt_ignore', 'gantt_double', 'gantt_perime', 'gantt_jalon_ecart', 'jalon_disparu', 'plan_ancien', 'echeance_passee', 'action_non_relue', 'absence_non_relue', 'personne_non_relue', 'hors_annuaire',
-  'demi_journee_illisible', 'parti', 'mep_passee', 'mep_sans_date', 'recul', 'conflit'];
+const PRIO_SIG = ['feed_ignore', 'archi_changement', 'archi_nouveau', 'archi_supprime', 'archi_dependance', 'archi_axe', 'gantt_ignore', 'gantt_double', 'gantt_perime', 'gantt_jalon_ecart', 'jalon_disparu', 'plan_ancien', 'echeance_passee', 'action_non_relue', 'absence_non_relue', 'personne_non_relue', 'hors_annuaire',
+  'demi_journee_illisible', 'parti', 'mep_passee', 'mep_sans_date', 'recul', 'conflit', 'archi_incoherence'];
 
 // Signal kinds already shown as an alert (same fact twice is noise).
 const DOUBLON = new Set(['phase']);
@@ -355,7 +355,13 @@ function cmdDigest(args) {
 // ---------- versions / writes helpers ----------
 // Single exception rule shared by every command that reads a batch (versions, writes):
 // only Jira-data charges not re-read may be deleted (rule K13, standing consent Franck 2026-10-29).
-function isK13Purge(w) { return w.op === 'delete' && w.purge === 'K13' && w.collection === 'charges' && /^jira\./.test(w.doc_id); }
+function isK13Purge(w) {
+  if (w.op !== 'delete') return false;
+  if (w.purge === 'K13') return w.collection === 'charges' && /^jira\./.test(w.doc_id);
+  // K14 (standing consent Franck 2026-11-02): a milestone or dependency of the architect roadmap no longer in his block
+  if (w.purge === 'K14') return ['jalons', 'dependances'].includes(w.collection) && /^feed\.archi\./.test(w.doc_id);
+  return false;
+}
 function cmdVersions([avant, ...batches]) {
   if (!avant) usage();
   const v = JSON.parse(fs.readFileSync(avant, 'utf8'));

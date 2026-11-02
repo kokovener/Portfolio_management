@@ -1,0 +1,11 @@
+{
+  "_doc": "Architect roadmap: task id prefix -> axis (Personne_09 via Franck, 2026-11-02). The « lot » field of each task must equal the axis of its prefix (38/38 on the 2026-11-02 read); a mismatch or an unknown prefix is reported (archi_axe), never corrected.",
+  "SC": "Socle/Core",
+  "IF": "Infra, DevOps & Azure",
+  "SE": "Sécurité & identité",
+  "DA": "Données & audit",
+  "DM": "Domaine métier",
+  "GO": "Gouvernance, équipe & IA",
+  "IN": "Intégrations & B2B",
+  "UI": "UI & microfrontends"
+}

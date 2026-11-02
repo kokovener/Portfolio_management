@@ -1,0 +1,1110 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Roadmap de l'architecte</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header with test notice, Gantt (initial vs planned), then the JSON block with a copy button */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --fg: #1c2430; --muted: #5d6878; --line: #d9dee6;
+  --accent: #2a5f9e; --initial: #9aa7b8; --late: #b4462f; --early: #2f7d4f; --warn-bg: #fff4d6; --warn-fg: #6b4e00;
+  --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161c; --surface: #1a2029; --fg: #e3e8ef; --muted: #9aa5b4; --line: #2c3542;
+  --accent: #6fa3e0; --initial: #5f6c7d; --late: #e47b63; --early: #6cc293; --warn-bg: #3a3014; --warn-fg: #f1d68a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161c; --surface: #1a2029; --fg: #e3e8ef; --muted: #9aa5b4; --line: #2c3542;
+  --accent: #6fa3e0; --initial: #5f6c7d; --late: #e47b63; --early: #6cc293; --warn-bg: #3a3014; --warn-fg: #f1d68a; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 48px; }
+main { max-width: 1100px; margin: 0 auto; display: grid; gap: 28px; }
+h1 { font-size: 1.6rem; font-weight: 600; margin: 0; text-wrap: balance; }
+h2 { font-size: 1.1rem; font-weight: 600; margin: 0 0 12px; }
+.sub { color: var(--muted); margin: 4px 0 0; }
+.notice { background: var(--warn-bg); color: var(--warn-fg); padding: 10px 14px; border-radius: 6px; font-weight: 500; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 18px; color: var(--muted); font-size: .85rem; margin-bottom: 12px; }
+.legend i { display: inline-block; width: 22px; height: 10px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.scroll { overflow-x: auto; }
+.gantt { min-width: 980px; display: grid; grid-template-columns: 300px 1fr 70px; font-size: .88rem; }
+.gantt .h { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.gantt .lbl, .gantt .track, .gantt .gap { border-bottom: 1px solid var(--line); padding: 8px 0; min-height: 44px; }
+.lbl b { font-family: var(--mono); font-weight: 500; margin-right: 6px; }
+.lbl small { display: block; color: var(--muted); }
+.track { position: relative; }
+.months { position: relative; height: 100%; }
+.mtick { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--line); }
+.mname { position: absolute; top: 4px; font-size: .75rem; color: var(--muted); padding-left: 4px; }
+.bar { position: absolute; height: 10px; border-radius: 3px; }
+.bar.ini { top: 12px; background: transparent; border: 2px solid var(--initial); height: 8px; }
+.bar.pre { top: 24px; background: var(--accent); }
+.bar.pre .pct { position: absolute; inset: 0 auto 0 0; background: rgba(255,255,255,.35); border-radius: 3px; }
+.gap { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500; padding-right: 4px; }
+.gap.late { color: var(--late); } .gap.early { color: var(--early); } .gap.zero { color: var(--muted); }
+ul.chg { margin: 0; padding-left: 20px; } ul.chg li + li { margin-top: 4px; }
+.jsonhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+button { font: inherit; font-weight: 500; background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 8px 16px; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--fg); outline-offset: 2px; }
+#etat { color: var(--muted); font-size: .85rem; }
+pre { margin: 0; font-family: var(--mono); font-size: .8rem; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px; overflow: auto; max-height: 420px; }
+</style>
+
+<main>
+  <header>
+    <h1>Roadmap de l'architecte</h1>
+    <p class="sub">Chantiers planifiés de l'architecte de solutions : Gantt initial et prévu, données au format programme 1.0.</p>
+  </header>
+
+  <section class="panel">
+    <h2>Gantt — initial et prévu</h2>
+    <div class="legend">
+      <span><i style="border:2px solid var(--initial)"></i>Initial (référence figée)</span>
+      <span><i style="background:var(--accent)"></i>Prévu (dernière planification)</span>
+      <span>Écart : fin prévue moins fin initiale, en jours ouvrables</span>
+    </div>
+    <div class="scroll"><div class="gantt" id="gantt"></div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Changements de la semaine</h2>
+    <ul class="chg" id="chg"></ul>
+  </section>
+
+  <section class="panel">
+    <div class="jsonhead">
+      <h2 style="margin:0">Données (format 1.0)</h2>
+      <span><span id="etat" aria-live="polite"></span> <button id="copier" type="button">Copier le JSON</button></span>
+    </div>
+    <pre id="json"></pre>
+  </section>
+</main>
+
+<script type="application/json" id="donnees-programme">
+{
+  "version_schema": "1.0",
+  "date_donnees": "2026-11-02",
+  "source": "Application de pilotage de la roadmap d'architecture — roadmap de l'architecte",
+  "champs_non_fournis": [
+    "complexite",
+    "confiance",
+    "effort_FE_jp",
+    "effort_BE_jp",
+    "effort_QA_jp",
+    "effort_IA_jp",
+    "effort_Analyste_jp",
+    "effort_Archi_jp"
+  ],
+  "taches": [
+    {
+      "id": "DA-01",
+      "projet": "Fiabilité des événements et audit",
+      "lot": "Données & audit",
+      "tache": "Audit central par CDC (BDAudit, msAudit)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 40,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2027-02-26",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2027-02-26",
+      "duree_jours_ouvres": 107,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : SC-05",
+      "commentaire": "Priorité haute ; liens forts : SE-09"
+    },
+    {
+      "id": "DA-11",
+      "projet": "Cohabitation et décommissionnement de G1",
+      "lot": "Données & audit",
+      "tache": "POC 2 — instance G1 raccordée à une copie de BD pour G2.1 (tests de bout en bout)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 20,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2026-12-31",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2026-12-31",
+      "duree_jours_ouvres": 66,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "GO-11",
+      "projet": "Gouvernance et équipe",
+      "lot": "Gouvernance, équipe & IA",
+      "tache": "Outillage d'analyse et de délégation (moteur, skills et agents Claude)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2026-11-30",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2026-11-30",
+      "duree_jours_ouvres": 43,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "durée saisie 1,5 mois"
+    },
+    {
+      "id": "IN-01",
+      "projet": "Méthane",
+      "lot": "Intégrations & B2B",
+      "tache": "Méthane Québec — Phase II (backend par l'architecte avec Claude, UI par l'équipe UI)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2026-11-30",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2026-11-30",
+      "duree_jours_ouvres": 43,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : SE-04",
+      "commentaire": "Priorité haute ; durée saisie 2 mois ; liens forts : SE-05, IF-06"
+    },
+    {
+      "id": "SC-02",
+      "projet": "Filtre et Recherche",
+      "lot": "Socle/Core",
+      "tache": "Service de filtres FilterSpec et repository générique",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 95,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2026-10-30",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2026-10-30",
+      "duree_jours_ouvres": 22,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Compatibilité avec les filtres et SP legacy",
+      "commentaire": "Priorité haute ; durée saisie 1 mois"
+    },
+    {
+      "id": "SC-24",
+      "projet": "Filtre et Recherche",
+      "lot": "Socle/Core",
+      "tache": "Service de recherche (Core UI)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 95,
+      "debut_initial": "2026-10-01",
+      "fin_initiale": "2026-10-02",
+      "debut_prevu": "2026-10-01",
+      "fin_prevue": "2026-10-02",
+      "duree_jours_ouvres": 2,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute ; durée saisie 10 j"
+    },
+    {
+      "id": "SC-15",
+      "projet": "Services transverses du socle",
+      "lot": "Socle/Core",
+      "tache": "Coordonnées, ISQ et Région — analyse, modèle de données, fiches et passation (architecte)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 20,
+      "debut_initial": "2026-11-02",
+      "fin_initiale": "2026-11-06",
+      "debut_prevu": "2026-11-02",
+      "fin_prevue": "2026-11-06",
+      "duree_jours_ouvres": 5,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : DA-08",
+      "commentaire": "Priorité haute ; durée saisie 5 j ; liens forts : DA-01"
+    },
+    {
+      "id": "SC-21",
+      "projet": "Extranets et portails",
+      "lot": "Socle/Core",
+      "tache": "Invalidation par API des caches de référence et des bibliothèques des extranets",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2026-11-09",
+      "fin_initiale": "2026-11-19",
+      "debut_prevu": "2026-11-09",
+      "fin_prevue": "2026-11-19",
+      "duree_jours_ouvres": 9,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité moyenne ; durée saisie 8 j"
+    },
+    {
+      "id": "SC-12",
+      "projet": "Services transverses du socle",
+      "lot": "Socle/Core",
+      "tache": "Standard UTC et fuseaux horaires",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2026-11-16",
+      "fin_initiale": "2026-11-23",
+      "debut_prevu": "2026-11-16",
+      "fin_prevue": "2026-11-23",
+      "duree_jours_ouvres": 6,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Erreurs de dates sur les paies et frais mensuels",
+      "commentaire": "Priorité moyenne ; durée saisie 5 j"
+    },
+    {
+      "id": "DA-07",
+      "projet": "Données, conformité et analytique",
+      "lot": "Données & audit",
+      "tache": "Analyse solution de reporting standardisée",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2026-12-07",
+      "fin_initiale": "2026-12-14",
+      "debut_prevu": "2026-12-07",
+      "fin_prevue": "2026-12-14",
+      "duree_jours_ouvres": 6,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : DA-02",
+      "commentaire": "durée saisie 4 j"
+    },
+    {
+      "id": "SE-02",
+      "projet": "Identité et accès",
+      "lot": "Sécurité & identité",
+      "tache": "Passerelle YARP en BFF (remplacement d'Ocelot)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-01-01",
+      "fin_initiale": "2027-01-29",
+      "debut_prevu": "2027-01-01",
+      "fin_prevue": "2027-01-29",
+      "duree_jours_ouvres": 21,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Routage dynamique : diagnostic et sécurité des routes publiées",
+      "commentaire": "Priorité haute ; durée saisie 1 mois ; liens forts : SC-01, SE-01"
+    },
+    {
+      "id": "SE-09",
+      "projet": "Identité et accès",
+      "lot": "Sécurité & identité",
+      "tache": "Modèle normalisé des droits et gabarit sécurité",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-01-04",
+      "fin_initiale": "2027-02-01",
+      "debut_prevu": "2027-01-04",
+      "fin_prevue": "2027-02-01",
+      "duree_jours_ouvres": 21,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Incohérences à corriger dans le gabarit des droits",
+      "commentaire": "Priorité haute ; durée saisie 1 mois"
+    },
+    {
+      "id": "SC-20",
+      "projet": "Core Backend",
+      "lot": "Socle/Core",
+      "tache": "Notification déclarative des changements de données (attribut de classe)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-01-18",
+      "fin_initiale": "2027-02-15",
+      "debut_prevu": "2027-01-18",
+      "fin_prevue": "2027-02-15",
+      "duree_jours_ouvres": 21,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "durée saisie 1 mois"
+    },
+    {
+      "id": "SE-01",
+      "projet": "Identité et accès",
+      "lot": "Sécurité & identité",
+      "tache": "MsSecurite — identité et autorisation centralisées (multi-profils)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-01-18",
+      "fin_initiale": "2027-04-19",
+      "debut_prevu": "2027-01-18",
+      "fin_prevue": "2027-04-19",
+      "duree_jours_ouvres": 66,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Point unique de défaillance pour tous les systèmes",
+      "commentaire": "Priorité haute ; durée saisie 3 mois ; liens forts : SC-01, SE-09"
+    },
+    {
+      "id": "SC-01",
+      "projet": "Identité et accès",
+      "lot": "Socle/Core",
+      "tache": "Service de cache central (MemoryCache puis Valkey)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-02-01",
+      "fin_initiale": "2027-02-26",
+      "debut_prevu": "2027-02-01",
+      "fin_prevue": "2027-02-26",
+      "duree_jours_ouvres": 20,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Cohérence approximative entre instances en phase I",
+      "commentaire": "Priorité haute ; durée saisie 1 mois"
+    },
+    {
+      "id": "SC-28",
+      "projet": "Core Backend",
+      "lot": "Socle/Core",
+      "tache": "Implémentation des queues streaming",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-02-01",
+      "fin_initiale": "2027-02-12",
+      "debut_prevu": "2027-02-01",
+      "fin_prevue": "2027-02-12",
+      "duree_jours_ouvres": 10,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "durée saisie 10 j"
+    },
+    {
+      "id": "SE-05",
+      "projet": "Services transverses du socle",
+      "lot": "Sécurité & identité",
+      "tache": "Gestion des secrets et de la configuration",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-02-01",
+      "fin_initiale": "2027-02-05",
+      "debut_prevu": "2027-02-01",
+      "fin_prevue": "2027-02-05",
+      "duree_jours_ouvres": 5,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Gestion des secrets à centraliser",
+      "commentaire": "Priorité haute ; durée saisie 5 j"
+    },
+    {
+      "id": "SC-25",
+      "projet": "Méthane",
+      "lot": "Socle/Core",
+      "tache": "Analyse Méthane",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 85,
+      "debut_initial": "2027-03-01",
+      "fin_initiale": "2027-03-31",
+      "debut_prevu": "2027-03-01",
+      "fin_prevue": "2027-03-31",
+      "duree_jours_ouvres": 23,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "SE-12",
+      "projet": "Identité et accès",
+      "lot": "Sécurité & identité",
+      "tache": "Sécurité — expositions relevées par l'analyse du code (standards 2026-10-25)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-03-01",
+      "fin_initiale": "2027-07-30",
+      "debut_prevu": "2027-03-01",
+      "fin_prevue": "2027-07-30",
+      "duree_jours_ouvres": 110,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "SC-06",
+      "projet": "Services transverses du socle",
+      "lot": "Socle/Core",
+      "tache": "Refonte de MsNotification (dont fin de RVI/Quovim)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 25,
+      "debut_initial": "2027-04-01",
+      "fin_initiale": "2027-04-30",
+      "debut_prevu": "2027-04-01",
+      "fin_prevue": "2027-04-30",
+      "duree_jours_ouvres": 22,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : SC-05",
+      "commentaire": "Priorité basse ; durée saisie 1 mois"
+    },
+    {
+      "id": "SC-07",
+      "projet": "Services transverses du socle",
+      "lot": "Socle/Core",
+      "tache": "MsFileMonitor — analyse de refonte (schémas as-is / to-be)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-04-01",
+      "fin_initiale": "2027-04-08",
+      "debut_prevu": "2027-04-01",
+      "fin_prevue": "2027-04-08",
+      "duree_jours_ouvres": 6,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Événements non déclenchés observés sur Transporteur",
+      "commentaire": "Priorité moyenne ; durée saisie 5 j"
+    },
+    {
+      "id": "SC-26",
+      "projet": "Fiabilité des événements et audit",
+      "lot": "Socle/Core",
+      "tache": "Analyse pour Audit",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 65,
+      "debut_initial": "2027-04-26",
+      "fin_initiale": "2027-06-24",
+      "debut_prevu": "2027-04-26",
+      "fin_prevue": "2027-06-24",
+      "duree_jours_ouvres": 44,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "SC-04",
+      "projet": "Services transverses du socle",
+      "lot": "Socle/Core",
+      "tache": "MsConfiguration — refactoring pour le chiffrement des données sensibles",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-05-03",
+      "fin_initiale": "2027-09-30",
+      "debut_prevu": "2027-05-03",
+      "fin_prevue": "2027-09-30",
+      "duree_jours_ouvres": 109,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Ordre de démarrage des microservices",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "IN-07",
+      "projet": "Méthane",
+      "lot": "Intégrations & B2B",
+      "tache": "Méthane — corrections de la phase I (flux B2B D-09, portage des calculs en C#, sécurité B2B)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2027-06-24",
+      "fin_initiale": "2027-11-24",
+      "debut_prevu": "2027-06-24",
+      "fin_prevue": "2027-11-24",
+      "duree_jours_ouvres": 110,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute ; liens forts : IN-01"
+    },
+    {
+      "id": "UI-07",
+      "projet": "Core UI",
+      "lot": "UI & microfrontends",
+      "tache": "Core UI — APIService, intercepteurs et contrat",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-08-02",
+      "fin_initiale": "2027-12-31",
+      "debut_prevu": "2027-08-02",
+      "fin_prevue": "2027-12-31",
+      "duree_jours_ouvres": 110,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité haute"
+    },
+    {
+      "id": "DA-04",
+      "projet": "Cohabitation et décommissionnement de G1",
+      "lot": "Données & audit",
+      "tache": "ETL et normalisation des modèles de données",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2027-10-01",
+      "fin_initiale": "2028-02-29",
+      "debut_prevu": "2027-10-01",
+      "fin_prevue": "2028-02-29",
+      "duree_jours_ouvres": 108,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "SSIS G2 vers G1 alors que les analyses ne sont pas terminées (archive)",
+      "commentaire": ""
+    },
+    {
+      "id": "SC-09",
+      "projet": "Données, conformité et analytique",
+      "lot": "Socle/Core",
+      "tache": "Modèle de domaine (plq.domaine, idReference, données confidentielles)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2027-11-24",
+      "fin_initiale": "2028-02-23",
+      "debut_prevu": "2027-11-24",
+      "fin_prevue": "2028-02-23",
+      "duree_jours_ouvres": 66,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Rupture de compatibilité des classes de base pour tous les microservices et pour les ETL",
+      "commentaire": ""
+    },
+    {
+      "id": "IF-06",
+      "projet": "Plateforme de livraison",
+      "lot": "Infra, DevOps & Azure",
+      "tache": "Environnements et comptes de service (BDEngine)",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2028-01-03",
+      "fin_initiale": "2028-05-31",
+      "debut_prevu": "2028-01-03",
+      "fin_prevue": "2028-05-31",
+      "duree_jours_ouvres": 108,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "DA-06",
+      "projet": "Plateforme de livraison",
+      "lot": "Données & audit",
+      "tache": "Gouvernance du code SQL — politique des SP et migrations découplées",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 0,
+      "debut_initial": "2028-02-23",
+      "fin_initiale": "2028-05-25",
+      "debut_prevu": "2028-02-23",
+      "fin_prevue": "2028-05-25",
+      "duree_jours_ouvres": 67,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend l'équipe : IF-01 (fin 2027-10)",
+      "commentaire": "au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "IF-11",
+      "projet": "Plateforme de livraison",
+      "lot": "Infra, DevOps & Azure",
+      "tache": "Versions des paquets plq.* et orchestration multi-dépôts",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-03-01",
+      "fin_initiale": "2028-07-31",
+      "debut_prevu": "2028-03-01",
+      "fin_prevue": "2028-07-31",
+      "duree_jours_ouvres": 109,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend l'équipe : IF-01 (fin 2027-10)",
+      "commentaire": "au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "IF-05",
+      "projet": "Trajectoire Azure et résilience",
+      "lot": "Infra, DevOps & Azure",
+      "tache": "Haute disponibilité et plan de relève",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-05-25",
+      "fin_initiale": "2028-12-25",
+      "debut_prevu": "2028-05-25",
+      "fin_prevue": "2028-12-25",
+      "duree_jours_ouvres": 153,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Aucun plan de relève documenté",
+      "commentaire": "liens forts : SC-01, SE-02 ; au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "UI-06",
+      "projet": "Core UI",
+      "lot": "UI & microfrontends",
+      "tache": "MessageService — bandeau de messages positionnable et toast générique",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-06-01",
+      "fin_initiale": "2028-08-31",
+      "debut_prevu": "2028-06-01",
+      "fin_prevue": "2028-08-31",
+      "duree_jours_ouvres": 66,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "IF-08",
+      "projet": "Trajectoire Azure et résilience",
+      "lot": "Infra, DevOps & Azure",
+      "tache": "Couche edge / proxy externe (Cloudflare, WAF)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-08-01",
+      "fin_initiale": "2028-12-29",
+      "debut_prevu": "2028-08-01",
+      "fin_prevue": "2028-12-29",
+      "duree_jours_ouvres": 109,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "SE-02",
+      "risque_principal": "Nouveau fournisseur SaaS « boîte noire » (journalisation et débogage limités)",
+      "commentaire": "au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "IF-09",
+      "projet": "Trajectoire Azure et résilience",
+      "lot": "Infra, DevOps & Azure",
+      "tache": "Trajectoire conteneurs et Azure (héritage Kubernetes 2023)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-09-01",
+      "fin_initiale": "2029-03-30",
+      "debut_prevu": "2028-09-01",
+      "fin_prevue": "2029-03-30",
+      "duree_jours_ouvres": 151,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend l'équipe : IF-01 (fin 2027-10)",
+      "commentaire": "liens forts : SE-05 ; au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "SC-30",
+      "projet": "Core Backend",
+      "lot": "Socle/Core",
+      "tache": "Socle backend — décisions ouvertes des standards (BE-O, CT-O)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2028-12-25",
+      "fin_initiale": "2029-05-25",
+      "debut_prevu": "2028-12-25",
+      "fin_prevue": "2029-05-25",
+      "duree_jours_ouvres": 110,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité moyenne ; au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "UI-08",
+      "projet": "Framework UI",
+      "lot": "UI & microfrontends",
+      "tache": "Design system Core UI — tokens, thèmes et mise en page (avec le designer UX)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2029-01-01",
+      "fin_initiale": "2029-05-31",
+      "debut_prevu": "2029-01-01",
+      "fin_prevue": "2029-05-31",
+      "duree_jours_ouvres": 109,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "aucun identifié",
+      "commentaire": "Priorité moyenne ; liens forts : UI-07 ; au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "SE-06",
+      "projet": "Données, conformité et analytique",
+      "lot": "Sécurité & identité",
+      "tache": "Politique d'accès aux BD de production, anonymisation et rétention",
+      "type": "tache",
+      "statut": "en_cours",
+      "avancement_pct": 50,
+      "debut_initial": "2029-04-02",
+      "fin_initiale": "2029-06-29",
+      "debut_prevu": "2029-04-02",
+      "fin_prevue": "2029-06-29",
+      "duree_jours_ouvres": 65,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "",
+      "risque_principal": "Attend un chantier non planifié : DA-02, IF-04",
+      "commentaire": "Priorité basse ; au carnet (au-delà de l’horizon engagé)"
+    },
+    {
+      "id": "IN-04",
+      "projet": "Extranets et portails",
+      "lot": "Intégrations & B2B",
+      "tache": "Échange documentaire sécurisé (extranet + SharePoint)",
+      "type": "tache",
+      "statut": "a_faire",
+      "avancement_pct": 0,
+      "debut_initial": "2029-05-25",
+      "fin_initiale": "2029-10-25",
+      "debut_prevu": "2029-05-25",
+      "fin_prevue": "2029-10-25",
+      "duree_jours_ouvres": 110,
+      "complexite": null,
+      "confiance": null,
+      "effort_FE_jp": null,
+      "effort_BE_jp": null,
+      "effort_QA_jp": null,
+      "effort_IA_jp": null,
+      "effort_Analyste_jp": null,
+      "effort_Archi_jp": null,
+      "depend_de": "SE-01",
+      "risque_principal": "Attend l'équipe : DM-01 (fin non planifiée)",
+      "commentaire": "Priorité basse ; au carnet (au-delà de l’horizon engagé)"
+    }
+  ],
+  "changements_semaine": [
+    "Première publication : la référence initiale est figée au 2026-11-02."
+  ]
+}
+</script>
+
+<script>
+(function () {
+  const raw = document.getElementById('donnees-programme').textContent.trim();
+  const data = JSON.parse(raw);
+  const D = s => new Date(s + 'T12:00:00Z');
+  const workdays = (a, b) => { // signed count of working days from a to b
+    let n = 0, sign = 1, d = D(a), e = D(b);
+    if (e < d) { [d, e] = [e, d]; sign = -1; }
+    while (d < e) { d.setUTCDate(d.getUTCDate() + 1); const w = d.getUTCDay(); if (w && w < 6) n++; }
+    return n * sign;
+  };
+  const dates = data.taches.flatMap(t => [t.debut_initial, t.fin_initiale, t.debut_prevu, t.fin_prevue]).map(D);
+  const min = new Date(Math.min(...dates)), max = new Date(Math.max(...dates));
+  const start = new Date(Date.UTC(min.getUTCFullYear(), min.getUTCMonth(), 1, 12));
+  const end = new Date(Date.UTC(max.getUTCFullYear(), max.getUTCMonth() + 1, 1, 12));
+  const span = end - start;
+  const pos = s => ((D(s) - start) / span) * 100;
+  const width = (a, b) => Math.max(((D(b) - D(a)) / span) * 100, 0.6);
+  const fmt = new Intl.DateTimeFormat('fr-CA', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+
+  let months = '';
+  for (let m = new Date(start); m < end; m.setUTCMonth(m.getUTCMonth() + 1)) {
+    const left = ((m - start) / span) * 100;
+    months += `<span class="mtick" style="left:${left}%"></span>${m.getUTCMonth() % 3 === 0 ? `<span class="mname" style="left:${left}%">${fmt.format(m)}</span>` : ""}`;
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const statut = { a_faire: 'à faire', en_cours: 'en cours', bloque: 'bloqué', termine: 'terminé' };
+
+  let html = '<div class="h">Chantier</div><div class="h track"><div class="months">' + months + '</div></div><div class="h" style="text-align:right">Écart</div>';
+  for (const t of data.taches) {
+    const g = workdays(t.fin_initiale, t.fin_prevue);
+    const cls = g > 0 ? 'late' : g < 0 ? 'early' : 'zero';
+    html += `<div class="lbl"><b>${esc(t.id)}</b>${esc(t.tache)}<small>${esc(t.projet)} · ${statut[t.statut] || t.statut} · ${t.avancement_pct} %</small></div>`
+      + `<div class="track"><div class="months">${months.replace(/<span class="mname"[^>]*>[^<]*<\/span>/g, '')}</div>`
+      + `<span class="bar ini" style="left:${pos(t.debut_initial)}%;width:${width(t.debut_initial, t.fin_initiale)}%" title="Initial : ${t.debut_initial} → ${t.fin_initiale}"></span>`
+      + `<span class="bar pre" style="left:${pos(t.debut_prevu)}%;width:${width(t.debut_prevu, t.fin_prevue)}%" title="Prévu : ${t.debut_prevu} → ${t.fin_prevue}"><span class="pct" style="width:${t.avancement_pct}%"></span></span></div>`
+      + `<div class="gap ${cls}">${g > 0 ? '+' : ''}${g} j</div>`;
+  }
+  document.getElementById('gantt').innerHTML = html;
+  document.getElementById('chg').innerHTML = data.changements_semaine.map(c => `<li>${esc(c)}</li>`).join('');
+  const pre = document.getElementById('json');
+  pre.textContent = JSON.stringify(data, null, 2);
+
+  document.getElementById('copier').addEventListener('click', () => {
+    const etat = document.getElementById('etat');
+    navigator.clipboard.writeText(pre.textContent).then(
+      () => { etat.textContent = 'JSON copié'; },
+      () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); etat.textContent = 'Texte sélectionné : Ctrl+C pour copier'; }
+    );
+  });
+})();
+</script>
+
+</body></html>

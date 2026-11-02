@@ -1,7 +1,7 @@
 # Instructions projet — Portefeuille PLQ
 
 Outil de visibilité du portefeuille TI (3 mois glissants, sprints, jalons, dépendances, risques, charge, MEP, run).
-Couche 0 au-dessus de Goutte 2.1. Décisions D1–D22 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v9.md` (motifs dans l'annexe).
+Couche 0 au-dessus de Goutte 2.1. Décisions D1–D22 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v10.md` (motifs dans l'annexe).
 Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant.
 
 ## Langue, heure, style
@@ -25,7 +25,7 @@ Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant
 | Santé | Calculée (D8), jamais déclarée ; fraîcheur > 15 j ouvrés sans mise à jour Smartsheet ni activité Jira = alerte (D8 v4) |
 | Capacité | Scrum = jours-personne − absences − réserve run (15 %) ; charge = points d'équipe et sous-tâches Jira ; WIP saisi abandonné (D7 v2, 28 oct.) ; aucune heure saisie |
 | Dépendances | Typées (bloque · alimente · attend) ; un prédécesseur qui recule met le successeur en alerte |
-| Feed | Un artefact projet n'est lu que s'il porte `<script type="application/json" id="portfolio-feed">` au modèle canonique ; sinon ignoré et signalé |
+| Feed | Un artefact projet n'est lu que s'il porte `<script type="application/json" id="portfolio-feed">` au modèle canonique, ou le format inscrit dans `04_Adaptateurs/Feeds_Inscrits_v2.md` (roadmap de l'architecte : `donnees-programme` 1.0, lu tel que livré, D12 v10) ; sinon ignoré et signalé |
 | Droits | Artefact partagé en lecture ; écriture `db` réservée au niveau owner ; Gérer masqué si `user.canEdit()` est faux ; item masqué (`visible` false) = filtre d'affichage (vue visiteur + digest), jamais une confidentialité (D20 v3) |
 | Nouveau projet | Skill `ajout-projet-portefeuille` (D21) : item `saisie.<nom>`, épopées, Gantt inscrit dans `04_Adaptateurs/Gantts_Inscrits_v1.md` |
 | Gantt de projet | Reproduit depuis ses données (drawio PLQ-Forge, JSON, ou ligne `gantts` du bloc feed d'un artefact), jamais copié en image ; lignes jalon = jalons pour un Gantt de fichier (Gantt de feed : affichage) ; tâches = affichage seulement (D22 v9) |
@@ -51,7 +51,8 @@ Racine plafonnée à ces 7 entrées. Nouveau sujet → dans une phase existante.
 - Enregistrements datés (digests, instantanés) : `AAAA-MM-JJ` dans le nom, partition `AAAA-MM/`, jamais archivés.
 - Noms de fichiers : `[A-Za-z0-9._-]` seulement ; pas d'espace, d'accent, de double extension.
 - Suppression : jamais sans accord explicite (fichier, ligne, item, brouillon). Un déplacement n'est pas une suppression.
-  Seule exception permanente (Franck, 29 oct.) : l'adaptateur Jira data supprime ses charges non relues dans les sprints qu'il vient de lire (K13).
+  Exceptions permanentes : l'adaptateur Jira data supprime ses charges non relues dans les sprints qu'il vient de lire (K13, Franck 29 oct.) ;
+  l'adaptateur artefacts supprime les jalons et dépendances `feed.archi.*` que l'architecte a retirés de sa roadmap (K14, Franck 2 nov.).
 - Skill `archive-versions` en mode `audit` d'abord.
 
 ## Sources et identifiants
@@ -60,7 +61,7 @@ Racine plafonnée à ces 7 entrées. Nouveau sujet → dans une phase existante.
 | Goutte 2.1 (lecture) | `C:\Users\fkowalczyk\OneDrive - Les producteurs de lait du Québec\Documents\Claude\Goutte2.1\` |
 | Smartsheet | `Goutte21_Master` 230627583414148 · `Jalons_Entites` 2733930749841284 |
 | Jira | GOU21 seul (sprints, versions MEP, tickets liés aux demandes STG21) ; SDD et PLQ hors connecteur ; MEP : calendrier MEP > Jira > courriel > Teams « 05 - Déploiements » > ledger (Kickoff D18 v8) |
-| Artefacts | Maquettes https://claude.ai/artifact/DSpedLCbm6enVxTz9cS9nd · Expert G1 Gantt S1 https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · Design system https://claude.ai/artifact/SW339XsDhEpz696xhonAC1 |
+| Artefacts | Roadmap de l'architecte (Personne_09, lue telle que livrée) https://claude.ai/artifact/7wZxwDRbqFhdG3SwsZq8eM · Maquettes https://claude.ai/artifact/DSpedLCbm6enVxTz9cS9nd · Expert G1 Gantt S1 https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · Design system https://claude.ai/artifact/SW339XsDhEpz696xhonAC1 |
 | Miro | Dernier board de rétro GOU21, cadre « Actions du sprint suivant » |
 | Teams | Canal du digest : `G1_Agent_Analystes` (groupId `e3fe050d-5ad9-4bd4-a483-cc4e5413ac49`, canal `19:bxs3bIvPMcXuZc0tA9xidnPdhemHhzafgN1S5FuKPV81@thread.tacv2`) |
 

@@ -2,12 +2,13 @@
 /* Artefacts adapter (step 3c): project artefacts' portfolio-feed blocks -> canonical model v1 document + db batch.
  *
  * Usage: node tools/adapt_artefacts.js <Feeds_Inscrits.md> <raw_dir> <base_before_dir> <out_dir> <schema.json>
- *   Feeds_Inscrits.md  registry table: URL | Item attendu | Préfixe | Propriétaire | Statut (only "actif" rows are read)
+ *   Feeds_Inscrits.md  registry table: URL | Item attendu | Préfixe | Propriétaire | Statut | Format (only "actif" rows are read;
+ *                      Format portfolio-feed by default, programme-1.0 = architect roadmap via tools/feed_programme.js)
  *   raw_dir            read.json {read_at, artefacts: {<url>: {dir, version, sha256}}} + <dir>/index.html, saved by
  *                      Claude with `Artifact read` (path index.html) — never WebFetch
  *   base_before_dir    ArtifactData export: <dir>/<collection>/*.json + versions.json {"<collection>/<id>": n}
  * Writes to out_dir: doc.json, batch.json (pinned ArtifactData writes), report.json, feeds/<dir>.json (extracted blocks).
- * Rules (fiche Adaptateur_Artefacts_v2):
+ * Rules (fiche Adaptateur_Artefacts_v3):
  *   - one <script type="application/json" id="portfolio-feed"> block; missing, duplicated, unparsable, invalid
  *     against the model (validate_model.py) or breaking the feed contract = feed ignored and reported, no write at all;
  *   - contract: source = artefact + registered URL; collections items, jalons, risques, attentes, dependances,
@@ -15,17 +16,23 @@
  *     at most one gantt, id <prefix>.gantt;
  *   - item: portfolio-owned fields taken at creation only (as Smartsheet S3), source fields at every read;
  *   - jalon / livrable: date_initiale kept when the date moves; risque.score computed;
- *   - base records of a feed absent from its read are kept and reported, never deleted.
- * Never writes an artefact; never deletes a db document.
+ *   - base records of a feed absent from its read are kept and reported, never deleted — except K14: milestones and
+ *     dependencies of a programme-1.0 feed absent from its read get a delete write marked "purge":"K14".
+ * Never writes an artefact; deletes no db document except K14.
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const PROG = require('./feed_programme.js');
+// registry « Format » column (Feeds_Inscrits_v2): portfolio-feed (default) or programme-1.0 (architect roadmap, Kickoff D12 v10)
+const FORMATS = ['portfolio-feed', 'programme-1.0'];
 
 // Kickoff D22 v7 (model v16): a feed may carry its project's Gantt (display only), one at most, id <prefix>.gantt
 const ALLOWED = ['items', 'jalons', 'risques', 'attentes', 'dependances', 'livrables', 'gantts'];
 const OWNED = ['nom', 'type', 'parent', 'voie', 'etape', 'promu', 'priorite', 'responsable', 'fenetre', 'note_lundi', 'liens', 'visible'];
+// programme-1.0: etape and fenetre are computed from the architect's tasks, so they follow the source at every read (D12 v10)
+const SOURCE_OWNED = { 'programme-1.0': ['etape', 'fenetre'] };
 const ITEM_SOURCE = ['pct_avancement', 'phase_source', 'contenu_sprint', 'support']; // model §3 read-only fields (sante apart)
 const RE_BLOCK = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
 
@@ -35,7 +42,7 @@ function parseRegistry(md) {
   md.split(/\r?\n/).forEach((l) => {
     const c = l.split('|').map((x) => x.trim());
     if (c.length < 7 || !/^https?:\/\/|^\(/.test(c[1])) return;
-    rows.push({ url: c[1], item: /^[a-z0-9]/.test(c[2]) ? c[2] : null, prefixe: c[3], proprietaire: c[4], statut: c[5] });
+    rows.push({ url: c[1], item: /^[a-z0-9]/.test(c[2]) ? c[2] : null, prefixe: c[3], proprietaire: c[4], statut: c[5], format: c.length >= 8 && c[6] ? c[6] : 'portfolio-feed' });
   });
   return rows;
 }
@@ -44,6 +51,7 @@ function checkRegistry(rows) {
   rows.forEach((r, i) => {
     if (!/^feed\.[a-z0-9-]+$/.test(r.prefixe)) errs.push(`ligne ${i + 1} : préfixe « ${r.prefixe} » hors forme feed.<nom>`);
     if (r.item && !underPrefix(r.item, r.prefixe)) errs.push(`ligne ${i + 1} : item attendu ${r.item} hors du préfixe ${r.prefixe}`);
+    if (!FORMATS.includes(r.format || 'portfolio-feed')) errs.push(`ligne ${i + 1} : format « ${r.format} » inconnu (${FORMATS.join(', ')})`);
     rows.forEach((o, j) => { if (j > i && (underPrefix(o.prefixe, r.prefixe) || underPrefix(r.prefixe, o.prefixe))) errs.push(`préfixes ${r.prefixe} / ${o.prefixe} se recouvrent`); });
   });
   return errs;
@@ -113,7 +121,9 @@ function mapFeed(feed, reg, base, readAt, signals, rows) {
     else {
       rec = Object.assign({}, prev); ITEM_SOURCE.forEach((k) => delete rec[k]);
       Object.keys(it).filter((k) => !OWNED.includes(k) && k !== 'source').forEach((k) => { rec[k] = it[k]; });
-      OWNED.filter((k) => k in it && !same(it[k], prev[k])).forEach((k) => {
+      const follow = SOURCE_OWNED[reg.format] || [];
+      follow.filter((k) => k in it).forEach((k) => { if (!same(it[k], prev[k])) signals.push({ kind: 'archi_etape', row: it.id, texte: `${it.nom || it.id} : ${k} ${JSON.stringify(prev[k])} → ${JSON.stringify(it[k])} (roadmap de l'architecte)` }); rec[k] = it[k]; });
+      OWNED.filter((k) => !follow.includes(k) && k in it && !same(it[k], prev[k])).forEach((k) => {
         if (k === 'etape' && it.etape === 'termine') { rec.etape = 'termine'; signals.push({ kind: 'termine', row: it.id, texte: `${it.id} : terminé dans le feed → étape Terminé` }); return; }
         signals.push({ kind: 'champ_possede', row: it.id, texte: `${it.id}.${k} : le feed propose ${JSON.stringify(it[k])}, la base garde ${JSON.stringify(prev[k])} (champ possédé, modifiable dans Gérer)` });
       });
@@ -167,8 +177,8 @@ function absents(reg, base, seen, signals, why) {
 }
 
 function adapt(registry, raw, base, versions, opts) {
-  const readAt = raw.read_at; const signals = []; const rows = []; const feeds = [];
-  const doc = { modele: '1', source: { systeme: 'artefact', ref: 'Feeds_Inscrits_v1', lu_le: readAt, par: 'adaptateur-artefacts' } };
+  const readAt = raw.read_at; const signals = []; const rows = []; const feeds = []; const purges = [];
+  const doc = { modele: '1', source: { systeme: 'artefact', ref: 'Feeds_Inscrits', lu_le: readAt, par: 'adaptateur-artefacts' } };
   ALLOWED.forEach((c) => { doc[c] = []; });
   const regErr = checkRegistry(registry);
   if (regErr.length) { regErr.forEach((t) => signals.push({ kind: 'registre', texte: t })); return finish(); }
@@ -185,19 +195,47 @@ function adapt(registry, raw, base, versions, opts) {
     const r = raw.artefacts[reg.url];
     if (!r || r.html == null) return ignore('artefact non lu');
     f.version = r.version;
-    const blocks = extractBlocks(r.html);
-    if (!blocks.length) return ignore('aucun bloc portfolio-feed');
-    if (blocks.length > 1) return ignore(`${blocks.length} blocs portfolio-feed`);
-    if (!blocks[0].json) return ignore('bloc sans type="application/json"');
-    let feed; try { feed = JSON.parse(blocks[0].text); } catch (e) { return ignore('JSON illisible', [e.message]); }
+    let feed;
+    if (reg.format === 'programme-1.0') {
+      // architect roadmap read as delivered (D12): his donnees-programme block, translated to the canonical model
+      const pb = PROG.extractProgramme(r.html);
+      if (!pb.length) return ignore('aucun bloc donnees-programme');
+      if (pb.length > 1) return ignore(`${pb.length} blocs donnees-programme`);
+      if (!pb[0].json) return ignore('bloc sans type="application/json"');
+      let prog; try { prog = JSON.parse(pb[0].text); } catch (e) { return ignore('JSON illisible', [e.message]); }
+      const t = PROG.translate(prog, Object.assign({ axes: opts.axes || {} }, reg));
+      if (t.errors.length) return ignore('bloc programme invalide', t.errors);
+      feed = t.feed; t.signals.forEach((s) => signals.push(s));
+    } else {
+      const blocks = extractBlocks(r.html);
+      if (!blocks.length) return ignore('aucun bloc portfolio-feed');
+      if (blocks.length > 1) return ignore(`${blocks.length} blocs portfolio-feed`);
+      if (!blocks[0].json) return ignore('bloc sans type="application/json"');
+      try { feed = JSON.parse(blocks[0].text); } catch (e) { return ignore('JSON illisible', [e.message]); }
+    }
     const contract = checkContract(feed, reg);
     const model = validateWithModel(feed, baseDoc, r.dir || reg.prefixe, opts.schema, opts.tmpDir);
     f.bloc = feed;
     if (contract.length || model.length) return ignore('bloc invalide', contract.concat(model));
+    const n0 = rows.length; const known = (base.items || []).some((i) => underPrefix(i.id, reg.prefixe));
     const out = mapFeed(feed, reg, base, readAt, signals, rows);
+    // architect roadmap: a task or project that appears after the first read is a change of the week (D12 v10)
+    if (reg.format === 'programme-1.0' && known) rows.slice(n0).filter((x) => x.decision === 'créé' && ['item', 'jalon'].includes(x.kind))
+      .forEach((x) => signals.push({ kind: 'archi_nouveau', row: x.id, texte: `${x.kind === 'item' ? 'Nouveau projet' : 'Nouvelle tâche'} dans la roadmap de l'architecte : ${(out[x.kind + 's'].find((r) => r.id === x.id) || {}).nom || x.id}` }));
     ALLOWED.forEach((c) => doc[c].push(...out[c]));
     f.resultat = 'lu'; f.ecrits = ALLOWED.reduce((n, c) => n + out[c].length, 0);
-    absents(reg, base, new Set(ALLOWED.flatMap((c) => (feed[c] || []).map((x) => `${c}/${x.id}`))), signals, 'absent de cette lecture');
+    const seen = new Set(ALLOWED.flatMap((c) => (feed[c] || []).map((x) => `${c}/${x.id}`)));
+    if (reg.format === 'programme-1.0') {
+      // K14 (standing consent Franck 2026-11-02): a task the architect removed or renamed would leave a milestone that
+      // turns « dépassé » forever — its milestone and dependencies read from this feed are deleted, and reported
+      ['jalons', 'dependances'].forEach((c) => (base[c] || []).filter((r) => underPrefix(r.id, reg.prefixe) && !seen.has(`${c}/${r.id}`) && r.source && r.source.systeme === 'artefact')
+        .forEach((r) => { purges.push({ op: 'delete', collection: c, doc_id: r.id, purge: 'K14' }); seen.add(`${c}/${r.id}`);
+          signals.push({ kind: 'archi_supprime', row: r.id, texte: `${c === 'jalons' ? 'Tâche retirée' : 'Dépendance retirée'} de la roadmap de l'architecte : ${r.nom || r.id} — supprimé (règle K14)` }); }));
+      // the architect's « changements de la semaine » are news only when his data date moved
+      const prevTop = (base.items || []).find((i) => i.id === (reg.item || reg.prefixe));
+      if (prevTop && prevTop.updated_at === (feed.items[0] || {}).updated_at) for (let k = signals.length - 1; k >= 0; k--) if (signals[k].kind === 'archi_changement' && signals[k].row === reg.url) signals.splice(k, 1);
+    }
+    absents(reg, base, seen, signals, 'absent de cette lecture');
   });
   return finish();
 
@@ -208,6 +246,7 @@ function adapt(registry, raw, base, versions, opts) {
       const w = { op: 'set', collection: c, doc_id: rec.id, data: rec }; const v = versions[`${c}/${rec.id}`];
       if (v) w.if_version = v; writes.push(w);
     }));
+    purges.forEach((w) => { const v = versions[`${w.collection}/${w.doc_id}`]; if (v) w.if_version = v; writes.push(w); });
     return { doc, writes, report: { lu_le: readAt, feeds: feeds.map((x) => Object.assign({}, x, { bloc: undefined })), ecrits: writes.length, rows, signals }, feeds };
   }
 }
@@ -236,7 +275,9 @@ if (require.main === module) {
   const registry = parseRegistry(fs.readFileSync(regP, 'utf8'));
   const vp = path.join(baseDir, 'versions.json');
   const versions = fs.existsSync(vp) ? JSON.parse(fs.readFileSync(vp, 'utf8')) : {};
-  const res = adapt(registry, readRaw(rawDir), readBase(baseDir), versions, { schema: schemaP, tmpDir: path.join(outDir, 'feeds') });
+  const axP = path.join(__dirname, '..', 'config', 'archi_axes.json');
+  const axes = fs.existsSync(axP) ? Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(axP, 'utf8'))).filter(([k]) => !k.startsWith('_'))) : {};
+  const res = adapt(registry, readRaw(rawDir), readBase(baseDir), versions, { schema: schemaP, tmpDir: path.join(outDir, 'feeds'), axes });
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'doc.json'), JSON.stringify(res.doc, null, 2));
   fs.writeFileSync(path.join(outDir, 'batch.json'), JSON.stringify(res.writes, null, 1));

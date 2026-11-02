@@ -7,7 +7,8 @@ set -u
 cd "$(dirname "$0")/.."
 SCHEMA="${SCHEMA:-../../OneDrive - Les producteurs de lait du Québec/Documents/Claude/Portefeuille_PLQ/02_Modele/schema.json}"
 [ -f "$SCHEMA" ] || SCHEMA="$(ls -d /sessions/*/mnt/Portefeuille_PLQ/02_Modele/schema.json 2>/dev/null | head -1)"
-FEEDS="$(dirname "$(dirname "$SCHEMA")")/04_Adaptateurs/Feeds_Inscrits_v1.md"
+# registry as it was on 27 Oct. (architect feed en_attente): the artefacts suites were written against that state
+FEEDS=tests/fixtures/feeds_inscrits_2026-10-27.md
 LEDGER="${LEDGER:-$(ls -d /sessions/*/mnt/Goutte2.1/Daily_Brief/_ledger 2>/dev/null | head -1)}"
 [ -n "$LEDGER" ] || LEDGER="../../OneDrive - Les producteurs de lait du Québec/Documents/Claude/Goutte2.1/Daily_Brief/_ledger"
 JSDOM_DIR="${JSDOM_DIR:-/tmp/jd/node_modules}"
@@ -21,6 +22,7 @@ run() { # name, inputs-to-check..., -- , command...
   local out; out="$("$@" 2>&1)"; local rc=$?
   if [ $rc -eq 0 ]; then echo "OK   $name ($(printf '%s\n' "$out" | grep -c '^ok\|✓\|^OK'))"; else echo "FAIL $name"; printf '%s\n' "$out" | tail -8 | sed 's/^/     /'; fail=$((fail+1)); fi
 }
+run feed_programme  "$SCHEMA" $BASE29 -- node tests/test_feed_programme.js "$SCHEMA" $BASE29 "$TMP/fp"
 run core            "$SCHEMA" dist/seed/base_seed.json -- node tests/test_core.js "$SCHEMA" dist/seed/base_seed.json
 run core_r06        $R28/r06c/base $R28/r06c/jira_out/doc.json -- node tests/test_core_r06.js $R28/r06c/base $R28/r06c/jira_out/doc.json
 run public_base     $BASE29 -- node tests/test_public_base.js $BASE29
@@ -44,6 +46,7 @@ run page_dom_r49    "$JSDOM_DIR/jsdom" tests/fixtures/seed_r49.json tests/fixtur
 run page_dom_v2    "$JSDOM_DIR/jsdom" tests/fixtures/seed_v2.json -- bash -c "python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_v2.json >/dev/null && cp dist/preview_local.html '$TMP/p2.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom_v2.js '$TMP/p2.html'"
 run page_dom_ux    "$JSDOM_DIR/jsdom" tests/fixtures/seed_r49.json tests/fixtures/seed_v2.json -- bash -c "python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_r49.json >/dev/null && cp dist/preview_local.html '$TMP/pu1.html' && python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_v2.json >/dev/null && cp dist/preview_local.html '$TMP/pu2.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom_ux.js '$TMP/pu1.html' '$TMP/pu2.html'"
 run page_dom_gantt "$JSDOM_DIR/jsdom" tests/fixtures/seed_gantt.json -- bash -c "python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_gantt.json >/dev/null && cp dist/preview_local.html '$TMP/pg.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom_gantt.js '$TMP/pg.html'"
+run page_dom_nav   "$JSDOM_DIR/jsdom" tests/fixtures/seed_r49.json -- bash -c "python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_r49.json >/dev/null && cp dist/preview_local.html '$TMP/pn.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom_nav.js '$TMP/pn.html'"
 git checkout -q -- dist/portefeuille.html 2>/dev/null || echo "WARN dist/portefeuille.html non restauré (git checkout impossible : verrou ?) — reconstruit par les tests" # build_interface rewrites the tracked page: restore it
 echo "---- $fail en échec · $skip sautés"
 rm -rf "$TMP"
