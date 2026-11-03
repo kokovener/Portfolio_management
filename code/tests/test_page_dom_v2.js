@@ -19,7 +19,7 @@ const S_same = () => true; // rows compared are siblings of the same section in 
 
   // R10 Data Jira on codes de taxes
   click(d.querySelector('[data-act="open-item"][data-id="saisie.codes-taxes"]')); await sleep(20);
-  assert(/Data Jira/.test(txt()) && /34,7 % des tickets faits/.test(txt()) && /17 faits · 15 en cours · 17 à faire · 49 au total/.test(txt()), 'stat');
+  assert(/Jira/.test(txt()) && /34,7 % des tickets faits/.test(txt()) && /17 faits · 15 en cours · 17 à faire · 49 au total/.test(txt()), 'stat');
   assert(/14 tâches parentes · 46 pts équipe/.test(txt()) && /Testeur Externe/.test(txt()) && /3 \/ 4/.test(txt()), 'sprint content and people (sub-tasks à faire / total)');
   const a = d.querySelector('a[href="https://jira-plq.atlassian.net/browse/GOU21-9199"]'); assert(a && a.target === '_blank', 'epic link');
   ok('projet: Data Jira card (R10) with clickable epic (R02)');
@@ -67,9 +67,9 @@ const S_same = () => true; // rows compared are siblings of the same section in 
   ok('legend: health colours explained on every view (R16), inside the items card on the sprint view (R42)');
 
   // R05 sprint capacity per person (Jira assignees + Scrum team)
-  click(d.querySelector('[data-act="open-sprint"]')); await sleep(20);
+  click(d.querySelector('[data-act="view"][data-v="sprint"]')); await sleep(20);
   assert(/Capacité · sous-tâches par personne · Jira/.test(txt()) && /Testeur Externe/.test(txt()) && /hors équipe/.test(txt()), 'people table');
-  assert(/Hors item du portefeuille.*6 tâches · 31 pts/.test(txt()), 'programme bucket');
+  assert(/Sans projet associé.*6 tâches · 31 pts/.test(txt()), 'programme bucket');
   assert(/Capacité · sous-tâches par personne/.test(txt()) && /pts équipe/.test(txt()), 'per-person load = sub-tasks, points = team (Franck flow)');
   assert(/Gestion des codes de taxes/.test(txt()), 'flux item with Jira tickets is in the sprint (R04)');
   assert(!/Jalons dans le sprint|jalons tombent dans le sprint/.test(txt()), 'R20 block and tile removed');
@@ -109,7 +109,7 @@ const S_same = () => true; // rows compared are siblings of the same section in 
   ok('sprint: retro action Faite / Rouvrir by the owner (R40)');
   click(d.querySelector('[data-act="open-sprint"][data-id="jira.gou21-s19"]')); await sleep(20);
   assert(/Capacité · sous-tâches par personne/.test(txt()) && !/Préparation · backlog/.test(txt()), 'current view unchanged');
-  assert(/Aucun ticket de support dans ce sprint/.test(txt()) && /1 dans S20/.test(txt()), 'R33 support S19');
+  assert(/Aucun ticket de support planifié dans ce sprint/.test(txt()) && /1 dans S20/.test(txt()), 'R33 support S19');
   // U22: the blocked sub-task folds under its blocked parent (counter), unfolded on click
   assert(/Bloqués dans le sprint · 1 \(\+ 1 sous-tâche\)/.test(txt()) && !/GOU21-10591/.test(txt()), 'U22 folded');
   click(d.querySelector('[data-act="toggle"][data-id="blq:GOU21-9698"]')); await sleep(20);
@@ -121,7 +121,7 @@ const S_same = () => true; // rows compared are siblings of the same section in 
 
   // R32 support ticket names on the portfolio card, grouped by STG21 request
   click(d.querySelector('[data-act="view"][data-v="portefeuille"]')); await sleep(20);
-  { const card = [...d.querySelectorAll('.card')].find((c) => /Support extranets · tickets GOU21/.test(c.textContent));
+  { const card = [...d.querySelectorAll('.card')].find((c) => /Support des extranets/.test(c.textContent));
     assert(card && card.querySelector('a[href$="STG21-226"]') && /GOU21-10412/.test(card.textContent) && /GOU21-10413/.test(card.textContent) && /sans sprint/.test(card.textContent), 'R32'); }
   ok('portefeuille: support tickets named, grouped by STG21 request, sprint or « sans sprint » (R32)');
 

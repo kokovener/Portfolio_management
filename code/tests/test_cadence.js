@@ -56,7 +56,7 @@ ok('fraîcheur : lecture du jour = fraîche ; Jira data relu par le réel (jira_
   base.lectures = [{ id: 'lecture.jira-data-reel', adaptateur: 'jira_data_reel', passage: 'lundi', lu_le: '2026-11-02T07:20-05:00', statut: 'ok' },
     { id: 'lecture.outlook', adaptateur: 'outlook', passage: 'lundi', lu_le: '2026-10-27T07:30-04:00', statut: 'ok' }];
   const f = C.fraicheurBloc(base, cad, 'B1', '2026-11-03');
-  assert.strictEqual(f.perime, false); assert.strictEqual(f.lu_le, '2026-10-27T07:30-04:00'); // oldest input shown
+  assert.strictEqual(f.perime, false); assert.strictEqual(f.lu_le, '2026-11-02T07:20-05:00'); // badge = main source (Jira data), Outlook in the tooltip (checkpoint 3 Nov.)
   assert.strictEqual(C.fraicheurBloc(base, cad, 'B1', '2026-11-04').perime, true);
   assert.strictEqual(C.fraicheurBloc(base, cad, 'B6', '2026-11-04').lu_le, '2026-10-27T07:30-04:00'); // full Outlook covers the team
 });

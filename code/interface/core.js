@@ -126,6 +126,8 @@
 
   // ---------- D8 health (computed, never declared) ----------
   function sante(base, item, today) {
+    // a finished item carries no live risk: never red for staleness or old milestones (checkpoint 3 Nov.)
+    if (item.etape === 'termine') return { couleur: 'vert', motifs: [] };
     const rouge = []; const jaune = [];
     jalonsOf(base, item.id).forEach((j) => {
       if (j.statut === 'depasse' || (j.statut !== 'fait' && j.date < today)) rouge.push(`jalon dépassé : ${j.nom} (${fmtDate(j.date)})`);
@@ -135,7 +137,8 @@
       if (s >= SEUILS.risque_rouge) rouge.push(`risque ${s} ≥ 15 : ${r.titre}`);
       else if (s >= SEUILS.risque_jaune) jaune.push(`risque ${s} ≥ 10 : ${r.titre}`);
     });
-    const fr = fraicheur(base, item, today);
+    // staleness applies to running work only, same scope as the freshness alert (actif / planifié)
+    const fr = ['actif', 'planifie'].includes(item.etape) ? fraicheur(base, item, today) : null;
     if (fr && fr.jo > SEUILS.fraicheur_jo) rouge.push(`fraîcheur : ${fr.jo} j ouvrés sans mise à jour Smartsheet ni activité Jira (seuil 15)`);
     base.attentes.filter((a) => a.item === item.id && !a.recue_le).forEach((a) => {
       const retard = workingDaysBetween(a.attendue_le, today);
@@ -181,7 +184,7 @@
           o.capacite += net * (1 - res / 100);
         });
       });
-      o.detail = `${fmtNum(o.demande)} / ${fmtNum(o.capacite)} j-p`;
+      o.detail = `${fmtNum(o.demande)} / ${fmtNum(o.capacite)} jours-personne`;
     });
     return Object.values(roles).map((o) => Object.assign(o, { pct: o.capacite ? Math.round(100 * o.demande / o.capacite) : null }))
       .sort((a, b) => (b.pct || 0) - (a.pct || 0));
@@ -239,7 +242,7 @@
     const ordered = chains.slice().sort((x, y) => reached.has(key(x.kind, x.r.id)) - reached.has(key(y.kind, y.r.id)) || String(x.r.date_initiale).localeCompare(String(y.r.date_initiale)) || x.r.id.localeCompare(y.r.id));
     const covered = new Set();
     ordered.filter((x) => { if (covered.has(key(x.kind, x.r.id))) return false; x.c.seen.forEach((k) => covered.add(k)); return true; }).forEach((x) => {
-      const lab = (ref) => { const rec = refRecord(base, ix, ref); const rc = rec && ref.kind !== 'item' ? recul(rec) : 0; return `${refNom(base, ix, ref)}${rc >= SEUILS.recul_jo ? `, +${rc} j o.` : ''}`; };
+      const lab = (ref) => { const rec = refRecord(base, ix, ref); const rc = rec && ref.kind !== 'item' ? recul(rec) : 0; return `${refNom(base, ix, ref)}${rc >= SEUILS.recul_jo ? `, +${rc} j ouvrés` : ''}`; };
       const who = x.kind === 'livrable' ? `Livrable ${x.r.nom}` : `${nom(x.r.item)} — ${x.r.nom}`;
       const tail = x.c.steps.length ? ` → entraîne : ${x.c.steps.map((d) => `${lab(d.vers)} (${d.type})`).join(' → ')}` : '';
       out.push({ kind: 'recul', item: x.kind === 'livrable' ? x.r.item || null : x.r.item, texte: `${who} : ${fmtDate(x.r.date_initiale)} → ${fmtDate(x.r.date)} (+${recul(x.r)} j ouvrés)${tail}.` });
@@ -250,11 +253,13 @@
     // Waits read from Jira (status Bloqué) are the blocked tickets: shown by the « bloqué » line of the sprint, not here
     const late = {}; base.attentes.filter((a) => !a.recue_le && !(a.source && a.source.systeme === 'jira')).forEach((a) => { const n = workingDaysBetween(a.attendue_le, today); if (n > SEUILS.attente_jo) (late[a.item] = late[a.item] || []).push({ a, n }); });
     Object.keys(late).forEach((id) => { const l = late[id].sort((x, y) => y.n - x.n);
-      out.push({ kind: 'attente', item: id, texte: `${nom(id)} : ${l.length} attente${l.length > 1 ? 's' : ''} de plus de 5 j ouvrés (max ${l[0].n} j o. : ${l[0].a.tiers} — ${l[0].a.objet})${l.length > 1 ? ` · tiers : ${[...new Set(l.map((x) => x.a.tiers))].join(', ')}` : ''}.` }); });
+      out.push({ kind: 'attente', item: id, texte: `${nom(id)} : ${l.length} attente${l.length > 1 ? 's' : ''} de plus de 5 j ouvrés (max ${l[0].n} j ouvrés : ${l[0].a.tiers} — ${l[0].a.objet})${l.length > 1 ? ` · tiers : ${[...new Set(l.map((x) => x.a.tiers))].join(', ')}` : ''}.` }); });
     // R44 (Franck): blocked tickets of the active sprint only, ticket keys only
     const sp = sprintAt(base, today); const L = (base.listes_jira || []).find((x) => x.id === 'jira.liste.bloques');
     if (sp && L) { const b = L.tickets.filter((x) => (x.sprints || []).includes(sp.id));
-      if (b.length) out.push({ kind: 'bloque', item: null, texte: `${String(sp.nom || sp.id).replace(/^G2\.1 - /, '')} : ${b.length} ticket${b.length > 1 ? 's' : ''} bloqué${b.length > 1 ? 's' : ''} — ${b.map((x) => x.cle).join(', ')}.` }); }
+      // same count as the sprint card: blocked parents, their blocked sub-tasks in brackets (checkpoint 3 Nov.)
+      const top = b.filter((t) => !t.sous_tache || !b.some((x) => x.cle === t.parent)); const sub = b.length - top.length;
+      if (b.length) out.push({ kind: 'bloque', item: null, texte: `${String(sp.nom || sp.id).replace(/^G2\.1 - /, '')} : ${top.length} ticket${top.length > 1 ? 's' : ''} bloqué${top.length > 1 ? 's' : ''}${sub ? ` (+ ${sub} sous-tâche${sub > 1 ? 's' : ''})` : ''} — ${top.map((x) => x.cle).join(', ')}.` }); }
     base.meps.filter((m) => m.statut === 'planifiee' && m.date >= today && m.date <= addDays(today, SEUILS.mep_j))
       .forEach((m) => out.push({ kind: 'mep', item: m.item || null, texte: `${m.systeme} le ${fmtDate(m.date)} : pas encore « prête » (tickets de la version non tous prêts) à ${daysBetween(today, m.date)} jours${m.ticket ? ' (' + m.ticket + ')' : ''}.` }));
     return out;
@@ -411,8 +416,8 @@
       const lim = c ? (c.jours_ouvres || c.jours) : null;
       return { a, lu_le: l.lu_le, origine: l.origine, age, unite: c && c.jours_ouvres ? 'j ouvrés' : 'j', cible: c, perime: lim !== null && age > lim };
     });
-    const lus = entrees.filter((e) => e.lu_le).map((e) => e.lu_le).sort();
-    return { ref, nom: b.nom, entrees, lu_le: entrees.some((e) => !e.lu_le) ? null : lus[0] || null, perime: entrees.some((e) => e.perime) };
+    // badge date = the block's main source (first adapter); the others stay in the tooltip and still raise « périmé » (checkpoint 3 Nov.)
+    return { ref, nom: b.nom, entrees, lu_le: entrees[0].lu_le || null, perime: entrees.some((e) => e.perime) };
   }
 
   // ---------- R37 (model v13): items hidden by the owner (item.visible === false) ----------
@@ -438,7 +443,7 @@
   // R09: manual order among siblings (rang), unranked items after, by name
   function bySiblingOrder(a, b) {
     const ra = typeof a.rang === 'number' ? a.rang : Infinity; const rb = typeof b.rang === 'number' ? b.rang : Infinity;
-    return ra - rb || a.nom.localeCompare(b.nom, 'fr');
+    return ra - rb || a.nom.localeCompare(b.nom, 'fr', { numeric: true }); // R60: L2 < L9 < L10
   }
   // R10: Jira statistics of an item (stat_jira) + the team's points and each person's sub-tasks in a sprint
   function jiraOf(base, itemId, sprintId) {

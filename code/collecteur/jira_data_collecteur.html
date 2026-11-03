@@ -1,0 +1,227 @@
+<title>Collecteur Jira</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1d1d1b;--mut:#6b6b66;--ok:#1f7a3a;--ko:#b3261e;--line:#deded8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--fg:#ececea;--mut:#a3a39d;--ok:#6fcf8b;--ko:#ff8a80;--line:#33332f}}
+:root[data-theme="dark"]{--bg:#151514;--fg:#ececea;--mut:#a3a39d;--ok:#6fcf8b;--ko:#ff8a80;--line:#33332f}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;margin:0;padding:16px;max-width:900px}
+h1{font-size:20px;margin:0 0 4px}p{color:var(--mut);margin:0 0 12px}
+button{font:inherit;padding:6px 14px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--fg);cursor:pointer}
+#etat{font-weight:600;margin:12px 0}.ok{color:var(--ok)}.ko{color:var(--ko)}
+pre{white-space:pre-wrap;word-break:break-word;font-size:12px;border-top:1px solid var(--line);padding-top:8px;color:var(--mut)}
+</style>
+<h1>Collecteur Jira — GOU21</h1>
+<p>Lit Jira data par le connecteur Atlassian et dépose les réponses brutes en base. Ne modifie jamais Jira. Démarre seul quand une demande « a_faire » attend.</p>
+<button id="go">Relancer la demande courante</button>
+<div id="etat">Chargement…</div>
+<pre id="log"></pre>
+<script>
+// Jira data collector for Portefeuille PLQ.
+// Reads the request doc demandes/courante (written by the Monday/daily task through ArtifactData), runs every Jira read of
+// the jira_data adapter through the viewer's Atlassian connector, and stores each tool response verbatim (tool text) in
+// lectures/<run_id>/reponses/<step>-<n>. Progress and outcome go to etats/<run_id>. No interpretation here:
+// tools/jira_data_collecte.js assembles raw.json from the exported responses. Never writes Jira (read tools only).
+'use strict';
+const SERVER = 'Atlassian MCP';
+const CLOUD = '2c850515-a3e1-4f5c-b6ff-0a435839fcfb';
+const BOARD = 38;
+const CONC = 6;
+const $ = (id) => document.getElementById(id);
+const log = (m) => { $('log').textContent += new Date().toLocaleTimeString('fr-CA') + '  ' + m + '\n'; };
+const setEtat = (m, cls) => { $('etat').textContent = m; $('etat').className = cls || ''; };
+
+let mcp = null, db = null, running = false;
+
+function toolText(r) {
+  // Keep exactly what the connector returned as text (what Claude would read); fall back to the structured payload.
+  if (r && Array.isArray(r.content)) {
+    const t = r.content.filter((c) => c && c.type === 'text').map((c) => c.text).join('');
+    if (t) return t;
+  }
+  return JSON.stringify(r && (r.payload !== undefined ? r.payload : r.structuredContent));
+}
+function unwrap(text) { let o = JSON.parse(text); if (o && o.data !== undefined) o = o.data; return o; }
+
+async function call(tool, input) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const r = await mcp.callTool(SERVER, tool, input);
+      if (r && r.isError) throw Object.assign(new Error(toolText(r).slice(0, 300)), { code: 'tool_error' });
+      return toolText(r);
+    } catch (e) {
+      if (attempt < 2 && (e && (e.retryable || e.code === 'rate_limited'))) { await new Promise((ok) => setTimeout(ok, 1500 * (attempt + 1))); continue; }
+      throw e;
+    }
+  }
+}
+
+async function pool(tasks) {
+  const out = new Array(tasks.length); let i = 0;
+  await Promise.all(Array.from({ length: Math.min(CONC, tasks.length) }, async () => {
+    while (i < tasks.length) { const k = i++; out[k] = await tasks[k](); }
+  }));
+  return out;
+}
+
+async function run(demande) {
+  if (running) return; running = true;
+  const runId = demande.run_id;
+  const etatRef = db.doc('etats/' + runId);
+  const t0 = new Date().toISOString();
+  let n = 0; const erreurs = []; const stats = {}; const supportKeys = new Set();
+  const save = async (etape, entree, texte) => {
+    n++; stats[etape] = (stats[etape] || 0) + 1;
+    await db.doc(`lectures/${runId}/reponses/${etape}-${String(stats[etape]).padStart(3, '0')}`)
+      .set({ etape, n: stats[etape], outil: entree.outil, entree: JSON.stringify(entree.input), texte, lu_a: new Date().toISOString() });
+  };
+  const step = async (etape, fn) => {
+    try { log('… ' + etape); await fn(); log('✓ ' + etape + ' (' + (stats[etape] || 0) + ' réponse(s))'); }
+    catch (e) { const m = etape + ' : ' + ((e && (e.code ? e.code + ' ' : '') + (e.message || e)) || 'erreur'); erreurs.push(m); log('✗ ' + m); }
+  };
+  // board issue data with nextPageToken pagination, every page saved
+  const boardPages = async (etape, jql, fields, responseFields) => {
+    let token = null;
+    do {
+      const input = { boardId: BOARD, dataset: 'all', jql, fields, maxResults: 100 };
+      if (token) input.nextPageToken = token;
+      const args = { name: 'getJiraBoardIssueData', cloudId: CLOUD, inputs: input, responseFields: responseFields.concat(['isLast', 'nextPageToken']) };
+      const texte = await call('executeRead', args);
+      await save(etape, { outil: 'executeRead', input: args }, texte);
+      const d = unwrap(texte); token = d && !d.isLast ? d.nextPageToken : null;
+      if (etape === 'c_candidats' || etape === 'c_precedents') (d.issues || []).forEach((t) => supportKeys.add(t.key));
+    } while (token);
+  };
+  const count = async (etape, jql) => {
+    const input = { cloudId: CLOUD, jql, searchResultMode: 'count' };
+    const texte = await call('searchJiraIssuesUsingJql', input);
+    await save(etape, { outil: 'searchJiraIssuesUsingJql', input }, texte);
+  };
+
+  try {
+    await etatRef.set({ run_id: runId, etat: 'en_cours', debut: t0, erreurs: [], reponses: 0 });
+    setEtat('Lecture en cours — ' + runId);
+    const ids = (demande.sprint_ids || []).map(Number);
+    if (ids.length !== 3) throw new Error('sprint_ids : 3 ids attendus (dernier clos, actif, suivant)');
+    const sp = ids.join(', ');
+    const epics = [...new Set(Object.values(demande.items || {}).flat())];
+    const epicList = epics.join(', ');
+    const depuis = demande.depuis ? `"${demande.depuis}"` : '-8d';
+    const SP_RF = ['issues.key', 'issues.fields.status.statusCategory.key', 'issues.fields.status.name', 'issues.fields.assignee.displayName',
+      'issues.fields.parent.key', 'issues.fields.parent.fields.summary', 'issues.fields.customFields.Story Points.value', 'issues.fields.customFields.Sprint.value.id'];
+
+    await Promise.all([
+      step('a_sprint_issues', () => boardPages('a_sprint_issues', `sprint in (${sp}) AND issuetype not in subTaskIssueTypes() ORDER BY key ASC`,
+        ['status', 'assignee', 'parent', 'customfield_10036', 'customfield_10020'], SP_RF)),
+      step('a2_sub_tasks', () => boardPages('a2_sub_tasks', `sprint in (${sp}) AND issuetype in subTaskIssueTypes() ORDER BY key ASC`,
+        ['status', 'assignee', 'parent', 'customfield_10020'],
+        ['issues.key', 'issues.fields.status.name', 'issues.fields.assignee.displayName', 'issues.fields.parent.key', 'issues.fields.customFields.Sprint.value.id'])),
+      step('a2_count', () => count('a2_count', `sprint in (${sp}) AND issuetype in subTaskIssueTypes()`)),
+      step('a_count', () => count('a_count', `sprint in (${sp}) AND issuetype not in subTaskIssueTypes()`)),
+      step('e_ready', () => boardPages('e_ready', 'project = GOU21 AND status in (10020, 10021) AND issuetype not in subTaskIssueTypes() ORDER BY Rank ASC',
+        ['summary', 'status', 'issuetype', 'parent', 'customfield_10036', 'customfield_10020'],
+        ['issues.key', 'issues.fields.summary', 'issues.fields.status.name', 'issues.fields.issuetype.name', 'issues.fields.parent.key',
+          'issues.fields.customFields.Story Points.value', 'issues.fields.customFields.Sprint.value.id'])),
+      epics.length ? step('f_blocked', () => boardPages('f_blocked', `parent in (${epicList}) AND statusCategory != Done AND status != "Annulé" AND (status = "Bloqué" OR issueLinkType = "is blocked by")`,
+        ['summary', 'status', 'parent', 'issuelinks'],
+        ['issues.key', 'issues.fields.summary', 'issues.fields.status.name', 'issues.fields.parent.key', 'issues.fields.issuelinks.type.inward',
+          'issues.fields.issuelinks.inwardIssue.key', 'issues.fields.issuelinks.inwardIssue.fields.status.statusCategory.key'])) : null,
+      step('f_blocked_subtasks', () => boardPages('f_blocked_subtasks', 'project = GOU21 AND issuetype in subTaskIssueTypes() AND status = "Bloqué"',
+        ['summary', 'parent'], ['issues.key', 'issues.fields.summary', 'issues.fields.parent.key'])),
+      step('g_sprint_blocked', () => boardPages('g_sprint_blocked', `sprint in (${sp}) AND status = "Bloqué"`,
+        ['summary', 'issuetype', 'parent', 'assignee', 'customfield_10020'],
+        ['issues.key', 'issues.fields.summary', 'issues.fields.issuetype.name', 'issues.fields.issuetype.subtask', 'issues.fields.parent.key',
+          'issues.fields.assignee.displayName', 'issues.fields.customFields.Sprint.value.id'])),
+      step('c_candidats', () => boardPages('c_candidats', `project = GOU21 AND issuetype in (Bug, Story, "Tâche") AND statusCategory != Done AND updated >= ${depuis}`,
+        ['summary', 'status', 'created'], ['issues.key', 'issues.fields.summary', 'issues.fields.status.statusCategory.key', 'issues.fields.created'])),
+      (demande.support_prev || []).length ? step('c_precedents', () => pool(demande.support_prev.map((key) => async () => {
+        // one query per key (as v1's one getJiraIssue per key): a deleted or moved ticket only loses itself
+        const args = { name: 'getJiraBoardIssueData', cloudId: CLOUD, inputs: { boardId: BOARD, dataset: 'all', jql: `key = ${key}`, fields: ['summary', 'status', 'created'], maxResults: 1 },
+          responseFields: ['issues.key', 'issues.fields.summary', 'issues.fields.status.statusCategory.key', 'issues.fields.created', 'isLast'] };
+        let texte;
+        try { texte = await call('executeRead', args); } catch (e) { texte = JSON.stringify({ introuvable: key, cause: String((e && (e.code || e.message)) || e).slice(0, 200), issues: [], isLast: true }); }
+        await save('c_precedents', { outil: 'executeRead', input: args }, texte);
+        (unwrap(texte).issues || []).forEach((t) => supportKeys.add(t.key));
+      }))) : null,
+      demande.reel ? step('d_board_sprints', async () => {
+        let startAt = 0, last = false;
+        while (!last) {
+          const args = { name: 'listJiraBoardSprints', cloudId: CLOUD, inputs: { boardId: BOARD, state: 'all', startAt, maxResults: 50 },
+            responseFields: ['values.id', 'values.name', 'values.state', 'values.startDate', 'values.endDate', 'isLast', 'startAt', 'maxResults'] };
+          const texte = await call('executeRead', args);
+          await save('d_board_sprints', { outil: 'executeRead', input: args }, texte);
+          const d = unwrap(texte); const k = (d.values || []).length; last = d.isLast !== false || k === 0; startAt += k;
+        }
+      }) : null,
+      demande.reel && epics.length ? step('d_count', () => count('d_count',
+        `parent in (${epicList}) AND issuetype not in subTaskIssueTypes() AND status != "Annulé" AND sprint is not EMPTY`)) : null,
+      demande.reel && epics.length ? step('d_epic_sprint_issues', () => boardPages('d_epic_sprint_issues',
+        `parent in (${epicList}) AND issuetype not in subTaskIssueTypes() AND status != "Annulé" AND sprint is not EMPTY ORDER BY key ASC`,
+        ['parent', 'customfield_10020', 'status'],
+        ['issues.key', 'issues.fields.parent.key', 'issues.fields.status.statusCategory.key', 'issues.fields.customFields.Sprint.value.id'])) : null
+    ].filter(Boolean));
+
+    // b. four counts per item
+    await step('b_counts', async () => {
+      const tasks = [];
+      Object.entries(demande.items || {}).forEach(([item, ep]) => {
+        const base = `parent in (${ep.join(', ')})`;
+        [['total', ''], ['done', ' AND statusCategory = Done'], ['in_progress', ' AND statusCategory = "In Progress"'], ['cancelled', ' AND status = "Annulé"']]
+          .forEach(([k, suffix]) => tasks.push(async () => {
+            const input = { cloudId: CLOUD, jql: base + suffix, searchResultMode: 'count' };
+            const texte = await call('searchJiraIssuesUsingJql', input);
+            await save('b_counts', { outil: 'searchJiraIssuesUsingJql', input: Object.assign({ item, mesure: k }, input) }, texte);
+          }));
+      });
+      await pool(tasks);
+    });
+
+    // c. remote links of every candidate (no responseFields: the filter empties the links)
+    await step('c_liens', async () => {
+      const keys = new Set(supportKeys);
+      (demande.support_prev || []).forEach((k) => keys.add(k));
+      await pool([...keys].sort().map((key) => async () => {
+        const args = { name: 'listJiraIssueRemoteIssueLinks', cloudId: CLOUD, inputs: { issueIdOrKey: key } };
+        const texte = await call('executeRead', args);
+        await save('c_liens', { outil: 'executeRead', input: args }, texte);
+      }));
+    });
+
+    const fin = new Date().toISOString();
+    await etatRef.set({ run_id: runId, etat: erreurs.length ? 'echec' : 'fini', debut: t0, fin, erreurs, reponses: n, par_etape: stats });
+    setEtat((erreurs.length ? 'Échec partiel — ' : 'Terminé — ') + n + ' réponse(s) · ' + runId, erreurs.length ? 'ko' : 'ok');
+  } catch (e) {
+    const m = (e && (e.code ? e.code + ' ' : '') + (e.message || e)) || 'erreur';
+    erreurs.push(m); log('✗ ' + m);
+    try { await etatRef.set({ run_id: runId, etat: 'echec', debut: t0, fin: new Date().toISOString(), erreurs, reponses: n, par_etape: stats }); } catch (_) { /* ignore */ }
+    setEtat('Échec — ' + m, 'ko');
+  } finally { running = false; }
+}
+
+// tolerant snapshot reader (exists / data may be properties or functions)
+async function getDoc(p) {
+  const s = await db.doc(p).get();
+  if (!s) return null;
+  const ex = typeof s.exists === 'function' ? s.exists() : s.exists;
+  if (ex === false) return null;
+  const d = typeof s.data === 'function' ? s.data() : s.data;
+  return d || null;
+}
+const demandeCourante = () => getDoc('demandes/courante');
+
+async function boot(force) {
+  if (!db || !mcp) { setEtat('Connecteur ou base indisponible pour ce lecteur.', 'ko'); return; }
+  const d = await demandeCourante();
+  if (!d) { setEtat('Aucune demande.'); return; }
+  const e = await getDoc('etats/' + d.run_id);
+  const etat = e ? e.etat : null;
+  const stale = e && e.etat === 'en_cours' && Date.now() - Date.parse(e.debut) > 10 * 60 * 1000;
+  if (!force && !stale && (d.etat !== 'a_faire' || etat)) { setEtat('Demande ' + d.run_id + ' : ' + (etat || d.etat)); return; }
+  await run(d);
+}
+
+$('go').onclick = () => boot(true).catch((e) => setEtat('Échec — ' + (e && e.message), 'ko'));
+(async () => {
+  try { [mcp, db] = await Promise.all([window.claude.use('mcp'), window.claude.use('db')]); }
+  catch (e) { /* stays null */ }
+  boot(false).catch((e) => setEtat('Échec — ' + (e && e.message), 'ko'));
+})();
+</script>

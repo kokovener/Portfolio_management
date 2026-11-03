@@ -158,4 +158,10 @@ ok('S3 guard: sheet_version and gates_sheet_version copied into the report when 
   assert.strictEqual(rr.report.sheet_version, 1234); assert.strictEqual(rr.report.gates_sheet_version, 567);
   assert(!('sheet_version' in r.report) && !('gates_sheet_version' in r.report));
 });
+ok('2026-11-03: a DATE cell holding text (« 31/09/29 ») is ignored with a date_invalide signal, the valid date is kept', () => {
+  const x = clone(raw); const l9 = x.rows.find((y) => y.id === 'L9'); l9.portefeuille = true; l9.debut_prevu = '2027-01-01'; l9.fin_prevue = '31/09/29';
+  const rr = adapt(x, base, {});
+  assert.deepStrictEqual(it(rr, 'goutte21.l9').fenetre, { debut: '2027-01-01', fin: null });
+  assert(rr.report.signals.some((s) => s.kind === 'date_invalide' && /L9 : Fin prévue « 31\/09\/29 »/.test(s.texte)));
+});
 console.log(`\n${n} adapter tests OK`);

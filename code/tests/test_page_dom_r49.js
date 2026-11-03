@@ -24,7 +24,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   assert(grp('qual') && grp('term'), 'parts present');
   assert(!row('goutte21.l8e') && !row('goutte21.l1'), 'folded by default');
   const all = [...d.querySelectorAll('.grp')].map((g) => g.dataset.id || g.textContent);
-  const iq = all.indexOf('grp:qual'); const it = all.indexOf('grp:term'); const im = all.findIndex((t) => /^MEP /.test(t));
+  const iq = all.indexOf('grp:qual'); const it = all.indexOf('grp:term'); const im = all.findIndex((t) => /^Mises en production /.test(t));
   assert(iq > 0 && it > iq && im > it, `order programme < qualifiés < terminés < MEP (${all.join(' | ')})`);
   ok('qualifiés and terminés: two folded parts, before the MEP');
 

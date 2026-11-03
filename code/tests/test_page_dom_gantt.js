@@ -22,14 +22,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.strictEqual(card.querySelectorAll('.gtr:not(.g):not(.h)').length, 43, 'Phase II: 43 task rows');
   assert.strictEqual(card.querySelectorAll('.gtr.g').length, 7, '7 groups');
   assert.strictEqual(card.querySelectorAll('.gms').length, 2 + 1, '2 milestones + legend diamond');
-  assert(/SharePoint · lu/.test(card.textContent) && /plan calculé le 14 oct\./.test(card.textContent) && /il y a 11 j o\./.test(card.textContent), 'provenance and plan age');
-  assert(/Hors planning : P2-INT\./.test(card.textContent), 'out-of-plan note');
+  assert(/SharePoint · lu/.test(card.textContent) && /plan calculé le 14 oct\./.test(card.textContent) && /il y a 11 j ouvrés/.test(card.textContent), 'provenance and plan age');
+  assert(/Non affichés \(sans date\) : P2-INT\./.test(card.textContent), 'out-of-plan note');
   ok('projet: Gantt card rebuilt from data — 43 rows, 7 groups, 2 milestones, provenance, plan computed 11 j o. ago');
 
   // bar position: P2-AN1 on Fri 16 Oct in a grid starting Mon 5 Oct, 14 weeks (98 days) -> left = 11/98
   const an1 = [...card.querySelectorAll('.gtr')].find((r) => /P2-AN1/.test(r.textContent)).querySelector('.gb');
   assert(Math.abs(parseFloat(an1.style.left) - 100 * 11 / 98) < 0.01 && Math.abs(parseFloat(an1.style.width) - 100 / 98) < 0.01, 'P2-AN1 position ' + an1.style.left);
-  assert(/16 oct\. 2026 → 16 oct\. 2026 · 1 j o\./.test(an1.title), 'bar tooltip (R51: year shown)');
+  assert(/16 oct\. 2026 → 16 oct\. 2026 · 1 j ouvré/.test(an1.title), 'bar tooltip (R51: year shown)');
   assert(card.querySelector('.gnow'), 'today line (29 Oct is inside the grid)');
   ok('projet: bars placed on the calendar (P2-AN1 = 16 oct.), tooltip, today line');
 
@@ -74,7 +74,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const ce = [...d.querySelectorAll('.card')].find((c) => /Gantt du projet/.test(c.textContent));
   assert(ce && !ce.querySelector('[data-act="gantt-tab"]'), 'one tab, no tab buttons');
   assert.strictEqual(ce.querySelectorAll('.gtr:not(.g):not(.h)').length, 80); assert(ce.querySelectorAll('.gb.fait').length > 30);
-  assert(/Artefact · lu/.test(ce.textContent) && /plan calculé le 29 oct\./.test(ce.textContent));
+  assert(/Artefact du projet · lu/.test(ce.textContent) && /plan calculé le 29 oct\./.test(ce.textContent));
   ok('Expert G1: Gantt from its feed block — 80 rows, done rows faded, provenance Artefact');
   // R58: project title frozen — sticky bar is a direct child of #app (sticky needs the scrolling parent), holds the h1, sits under the header
   { const ph = d.querySelector('#app > .phead'); assert(ph && ph.querySelector('h1') && /Expert G1/.test(ph.textContent), 'phead with the project title');

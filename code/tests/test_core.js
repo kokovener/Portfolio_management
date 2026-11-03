@@ -63,7 +63,7 @@ ok('alerts (R44): one recul chain ADR -> décision CDP (+10) -> L8D, no separate
   const a = Core.alertes(base, T);
   const k = a.map((x) => x.kind);
   const r = a.filter((x) => x.kind === 'recul'); assert.strictEqual(r.length, 1, r.map((x) => x.texte).join(' | '));
-  assert(/^Livrable ADR/.test(r[0].texte) && /Décision CDP[^→]*\+10 j o\./.test(r[0].texte) && /L8D/.test(r[0].texte), r[0].texte);
+  assert(/^Livrable ADR/.test(r[0].texte) && /Décision CDP[^→]*\+10 j ouvrés/.test(r[0].texte) && /L8D/.test(r[0].texte), r[0].texte);
   assert(!k.includes('dependance'));
   assert(!k.includes('mep') && !k.includes('wip')); // no WIP rule any more (v8)
   assert(a.some((x) => x.kind === 'phase' && x.item === 'goutte21.l8')); // seed L8: smartsheet, no phase

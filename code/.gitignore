@@ -56,3 +56,8 @@ dist/runs/2026-10-28/r06d/versions.json
 dist/runs/**/personnes/
 dist/runs/*/suppressions/personnes__*
 dist/runs/**/*.gz.b64
+# collector runs (3 Nov.): base copies and adapter outputs stay local; demande, export and raw are kept as test inputs
+dist/runs/*/*/base_avant/
+dist/runs/*/*/base_avant.json
+dist/runs/*/*/*/base/
+dist/runs/*/*/*/out*/

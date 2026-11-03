@@ -45,7 +45,9 @@ const click = (w, el) => el.dispatchEvent(new w.MouseEvent('click', { bubbles: t
   click(w, d.querySelector('[data-act="modal"]')); await sleep(10);
   assert(d.querySelector('.modal[role="dialog"] form[data-form="item"]'), 'gerer visible'); ok('projet: Gérer in a modal (Modifier) when canEdit');
 
-  click(w, d.querySelector('[data-act="open-sprint"]')); await sleep(20);
+  // flux item: no « Voir le sprint » button since the 3 Nov. checkpoint — the Sprint tab opens the current sprint
+  assert(!d.querySelector('.phead [data-act="open-sprint"]'), 'no sprint button on a flux item');
+  click(w, d.querySelector('[data-act="view"][data-v="sprint"]')); await sleep(20);
   assert(/S19/.test(txt()) && /Items dans le sprint/.test(txt())); ok('sprint view renders (S19 actif)');
   click(w, [...d.querySelectorAll('[data-act="open-sprint"]')].find((b) => b.textContent.startsWith('S20'))); await sleep(20);
   assert(!/Gate AC-4 GO Dev/.test(txt()) && !/Go \/ no-go pilote/.test(txt())); ok('sprint S20: no Jira ticket in the v1 seed → no item, no milestone (R04, Jira only)');

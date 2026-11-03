@@ -33,6 +33,7 @@ const ACTIVE_ORDER = ['BA', 'AF / UX', 'Archi / Coordo / Confo', 'Dev', 'QA', 'M
 const PAUSED = ['Backlog', 'A Revoir'];    // decision Franck R06: "A Revoir" = paused, out of active
 const SOURCE_FIELDS = ['pct_avancement', 'phase_source', 'phase_deduite'];
 const GATES = { 'ba-3': 'BA-3 scope figé', 'ac-4': 'AC-4 GO Dev', 'qa-2': 'QA-2 UAT', 'qa-3': 'QA-3 MEP' };
+const isoDate = (d) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !isNaN(Date.parse(d + 'T00:00:00Z')) && new Date(d + 'T00:00:00Z').toISOString().slice(0, 10) === d;
 const som = (d) => d.slice(0, 7) + '-01';
 const eom = (d) => { const [y, m] = d.slice(0, 7).split('-').map(Number); const x = new Date(Date.UTC(y, m, 0)); return x.toISOString().slice(0, 10); };
 
@@ -136,8 +137,13 @@ function adapt(raw, base, versions) {
     if (ph.phase) rec.phase_source = ph.phase;
     if (ph.deduite) rec.phase_deduite = true;
     // planned window (R06 part 2): Smartsheet wins when filled; empty keeps a window entered in Gérer
-    if (r.debut_prevu || r.fin_prevue) {
-      const f = { debut: som(r.debut_prevu || r.fin_prevue), fin: r.fin_prevue ? eom(r.fin_prevue) : null };
+    // a DATE cell holding text (ex. "31/09/29") is ignored with a signal, never parsed (Smartsheet 2026-11-03)
+    const deb = isoDate(r.debut_prevu) ? r.debut_prevu : null; const fin = isoDate(r.fin_prevue) ? r.fin_prevue : null;
+    [['Début prévu', r.debut_prevu], ['Fin prévue', r.fin_prevue]].forEach(([col, v]) => {
+      if (v && !isoDate(v)) signals.push({ kind: 'date_invalide', row: r.id, texte: `${r.id} : ${col} « ${v} » n'est pas une date — ignorée (à corriger dans la feuille)` });
+    });
+    if (deb || fin) {
+      const f = { debut: som(deb || fin), fin: fin ? eom(fin) : null };
       if (f.fin && f.fin < f.debut) signals.push({ kind: 'fenetre', row: r.id, texte: `${r.id} : Fin prévue avant Début prévu — fenêtre ignorée` });
       else rec.fenetre = f;
     }

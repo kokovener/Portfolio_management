@@ -32,8 +32,8 @@
     { "ref": "B6", "nom": "Équipe", "adaptateurs": ["outlook_equipe"], "cible": {} },
     { "ref": "B7", "nom": "Absences", "adaptateurs": ["outlook"], "cible": { "outlook": { "jours": 21 } } },
     { "ref": "B8", "nom": "Actions de rétro", "adaptateurs": ["miro"], "cible": { "miro": { "jours": 21 } } },
-    { "ref": "B9", "nom": "Feeds d'artefacts", "adaptateurs": ["artefacts"], "cible": { "artefacts": { "jours": 5 } } },
-    { "ref": "B12", "nom": "Gantt de projet (fichier inscrit)", "adaptateurs": ["gantt"], "cible": { "gantt": { "jours": 7 } } }
+    { "ref": "B9", "nom": "Pages des projets (artefacts)", "adaptateurs": ["artefacts"], "cible": { "artefacts": { "jours": 5 } } },
+    { "ref": "B12", "nom": "Gantt de projet (fichier)", "adaptateurs": ["gantt"], "cible": { "gantt": { "jours": 7 } } }
   ],
   "par": { "smartsheet": "adaptateur-smartsheet", "outlook": "adaptateur-outlook", "outlook_equipe": "adaptateur-outlook", "jira": "adaptateur-jira", "jira_data": "adaptateur-jira-data", "jira_data_reel": "adaptateur-jira-data", "artefacts": "adaptateur-artefacts", "miro": "adaptateur-miro", "gantt": "adaptateur-gantt" }
 }

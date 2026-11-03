@@ -28,8 +28,8 @@ let n = 0; const ok = (m) => { n++; console.log('ok  ' + m); };
   const stages = [...d.querySelectorAll('.stage')].map((s) => s.textContent.replace(/\s+/g, ' ').trim());
   assert(stages.some((s) => /^12 ?Actif dont 2 runs$/.test(s)), 'funnel actif: ' + stages);
   assert(stages.some((s) => /^0 ?Terminé depuis 90 j · 2 au total$/.test(s)), 'funnel terminé: ' + stages);
-  const mh = [...d.querySelectorAll('.grp')].find((g) => /^MEP /.test(g.textContent)).textContent;
-  assert(/\d+ depuis le lundi 26 oct\., dont \d+ à venir · 1 passée encore « planifiée »/.test(mh), 'MEP header: ' + mh);
+  const mh = [...d.querySelectorAll('.grp')].find((g) => /^Mises en production /.test(g.textContent)).textContent;
+  assert(/\d+ depuis le lundi 26 oct\., dont \d+ à venir · 1 non confirmée/.test(mh), 'MEP header: ' + mh);
   assert(d.querySelector('.tl .ms.bad[title*="MEP non confirmée"]') || /non confirmée/.test(txt()), 'past planifiée MEP flagged');
   ok('U08: tile, funnel and MEP counts name their scope; past « planifiée » MEP flagged');
 
@@ -45,7 +45,7 @@ let n = 0; const ok = (m) => { n++; console.log('ok  ' + m); };
 
   // U06: one freshness line (latest source read + Monday snapshot), no competing « base lue »
   const fl = hdr.querySelector('.row .muted').textContent;
-  assert(/^Données du 29 oct\. · \d+h\d+ (EDT|EST) · instantané du lundi 27 oct\./.test(fl) && !/base lue|sources OK/.test(hdr.textContent), 'freshness line: ' + fl);
+  assert(/^Données à jour au 29 oct\. · \d+h\d+ (EDT|EST)/.test(fl.trim()) && /instantané du 27 oct\./.test(hdr.querySelector('.row .muted').title) && !/base lue|sources OK/.test(hdr.textContent), 'freshness line: ' + fl);
   ok('U06: one freshness line « Données du … · instantané du lundi … »');
 
   // U13: funnel right under the tiles, before the grid

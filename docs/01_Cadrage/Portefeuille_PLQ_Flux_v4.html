@@ -1,0 +1,284 @@
+<meta charset="utf-8">
+<title>Flux Portefeuille PLQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one wide left-to-right flow figure (sources → passages → base → sorties), then reference tables.
+   v4: three scheduled passes (cadence v4), eight sources, seven adapters, 17 collections. */
+:root{
+  --bg:#f8f8fa;--card:#ffffff;--ink:#2e2e36;--ink2:#54545e;--mute:#7c7c88;--line:#dcdce3;--soft:#eef0f4;
+  --navy:#00405e;--blue:#0070a8;--mist:#e4f2f8;--gold:#b98a2c;--gold-t:#f6ecd6;--green:#6b7730;--green-t:#eef1da;
+  --write:#0070a8;--font:Montserrat,"Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#33404b;--soft:#222a33;
+  --navy:#9fd3ea;--blue:#5cb3e0;--mist:#1d3442;--gold:#e0b866;--gold-t:#3a3221;--green:#c2cf7f;--green-t:#2b3120;--write:#5cb3e0;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161b;--card:#1b2128;--ink:#e8ebef;--ink2:#c3c8cf;--mute:#9aa1aa;--line:#33404b;--soft:#222a33;
+  --navy:#9fd3ea;--blue:#5cb3e0;--mist:#1d3442;--gold:#e0b866;--gold-t:#3a3221;--green:#c2cf7f;--green-t:#2b3120;--write:#5cb3e0;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{margin:4px 0 6px;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02em;text-wrap:balance}
+h2{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--navy)}
+.lede{margin:0;max-width:78ch;color:var(--ink2)}
+figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;min-width:980px;height:auto;color:var(--ink);font-family:var(--font)}
+figcaption{margin-top:10px;font-size:12px;color:var(--mute);max-width:90ch}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.panel{min-width:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--soft);vertical-align:top}
+td:first-child{font-weight:600;color:var(--navy);white-space:nowrap}
+.tw{overflow-x:auto}
+.foot{font-size:12px;color:var(--mute)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Les Producteurs de lait du Québec · TI · Portefeuille PLQ</span>
+    <h1>D'où viennent les chiffres du portefeuille, et quand ils se mettent à jour</h1>
+    <p class="lede">Le portefeuille lit huit sources sans jamais les modifier. Trois passages planifiés relisent seulement ce qui est dû : la photo du lundi 7 h (instantané, digest, message Teams), le quotidien du mardi au vendredi à 9 h et Smartsheet le jeudi à 13 h ; tout bloc se relit aussi à la demande. Franck complète à la main ce que les sources ne donnent pas. La page calcule santé, alertes et capacité à l'ouverture, et affiche l'âge de chaque bloc.</p>
+  </header>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1200 830" role="img" aria-label="Huit sources en lecture seule alimentent trois passages planifiés, qui écrivent dans la base du portefeuille ; Franck et Claude y écrivent aussi ; la page lit la base en direct ; la photo du lundi produit le digest et le message Teams.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        <marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--write)"/></marker>
+      </defs>
+
+      <!-- column headings -->
+      <g font-size="11" font-weight="700" letter-spacing="1.4" fill="var(--mute)">
+        <text x="20" y="56">SOURCES · LECTURE SEULE</text>
+        <text x="340" y="56">PASSAGES</text>
+        <text x="680" y="56">BASE</text>
+        <text x="940" y="56">SORTIES</text>
+      </g>
+
+      <!-- sources (8) -->
+      <g font-size="12">
+        <g><rect x="20" y="80" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="106" font-weight="700" fill="var(--navy)">Smartsheet</text>
+          <text x="34" y="124" fill="var(--ink2)">Goutte21_Master · Jalons_Entites</text>
+          <text x="34" y="140" fill="var(--ink2)">L et sous-L · %, phase, gates, risques</text></g>
+        <g><rect x="20" y="162" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="188" font-weight="700" fill="var(--navy)">Jira GOU21 · board 38</text>
+          <text x="34" y="206" fill="var(--ink2)">sprints · MEP · points · sous-tâches</text>
+          <text x="34" y="222" fill="var(--ink2)">data lue par la page Collecteur Jira</text></g>
+        <g><rect x="20" y="244" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="270" font-weight="700" fill="var(--navy)">M365 · sources MEP</text>
+          <text x="34" y="288" fill="var(--ink2)">calendrier MEP · courriels</text>
+          <text x="34" y="304" fill="var(--ink2)">Teams « 05 - Déploiements »</text></g>
+        <g><rect x="20" y="326" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="352" font-weight="700" fill="var(--navy)">Ledgers Goutte 2.1</text>
+          <text x="34" y="372" fill="var(--ink2)">MEP SDD et PLQ (dernier recours)</text></g>
+        <g><rect x="20" y="408" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="434" font-weight="700" fill="var(--navy)">Artefacts de projet</text>
+          <text x="34" y="452" fill="var(--ink2)">blocs feed inscrits (Expert G1…)</text>
+          <text x="34" y="468" fill="var(--ink2)">roadmap de l'architecte</text></g>
+        <g><rect x="20" y="490" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="516" font-weight="700" fill="var(--navy)">Gantts inscrits</text>
+          <text x="34" y="536" fill="var(--ink2)">drawio PLQ-Forge ou JSON (SharePoint)</text></g>
+        <g><rect x="20" y="572" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="598" font-weight="700" fill="var(--navy)">Team_G2.1.xlsx + Outlook</text>
+          <text x="34" y="616" fill="var(--ink2)">équipe et rôles · absences</text>
+          <text x="34" y="632" fill="var(--ink2)">fériés (config) · fermetures</text></g>
+        <g><rect x="20" y="654" width="260" height="70" rx="8" fill="var(--card)" stroke="var(--line)"/>
+          <text x="34" y="680" font-weight="700" fill="var(--navy)">Miro · rétro du sprint</text>
+          <text x="34" y="700" fill="var(--ink2)">cadre « Actions »</text></g>
+      </g>
+      <!-- source → passages arrows -->
+      <g stroke="currentColor" stroke-width="1.2" fill="none" marker-end="url(#ar)" opacity=".7">
+        <line x1="280" y1="115" x2="338" y2="115"/><line x1="280" y1="197" x2="338" y2="197"/>
+        <line x1="280" y1="279" x2="338" y2="279"/><line x1="280" y1="361" x2="338" y2="361"/>
+        <line x1="280" y1="443" x2="338" y2="443"/><line x1="280" y1="525" x2="338" y2="525"/>
+        <line x1="280" y1="607" x2="338" y2="607"/><line x1="280" y1="689" x2="338" y2="689"/>
+      </g>
+      <text x="309" y="744" font-size="11" text-anchor="middle" fill="var(--mute)">lit</text>
+
+      <!-- passages -->
+      <rect x="340" y="80" width="280" height="656" rx="10" fill="var(--mist)" stroke="var(--blue)"/>
+      <text x="356" y="106" font-size="13" font-weight="800" fill="var(--navy)">Passages planifiés</text>
+      <g font-size="12">
+        <rect x="356" y="118" width="248" height="112" rx="6" fill="var(--card)" stroke="var(--blue)"/>
+        <text x="368" y="138" font-weight="700" fill="var(--ink)">Lundi 7 h · photo complète</text>
+        <text x="368" y="157" fill="var(--ink2)">Mar–ven 9 h · sprint, support, MEP</text>
+        <text x="368" y="176" fill="var(--ink2)">Mercredi 9 h · + artefacts</text>
+        <text x="368" y="195" fill="var(--ink2)">Jeudi 13 h · Smartsheet</text>
+        <text x="368" y="214" fill="var(--ink2)">À la demande · « rafraîchis &lt;bloc&gt; »</text>
+
+        <rect x="356" y="240" width="248" height="46" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="260" font-weight="700" fill="var(--ink)">0 · Plan du passage</text>
+        <text x="368" y="277" fill="var(--ink2)">adaptateurs dus, dans l'ordre</text>
+
+        <rect x="356" y="294" width="248" height="46" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="314" font-weight="700" fill="var(--ink)">1 · Instantané (lundi)</text>
+        <text x="368" y="331" fill="var(--ink2)">avant toute lecture, jamais supprimé</text>
+
+        <rect x="356" y="348" width="248" height="196" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="370" font-weight="700" fill="var(--ink)">2 · Sept adaptateurs</text>
+        <text x="368" y="394" fill="var(--ink2)">Smartsheet → items L, gates, risques</text>
+        <text x="368" y="414" fill="var(--ink2)">Jira → sprints, MEP (+ M365, ledger)</text>
+        <text x="368" y="434" fill="var(--ink2)">Jira data → points, sous-tâches,</text>
+        <text x="380" y="450" fill="var(--ink2)">support STG21</text>
+        <text x="368" y="472" fill="var(--ink2)">Artefacts → jalons, risques</text>
+        <text x="368" y="492" fill="var(--ink2)">Gantt → Gantt de projet</text>
+        <text x="368" y="512" fill="var(--ink2)">Outlook → équipe, absences</text>
+        <text x="368" y="532" fill="var(--ink2)">Miro → actions de rétro</text>
+
+        <rect x="356" y="552" width="248" height="46" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="572" font-weight="700" fill="var(--ink)">3 · Validation</text>
+        <text x="368" y="589" fill="var(--ink2)">modèle canonique v18 (schema.json)</text>
+
+        <rect x="356" y="606" width="248" height="54" rx="6" fill="var(--gold-t)" stroke="var(--gold)" stroke-dasharray="5 3"/>
+        <text x="368" y="626" font-weight="700" fill="var(--ink)">3b · Agent analyste (lundi)</text>
+        <text x="368" y="642" fill="var(--ink2)">croise toute la base : ≤ 5 signaux</text>
+        <text x="368" y="656" font-size="11" fill="var(--mute)">à confirmer, jamais écrits en base</text>
+
+        <rect x="356" y="668" width="248" height="56" rx="6" fill="var(--card)" stroke="var(--line)"/>
+        <text x="368" y="688" font-weight="700" fill="var(--ink)">4 · Digest et Teams (lundi)</text>
+        <text x="368" y="706" fill="var(--ink2)">alertes + signaux + recommandation</text>
+      </g>
+
+      <!-- Gérer + Claude -->
+      <g font-size="12">
+        <rect x="680" y="80" width="94" height="130" rx="8" fill="var(--gold-t)" stroke="var(--gold)"/>
+        <text x="692" y="104" font-weight="700" fill="var(--ink)">Gérer</text>
+        <text x="692" y="124" fill="var(--ink2)">Franck,</text>
+        <text x="692" y="140" fill="var(--ink2)">seul éditeur</text>
+        <text x="692" y="164" font-size="11" fill="var(--mute)">jalons, risques,</text>
+        <text x="692" y="179" font-size="11" fill="var(--mute)">MEP, dépend.</text>
+        <rect x="786" y="80" width="94" height="130" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="798" y="104" font-weight="700" fill="var(--ink)">Claude</text>
+        <text x="798" y="124" fill="var(--ink2)">conversation</text>
+        <text x="798" y="164" font-size="11" fill="var(--mute)">actions de rétro,</text>
+        <text x="798" y="179" font-size="11" fill="var(--mute)">nouveau projet</text>
+      </g>
+
+      <!-- base (cylinder) -->
+      <g>
+        <path d="M680,262 v170 a100,16 0 0 0 200,0 v-170" fill="var(--card)" stroke="var(--navy)" stroke-width="1.5"/>
+        <ellipse cx="780" cy="262" rx="100" ry="16" fill="var(--soft)" stroke="var(--navy)" stroke-width="1.5"/>
+        <text x="780" y="304" font-size="13" font-weight="800" text-anchor="middle" fill="var(--navy)">Base du portefeuille</text>
+        <text x="780" y="324" font-size="12" text-anchor="middle" fill="var(--ink2)">17 collections</text>
+        <text x="780" y="350" font-size="11" text-anchor="middle" fill="var(--mute)">items · jalons · risques</text>
+        <text x="780" y="366" font-size="11" text-anchor="middle" fill="var(--mute)">charges · sprints · MEP</text>
+        <text x="780" y="382" font-size="11" text-anchor="middle" fill="var(--mute)">gantts · lectures</text>
+        <text x="780" y="398" font-size="11" text-anchor="middle" fill="var(--mute)">instantanés…</text>
+      </g>
+
+      <!-- write arrows (accent) -->
+      <g stroke="var(--write)" stroke-width="3" fill="none" marker-end="url(#aw)">
+        <line x1="620" y1="320" x2="676" y2="320"/>
+        <line x1="727" y1="210" x2="727" y2="244"/>
+        <line x1="833" y1="210" x2="833" y2="244"/>
+      </g>
+      <text x="648" y="310" font-size="11" text-anchor="middle" font-weight="700" fill="var(--write)">écrit</text>
+      <text x="780" y="232" font-size="11" text-anchor="middle" font-weight="700" fill="var(--write)">écrit</text>
+
+      <!-- outputs -->
+      <g font-size="12">
+        <rect x="940" y="80" width="240" height="60" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="954" y="104" font-weight="700" fill="var(--ink)">Équipe · CDP · Direction</text>
+        <text x="954" y="123" fill="var(--ink2)">lecture, une fois la page partagée</text>
+        <rect x="940" y="230" width="240" height="210" rx="8" fill="var(--card)" stroke="var(--navy)" stroke-width="1.5"/>
+        <text x="954" y="256" font-size="13" font-weight="800" fill="var(--navy)">Page Portefeuille PLQ</text>
+        <text x="954" y="278" fill="var(--ink2)">vues Portefeuille · Projet · Sprint</text>
+        <text x="954" y="304" fill="var(--ink2)">calculés à l'ouverture :</text>
+        <text x="966" y="322" fill="var(--ink2)">santé, alertes, capacité</text>
+        <text x="954" y="348" fill="var(--ink2)">chaque bloc : « lu il y a … »,</text>
+        <text x="966" y="366" fill="var(--ink2)">« périmé » au-delà de sa cible</text>
+        <text x="954" y="392" fill="var(--ink2)">aucune donnée dans le code :</text>
+        <text x="966" y="410" fill="var(--ink2)">tout vient de la base</text>
+        <rect x="940" y="640" width="240" height="56" rx="8" fill="var(--card)" stroke="var(--line)"/>
+        <text x="954" y="662" font-weight="700" fill="var(--ink)">Digest · 05_Pilotage/AAAA-MM</text>
+        <text x="954" y="681" fill="var(--ink2)">Digest_&lt;lundi&gt;.md</text>
+        <rect x="940" y="714" width="240" height="56" rx="8" fill="var(--green-t)" stroke="var(--green)"/>
+        <text x="954" y="736" font-weight="700" fill="var(--ink)">Teams · G1_Agent_Analystes</text>
+        <text x="954" y="755" fill="var(--ink2)">brouillon tant que Franck n'a pas validé</text>
+      </g>
+      <!-- read arrows -->
+      <g stroke="currentColor" stroke-width="1.2" fill="none" marker-end="url(#ar)" opacity=".7">
+        <line x1="880" y1="335" x2="938" y2="335"/>
+        <line x1="1060" y1="230" x2="1060" y2="144"/>
+        <path d="M620,696 L760,696 L760,668 L938,668"/>
+        <line x1="1060" y1="696" x2="1060" y2="710"/>
+      </g>
+      <text x="909" y="325" font-size="11" text-anchor="middle" fill="var(--mute)">lit</text>
+      <text x="1068" y="192" font-size="11" fill="var(--mute)">consultent</text>
+      <text x="850" y="660" font-size="11" text-anchor="middle" fill="var(--mute)">produit</text>
+
+      <!-- legend -->
+      <g font-size="11" fill="var(--mute)">
+        <line x1="340" y1="790" x2="380" y2="790" stroke="var(--write)" stroke-width="3" marker-end="url(#aw)"/>
+        <text x="388" y="794">écriture dans la base</text>
+        <line x1="540" y1="790" x2="580" y2="790" stroke="currentColor" stroke-width="1.2" opacity=".7" marker-end="url(#ar)"/>
+        <text x="588" y="794">lecture</text>
+        <rect x="660" y="783" width="34" height="14" rx="3" fill="var(--gold-t)" stroke="var(--gold)" stroke-dasharray="5 3"/>
+        <text x="702" y="794">agent : jugement, jamais écrit en base</text>
+        <text x="20" y="818">Aucune flèche ne repart vers une source : le portefeuille ne modifie jamais Smartsheet, Jira, Outlook, Miro, un Gantt ni un artefact.</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Trois chemins écrivent dans la base (les passages planifiés, Gérer, la conversation Claude) ; tout le reste lit. Seule la photo du lundi écrit l'instantané, le digest et le message Teams. La page n'a rien en dur : elle recalcule à chaque ouverture à partir de la base.</figcaption>
+  </figure>
+
+  <section class="panel">
+    <h2>Quand chaque passage tourne</h2>
+    <div class="tw"><table>
+      <thead><tr><th>Passage</th><th>Quand</th><th>Relit</th><th>Écrit</th></tr></thead>
+      <tbody>
+        <tr><td>Photo</td><td>Lundi 7 h</td><td>Tout sauf l'équipe ; absences et Miro le lundi de début de sprint (9 nov., 30 nov., 21 déc.)</td><td>Base, instantané, digest, message Teams</td></tr>
+        <tr><td>Quotidien</td><td>Mardi au vendredi 9 h</td><td>Sprint, support extranets, MEP ; + artefacts le mercredi</td><td>Base</td></tr>
+        <tr><td>Smartsheet</td><td>Jeudi 13 h</td><td>Gantt prévu, phases, gates, risques</td><td>Base</td></tr>
+        <tr><td>À la demande</td><td>« Rafraîchis &lt;bloc&gt; »</td><td>Le bloc demandé (équipe, Gantt de projet, rétro…)</td><td>Base</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <div class="two">
+    <section class="panel">
+      <h2>Ce que chaque source donne</h2>
+      <div class="tw"><table>
+        <thead><tr><th>Source</th><th>Donnée</th><th>Règle clé</th></tr></thead>
+        <tbody>
+          <tr><td>Smartsheet</td><td>Programme, L, sous-L, %, phase, gates, risques</td><td>Grain L seulement, jamais les entités</td></tr>
+          <tr><td>Jira · sprints</td><td>Dernier sprint clos, actif, suivant ; MEP</td><td>Jira fait foi pour le sprint</td></tr>
+          <tr><td>Jira · data</td><td>Points de la tâche parente ; sous-tâches par personne ; support STG21</td><td>Lu par la page Collecteur Jira, sans transcription</td></tr>
+          <tr><td>MEP M365</td><td>Calendrier MEP, courriels, Teams « 05 - Déploiements »</td><td>Priorité : calendrier &gt; Jira &gt; courriel &gt; Teams &gt; ledger</td></tr>
+          <tr><td>Ledgers</td><td>MEP SDD et PLQ</td><td>Dernier recours ; « non recoupée » si seul</td></tr>
+          <tr><td>Artefacts</td><td>Jalons, risques, attentes ; roadmap de l'architecte</td><td>Bloc feed inscrit, sinon ignoré et signalé</td></tr>
+          <tr><td>Gantts</td><td>Tâches, jalons, chemin critique</td><td>Reproduit depuis les données, jamais en image</td></tr>
+          <tr><td>Team + Outlook</td><td>Personnes, rôles, absences, fériés, fermetures</td><td>Départs exclus (team_departs.json)</td></tr>
+          <tr><td>Miro</td><td>Actions de la rétro</td><td>Statut saisi après la rétro</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section class="panel">
+      <h2>Règles qui s'appliquent partout</h2>
+      <div class="tw"><table>
+        <thead><tr><th>Règle</th><th>Énoncé</th></tr></thead>
+        <tbody>
+          <tr><td>Fait</td><td>Dès « Prêt pour Preprod » ; « Annulé » n'est ni fait ni charge</td></tr>
+          <tr><td>Santé</td><td>Calculée, jamais déclarée ; &gt; 15 j ouvrés sans mise à jour Smartsheet ni activité Jira = alerte</td></tr>
+          <tr><td>Dépendances</td><td>Un prédécesseur qui recule met le successeur en alerte</td></tr>
+          <tr><td>Sprint</td><td>Un projet y figure seulement s'il y a des tickets Jira</td></tr>
+          <tr><td>Fraîcheur</td><td>Chaque bloc a une cible ; « périmé » au-delà</td></tr>
+          <tr><td>Instantané</td><td>Écrit chaque lundi avant tout recalcul ; jamais supprimé</td></tr>
+          <tr><td>Analyste</td><td>Agent au contexte neuf : ≤ 5 signaux prouvés, à juger « juste / faux »</td></tr>
+          <tr><td>Suppression</td><td>Jamais sans l'accord de Franck, sauf charges Jira non relues (K13) et jalons retirés de la roadmap (K14)</td></tr>
+          <tr><td>Heures</td><td>Heure du Québec, jamais d'UTC brut</td></tr>
+          <tr><td>Recrutements</td><td>Rien n'entre dans la base ni dans un digest</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+  </div>
+  <p class="foot">Flux v4 · 3 nov. 2026 (passages quotidien et jeudi, sources MEP M365, Gantts, Collecteur Jira, roadmap de l'architecte) · remplace Flux v3 du 28 oct. · modèle canonique v18 · cadence v4 · tâche du lundi v19 · passage v8</p>
+</div>

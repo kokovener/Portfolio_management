@@ -4,8 +4,8 @@ Copie générée par `tools/backup_github.js` (date dans le message de commit). 
 
 | Dossier | Contenu | Fichiers |
 |---|---|---|
-| `code/` | Fichiers suivis du dépôt local `Projets_Dev/Portefeuille_PLQ` (hors `dist/`) | 74 |
-| `docs/` | Dossier projet OneDrive `Portefeuille_PLQ` | 213 |
+| `code/` | Fichiers suivis du dépôt local `Projets_Dev/Portefeuille_PLQ` (hors `dist/`) | 77 |
+| `docs/` | Dossier projet OneDrive `Portefeuille_PLQ` | 223 |
 
 ## Pseudonymisation
 
