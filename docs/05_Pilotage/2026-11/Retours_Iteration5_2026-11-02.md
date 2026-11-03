@@ -12,6 +12,9 @@ Numérotation : R49–R50 déjà pris (coché = toujours item) → ce lot commen
 | R54 | Projet / Gantt | Aucun chemin du sous-projet vers le Gantt global | Lien « Gantt du programme » à côté du titre, ouvre la fiche du programme sur son Gantt | S | Page seule | livré v53 (32eab34) |
 | R55 | Projet / Jalons · MEP · Risques · Attentes | Quatre cartes pleine largeur, même vides | Proposition de Claude (voir Arbitrages) | S | Page seule | livré v53 (32eab34) |
 | R56 | Programme Goutte 2.1 | Pas de Gantt global G2.1 ; donc rien à montrer dans les L | Gantt du programme G2.1 calculé depuis les livraisons (prévu Smartsheet, réel Jira, jalons) ; même lien et même extrait dans les L | S | Page seule (calcul à l'affichage, rien en base) | livré v53 (32eab34) |
+| R57 | Portefeuille / cartouches + entonnoir | Cartouches hauts (≈ 92 px), chiffre isolé, beaucoup de vide | Cartouches réduits | C | Page seule (CSS) | livré v54 |
+| R58 | Projet / en-tête | Le titre du projet disparaît au défilement (fiche longue, Gantt en bas) | Titre du projet toujours visible | S | Page seule (CSS) | livré v54 |
+| R59 | Sprint / en-tête | Le titre du sprint disparaît au défilement | Titre du sprint figé, comme R58 | S | Page seule (CSS) | livré v55 |
 
 ## Arbitrages (Claude, sans Franck)
 
@@ -24,3 +27,6 @@ Numérotation : R49–R50 déjà pris (coché = toujours item) → ce lot commen
 | A5 | R55 : sections repliables (▾, mémorisées par visiteur) ; vides regroupées sur une ligne « Rien de rattaché » ; Risques et Attentes passent dans la colonne de droite ; consigne Jalons Goutte 2.1 gardée (propriétaire) |
 | A6 | R56 : Gantt G2.1 calculé à l'affichage, jamais écrit en base : un groupe par L active, barre = prévu (Smartsheet, cascade), trait = réel Jira (pointillé = en cours), losanges = jalons propres ; idées / qualifiés exclus, non datés listés sous le Gantt |
 | A7 | Tests : la carte MEP vide n'existe plus (test U15 adapté) ; nouvelle vérif. DOM R51–R56 dans `test_page_dom_gantt.js` ; 27 suites vertes |
+| A8 | R57 : chiffre et libellé sur une ligne (cartouches −40 % en hauteur, étapes de l'entonnoir aussi) ; la note de bas de l'entonnoir passe en infobulle ⓘ du titre ; même gabarit pour les cartouches Sprint |
+| A9 | R58 : figé = nature + nom + boutons (Modifier, Sprint), collé sous l'en-tête ; fil d'Ariane et ligne Source défilent (garder la barre figée basse) ; vérifié sur claude.ai le 2 nov. ; test R57/R58 dans `test_page_dom_gantt.js` ; 27 suites vertes |
+| A10 | R59 : figé = nom, dates et onglets S18 / S19 / S20 (changer de sprint sans remonter) ; barre de tempo et ligne de provenance défilent ; vérifié sur claude.ai le 2 nov. |

@@ -73,8 +73,10 @@ ok('Top risque: existing smartsheet risk keeps P·I; L8B only signalled', () => 
   assert.strictEqual(r.doc.risques.length, 1); assert.strictEqual(r.doc.risques[0].probabilite, 4);
   assert(r.report.signals.some((s) => s.kind === 'risque' && s.row === 'L8B'));
 });
-ok('pinned write for existing doc; no health written; model v4 document', () => {
-  assert.strictEqual(r.writes.find((w) => w.doc_id === 'goutte21.l8d').if_version, 6);
+ok('pinned write for existing doc (when its content changed, R9); no health written; model v4 document', () => {
+  const b2 = clone(base); b2.items.find((i) => i.id === 'goutte21.l8d').pct_avancement = -1; // stale base value → rewrite due
+  assert.strictEqual(adapt(raw, b2, { 'items/goutte21.l8d': 6 }).writes.find((w) => w.doc_id === 'goutte21.l8d').if_version, 6);
+  assert(!r.writes.some((w) => w.doc_id === 'goutte21.l8d')); // unchanged in the real base → not rewritten
   assert(r.doc.items.every((i) => !('sante' in i))); assert.strictEqual(r.doc.modele, '4');
 });
 // ---------- v3 (R06 part 2): planned window and gates ----------
@@ -149,5 +151,11 @@ ok('R50 sheet hierarchy wins over the ID: L8B at top level → parent programme,
   assert.strictEqual(it(rr, 'goutte21.l8b').parent, 'goutte21');
   assert.notStrictEqual(it(rr, 'goutte21.l8').phase_source, 'BA');
   assert.strictEqual(it(r, 'goutte21.l8b').parent, 'goutte21.l8');
+});
+ok('S3 guard: sheet_version and gates_sheet_version copied into the report when read, absent otherwise', () => {
+  const x = clone(raw); x.sheet_version = 1234; x.gates_sheet_version = 567;
+  const rr = adapt(x, base, {});
+  assert.strictEqual(rr.report.sheet_version, 1234); assert.strictEqual(rr.report.gates_sheet_version, 567);
+  assert(!('sheet_version' in r.report) && !('gates_sheet_version' in r.report));
 });
 console.log(`\n${n} adapter tests OK`);

@@ -31,7 +31,9 @@ run feries          tests -- node tests/test_adapt_feries.js
 run backup_github   tests -- node tests/test_backup_github.js
 run smartsheet      $R28/r06/smartsheet_raw.json $R28/r06c/base -- node tests/test_adapt_smartsheet.js $R28/r06/smartsheet_raw.json $R28/r06c/base
 run jira            $R27/jira_raw.json $R27/jira_base_before "$LEDGER/2026-W44.md" -- node tests/test_adapt_jira.js $R27/jira_raw.json $R27/jira_base_before "$LEDGER/2026-W40.md" "$LEDGER/2026-W41.md" "$LEDGER/2026-W42.md" "$LEDGER/2026-W43.md" "$LEDGER/2026-W44.md"
+run mep_merge       dist/lundi/2026-11-02/jira/mep_sources.json dist/lundi/2026-11-02_matin/jira/mep_sources.json -- node tests/test_mep_merge.js dist/lundi/2026-11-02/jira/mep_sources.json dist/lundi/2026-11-02_matin/jira/mep_sources.json
 run mep_sources     dist/runs/2026-10-30/mep_sources/raw.json dist/passages/2026-10-30-quotidien-0902/jira/raw.json "$LEDGER/2026-W44.md" -- node tests/test_mep_sources.js dist/runs/2026-10-30/mep_sources/raw.json dist/passages/2026-10-30-quotidien-0902/jira "$LEDGER/2026-W40.md" "$LEDGER/2026-W41.md" "$LEDGER/2026-W42.md" "$LEDGER/2026-W43.md" "$LEDGER/2026-W44.md"
+run r9_ecritures   dist/passages/2026-11-02-quotidien-1021/jira/raw.json dist/passages/2026-11-02-demande-smartsheet-1455/smartsheet/raw.json "$LEDGER/2026-W45.md" -- node tests/test_r9_ecritures.js dist/passages/2026-11-02-quotidien-1021 dist/passages/2026-11-02-demande-smartsheet-1455 "$LEDGER/2026-W41.md" "$LEDGER/2026-W42.md" "$LEDGER/2026-W43.md" "$LEDGER/2026-W44.md" "$LEDGER/2026-W45.md"
 run jira_data       $R28/jira_data/raw.json $R28/r34/base -- node tests/test_adapt_jira_data.js $R28/jira_data/raw.json $R28/r34/base
 run outlook         $R27/team_raw.json $R27/outlook_raw.json $R27/outlook_base_before -- node tests/test_adapt_outlook.js $R27/team_raw.json $R27/outlook_raw.json $R27/outlook_base_before
 run miro            $R27/miro_raw.json -- node tests/test_adapt_miro.js $R27/miro_raw.json
@@ -40,6 +42,8 @@ run gantt           "$SCHEMA" tests/fixtures/gantt/methane-gantt.drawio -- node 
 run ajout_projet    "$SCHEMA" -- node tests/test_ajout_projet.js "$SCHEMA"
 run feed_gantt      "$FEEDS" $R27/art_base_before tests/fixtures/expertg1_index_2026-10-29.html -- node tests/test_feed_gantt.js "$FEEDS" $R27/art_base_before "$SCHEMA" "$TMP/fg"
 run statut_actions  dist/retro/2026-10-27 -- node tests/test_statut_actions.js dist/retro/2026-10-27 "$SCHEMA"
+run garde         dist/passages/2026-11-02-quotidien-1021/jira/raw.json dist/passages/2026-10-30-demande-tout-1303/gantt/raw/read.json -- node tests/test_garde.js dist/passages/2026-11-02-quotidien-1021
+run lundi_apply     dist/lundi/2026-11-02/base_avant dist/lundi/2026-11-02/base_apres -- node tests/test_lundi_apply.js dist/lundi/2026-11-02
 run lundi           $BASE29 -- node tests/test_lundi.js $BASE29 "$SCHEMA"
 run page_dom_v1     "$JSDOM_DIR/jsdom" -- bash -c "python3 tools/build_interface.py '$SCHEMA' dist/seed/base_seed.json >/dev/null && cp dist/preview_local.html '$TMP/p1.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom.js '$TMP/p1.html'"
 run page_dom_r49    "$JSDOM_DIR/jsdom" tests/fixtures/seed_r49.json tests/fixtures/seed_r49_l8q.json -- bash -c "python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_r49_l8q.json >/dev/null && cp dist/preview_local.html '$TMP/p49q.html' && python3 tools/build_interface.py '$SCHEMA' tests/fixtures/seed_r49.json >/dev/null && cp dist/preview_local.html '$TMP/p49.html' && NODE_PATH='$JSDOM_DIR' node tests/test_page_dom_r49.js '$TMP/p49.html' '$TMP/p49q.html'"

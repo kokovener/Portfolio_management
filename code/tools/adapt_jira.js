@@ -15,6 +15,8 @@
  * Calendar > Jira > Email > Teams > ledger. Jira keeps the status of a GOU21 ticket; a proof of deployment beats an
  * announcement; between two proofs of the same kind the higher source wins. Jira has no deployment date: its closing
  * date is the last fallback. SDD / PLQ tickets seen only in an email or Teams post are written (source outlook / teams).
+ * R9 (Optimisation_Requetes_v1): batch.json holds only records whose content changed (source.lu_le excluded); doc.json
+ * and report.json keep every record (report.inchanges = records not rewritten).
  * Never writes Jira nor the ledger; never deletes a db document.
  */
 'use strict';
@@ -223,13 +225,24 @@ function adapt(raw, base, versions, ledgers, sources) {
 
   const doc = { modele: '1', source: { systeme: 'jira', ref: `GOU21 board ${raw.board} · épopée ${raw.mep_epic} · versions · ${sources ? 'calendrier, courriels, Teams · ' : ''}ledger`, lu_le: now, par: 'adaptateur-jira' }, sprints: out.sprints, meps: out.meps };
   const writes = [];
+  let inchanges = 0;
   ['sprints', 'meps'].forEach((c) => doc[c].forEach((r) => {
+    // R9: doc.json and the report keep every record; only changed ones are written
+    if (sameContent((base[c] || []).find((x) => x.id === r.id), r)) { inchanges++; return; }
     const w = { op: 'set', collection: c, doc_id: r.id, data: r }; const v = versions[`${c}/${r.id}`];
     if (v) w.if_version = v; writes.push(w);
   }));
-  return { doc, writes, report: { lu_le: now, sprints: out.sprints.length, meps: out.meps.length, ecrits: writes.length, rows, signals } };
+  return { doc, writes, report: { lu_le: now, sprints: out.sprints.length, meps: out.meps.length, ecrits: writes.length, inchanges, rows, signals } };
 }
 
+// R9 (Optimisation_Requetes_v1): a document is written only when its content changes — source.lu_le excluded from the
+// comparison (freshness is carried by the lectures collection); canonical form because db exports sort keys.
+function canon(v) { return Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => { if (v[k] !== undefined) o[k] = canon(v[k]); return o; }, {}) : v; }
+function sameContent(prev, r) {
+  if (!prev) return false;
+  const strip = (x) => JSON.stringify(canon(Object.assign({}, x, { source: x.source ? Object.assign({}, x.source, { lu_le: null }) : x.source, _version: undefined })));
+  return strip(prev) === strip(r);
+}
 function readDir(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')));

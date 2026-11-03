@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://plq.local/portefeuille/schema/v2",
-  "title": "Portefeuille PLQ — modèle canonique v17",
+  "title": "Portefeuille PLQ — modèle canonique v18",
   "description": "Un document = un feed (bloc <script id=\"portfolio-feed\">), un adaptateur, ou la base complète. Toutes les collections sont optionnelles ; un document vide est valide. Dates : AAAA-MM-JJ ; horodatages : ISO 8601 avec décalage (heure du Québec : EDT -04:00, EST -05:00).",
   "type": "object",
   "additionalProperties": false,
@@ -29,7 +29,7 @@
         "14",
         "15"
       ],
-      "description": "Version du modèle canonique ; v17 : MEP lues aussi dans les courriels et Teams (source teams, Kickoff D18 v7) ; v16 : Gantt porté par un feed (schéma inchangé) ; v15 : Gantt de projet (collection gantts, jalons tirés du Gantt, source sharepoint) ; v14 : tendance du support vs le lundi (support[].lundis, tendance_vs) ; v13 ajoute item.visible (masquage, R37) ; v10 ajoute la liste des bloqués du sprint ; v8 retire le WIP saisi (D7 volet flux, Franck 2026-10-28) ; v7 ⊃ … ⊃ v1"
+      "description": "Version du modèle canonique ; v18 : lecture.statut « inchange » (schéma : un enum étendu) ; v17 : MEP lues aussi dans les courriels et Teams (source teams, Kickoff D18 v7) ; v16 : Gantt porté par un feed (schéma inchangé) ; v15 : Gantt de projet (collection gantts, jalons tirés du Gantt, source sharepoint) ; v14 : tendance du support vs le lundi (support[].lundis, tendance_vs) ; v13 ajoute item.visible (masquage, R37) ; v10 ajoute la liste des bloqués du sprint ; v8 retire le WIP saisi (D7 volet flux, Franck 2026-10-28) ; v7 ⊃ … ⊃ v1"
     },
     "source": {
       "$ref": "#/$defs/source",
@@ -1312,7 +1312,7 @@
         "statut",
         "source"
       ],
-      "description": "v6 (R36 cadence) — état de la dernière lecture d'un adaptateur : un document par adaptateur (id lecture.<adaptateur>), réécrit à chaque passage ; sert à afficher la fraîcheur des blocs. Écrit par les tâches planifiées, jamais saisi dans Gérer",
+      "description": "v6 (R36 cadence) — état de la dernière lecture d'un adaptateur : un document par adaptateur (id lecture.<adaptateur>), réécrit à chaque passage ; sert à afficher la fraîcheur des blocs. Écrit par les tâches planifiées, jamais saisi dans Gérer ; v18 : statut inchange (Optimisation_Requetes_v1 S3)",
       "properties": {
         "id": {
           "$ref": "#/$defs/id"
@@ -1350,8 +1350,10 @@
           "enum": [
             "ok",
             "partiel",
-            "echec"
-          ]
+            "echec",
+            "inchange"
+          ],
+          "description": "v18 : inchange = garde « inchangé » vraie (Smartsheet : versions des 2 feuilles et commentaires égaux au brut précédent ; Jira data : 0 ticket mis à jour et sprints identiques ; Gantt : TimeLastModified identique) — brut précédent repris, 0 écriture ; compte comme une lecture fraîche"
         },
         "ecrits": {
           "type": "integer",

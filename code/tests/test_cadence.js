@@ -10,13 +10,14 @@ const cad = loadCadence();
 let n = 0; const ok = (m, f) => { f(); n++; console.log('ok  ' + m); };
 const names = (p) => p.adaptateurs.map((a) => a.adaptateur);
 
-ok('lundi 2 nov. (pas un début de sprint) : photo sans Outlook, Jira data avec le réel (étape d), instantané + digest + Teams', () => {
+ok('lundi 2 nov. (pas un début de sprint) : photo sans Outlook ni Miro (S2), Jira data avec le réel (étape d), instantané + digest + Teams', () => {
   const p = plan(cad, 'lundi', '2026-11-02');
-  assert.deepStrictEqual(names(p), ['smartsheet', 'jira', 'jira_data_reel', 'artefacts', 'gantt', 'miro']);
+  assert.deepStrictEqual(names(p), ['smartsheet', 'jira', 'jira_data_reel', 'artefacts', 'gantt']);
   assert(p.instantane && p.digest && p.teams); assert.deepStrictEqual(p.avertissements, []);
 });
-ok('lundi 9 nov. = début de sprint (F4) : Outlook ajouté, avant Jira (ordre C4)', () => {
+ok('lundi 9 nov. = début de sprint (F4, S2) : Outlook avant Jira et Miro en dernier (ordre C4) ; lundi 16 nov. sans les deux', () => {
   assert.deepStrictEqual(names(plan(cad, 'lundi', '2026-11-09')), ['smartsheet', 'outlook', 'jira', 'jira_data_reel', 'artefacts', 'gantt', 'miro']);
+  assert.deepStrictEqual(names(plan(cad, 'lundi', '2026-11-16')), ['smartsheet', 'jira', 'jira_data_reel', 'artefacts', 'gantt']);
 });
 ok('sprints de 3 semaines : 9 nov., 30 nov., 21 déc. ; S19 en cours = 19 oct. → 6 nov.', () => {
   ['2026-11-09', '2026-11-30', '2026-12-21'].forEach((d) => assert(sprintOf(cad, d).debut_sprint, d));
@@ -34,7 +35,15 @@ ok('à la demande « équipe » (F3) : Outlook mode équipe puis Jira data, aver
   assert.deepStrictEqual(names(p), ['outlook_equipe', 'jira_data']); assert.strictEqual(p.avertissements.length, 1);
   assert.throws(() => plan(cad, 'demande', '2026-10-28', 'inconnue'));
 });
-ok('jour hors passage : plan rendu avec un avertissement (lancement manuel)', () => assert(/samedi/.test(plan(cad, 'quotidien', '2026-11-07').avertissements[0])));
+ok('S1 : quotidien du lundi = liste vide « jour hors du passage » ; --force (lancement manuel) = Jira + Jira data avec avertissement', () => {
+  const p = plan(cad, 'quotidien', '2026-11-09');
+  assert.deepStrictEqual(names(p), []); assert.strictEqual(p.motif, 'jour hors du passage'); assert(!p.instantane);
+  const f = plan(cad, 'quotidien', '2026-11-09', undefined, { force: true });
+  assert.deepStrictEqual(names(f), ['jira', 'jira_data']); assert(/lundi/.test(f.avertissements[0])); assert(!f.motif);
+  assert.deepStrictEqual(names(plan(cad, 'quotidien', '2026-11-07')), []); // saturday
+  assert(/samedi/.test(plan(cad, 'quotidien', '2026-11-07', undefined, { force: true }).avertissements[0]));
+});
+ok('à la demande « retro » (S2) : Miro seul, quel que soit le jour', () => assert.deepStrictEqual(names(plan(cad, 'demande', '2026-11-10', 'retro')), ['miro']));
 ok('lecture : document v6 valide, épinglé quand la version est connue, Z refusé', () => {
   const w = lecture(schema, 'jira_data', 'quotidien', '2026-11-03T09:05-05:00', 'ok', 12, { 'lectures/lecture.jira-data': 4 });
   assert.strictEqual(w[0].doc_id, 'lecture.jira-data'); assert.strictEqual(w[0].if_version, 4); assert.deepStrictEqual(C.validate(schema, 'lecture', w[0].data), []);
@@ -58,5 +67,22 @@ ok('fraîcheur sans aucune lecture : date la plus récente écrite par l\'adapta
   const f = C.fraicheurBloc(base, cad, 'B3', '2026-10-29');
   assert.strictEqual(f.entrees[0].origine, 'données'); assert.strictEqual(f.perime, false);
   const g = C.fraicheurBloc(C.emptyBase(), cad, 'B4', '2026-10-29'); assert.strictEqual(g.lu_le, null); assert.strictEqual(g.perime, true);
+});
+ok('S3 (modèle v18) : lecture « inchange » valide avec 0 écriture et cause facultative ; refusée avec des écritures', () => {
+  const w = lecture(schema, 'smartsheet', 'lundi', '2026-11-09T07:04-05:00', 'inchange', 0, {});
+  assert.strictEqual(w[0].data.statut, 'inchange'); assert.deepStrictEqual(C.validate(schema, 'lecture', w[0].data), []);
+  assert.strictEqual(lecture(schema, 'jira_data', 'quotidien', '2026-11-10T09:04-05:00', 'inchange', 0, {}, 'garde : 0 ticket mis à jour')[0].data.cause, 'garde : 0 ticket mis à jour');
+  assert.throws(() => lecture(schema, 'smartsheet', 'lundi', '2026-11-09T07:04-05:00', 'inchange', 3, {}));
+  assert.throws(() => lecture(schema, 'smartsheet', 'lundi', '2026-11-09T07:04-05:00', 'inconnu', 0, {}));
+});
+ok('S3 : core.js — une lecture « inchange » compte comme fraîche (seul echec est ignoré)', () => {
+  const base = C.emptyBase();
+  base.lectures = [{ id: 'lecture.smartsheet', adaptateur: 'smartsheet', passage: 'lundi', lu_le: '2026-11-09T07:04-05:00', statut: 'inchange', ecrits: 0 },
+    { id: 'lecture.jira-data', adaptateur: 'jira_data', passage: 'quotidien', lu_le: '2026-11-10T09:04-05:00', statut: 'inchange', ecrits: 0 }];
+  const f = C.fraicheurBloc(base, cad, 'B4', '2026-11-12');
+  assert.strictEqual(f.lu_le, '2026-11-09T07:04-05:00'); assert.strictEqual(f.perime, false);
+  const g = C.fraicheurBloc(base, cad, 'B2', '2026-11-11');
+  assert.strictEqual(g.lu_le, '2026-11-10T09:04-05:00'); assert.strictEqual(g.perime, false);
+  base.lectures[0].statut = 'echec'; assert.strictEqual(C.fraicheurBloc(base, cad, 'B4', '2026-11-12').lu_le, null);
 });
 console.log(`\n${n} tests OK`);

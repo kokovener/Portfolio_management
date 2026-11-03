@@ -18,6 +18,9 @@
  *   checkbox, Date check (actual) → jalon <item>.<gate>;
  *   v5 (R27): raw.commentaires [[rowId, commentId, text, author, createdAt]] → blocking comments become attentes;
  *   adapter writes source fields only, keeps portfolio-owned fields; never writes Smartsheet.
+ *   v6 (Optimisation_Requetes_v1 S3): optional raw.sheet_version / raw.gates_sheet_version (get_sheet_version of the
+ *   Master and of Jalons_Entites, read by the "unchanged" guard) are copied into report.json.
+ *   R9: batch.json holds only documents whose content changed (source.lu_le excluded); doc.json / report keep all rows.
  */
 'use strict';
 const fs = require('fs');
@@ -33,6 +36,14 @@ const GATES = { 'ba-3': 'BA-3 scope figé', 'ac-4': 'AC-4 GO Dev', 'qa-2': 'QA-2
 const som = (d) => d.slice(0, 7) + '-01';
 const eom = (d) => { const [y, m] = d.slice(0, 7).split('-').map(Number); const x = new Date(Date.UTC(y, m, 0)); return x.toISOString().slice(0, 10); };
 
+// R9 (Optimisation_Requetes_v1): a document is written only when its content changes — source.lu_le excluded from the
+// comparison (freshness is carried by the lectures collection); canonical form because db exports sort keys.
+function canon(v) { return Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => { if (v[k] !== undefined) o[k] = canon(v[k]); return o; }, {}) : v; }
+function sameContent(prev, r) {
+  if (!prev) return false;
+  const strip = (x) => JSON.stringify(canon(Object.assign({}, x, { source: x.source ? Object.assign({}, x.source, { lu_le: null }) : x.source, _version: undefined })));
+  return strip(prev) === strip(r);
+}
 function toEdt(z) { return z ? Core.nowTs(new Date(z)) : null; }
 function readDir(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -229,11 +240,17 @@ function adapt(raw, base, versions) {
   if (out.risques.length) doc.risques = out.risques;
   if (jalons.length) doc.jalons = jalons;
   const writes = [];
+  let inchanges = 0;
   ['items', 'risques', 'jalons', 'attentes'].forEach((c) => (doc[c] || []).forEach((r) => {
+    // R9: doc.json and the report keep every row; only changed documents are written
+    if (sameContent((base[c] || []).find((x) => x.id === r.id), r)) { inchanges++; return; }
     const w = { op: 'set', collection: c, doc_id: r.id, data: r }; const v = versions[`${c}/${r.id}`];
     if (v) w.if_version = v; writes.push(w);
   }));
-  return { doc, writes, report: { lu_le: now, lignes_lues: raw.rows.length, grain: grain.length, jalons: jalons.length, ecrits: writes.length, promus_relies: Object.keys(linked).length, rows, signals } };
+  const report = { lu_le: now, lignes_lues: raw.rows.length, grain: grain.length, jalons: jalons.length, ecrits: writes.length, inchanges, promus_relies: Object.keys(linked).length, rows, signals };
+  // S3 guard: sheet versions read before the full read, kept so the next pass can compare
+  ['sheet_version', 'gates_sheet_version'].forEach((k) => { if (raw[k] !== undefined && raw[k] !== null) report[k] = raw[k]; });
+  return { doc, writes, report };
 }
 
 if (require.main === module) {

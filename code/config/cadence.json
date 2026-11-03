@@ -1,13 +1,13 @@
 {
-  "_doc": "Cadence de rafraîchissement (R36, décisions Franck 2026-10-28). Cadrage : Portefeuille_PLQ/05_Pilotage/Cadence_Rafraichissement_v3.md. Modifier ici, jamais dans le code.",
+  "_doc": "Cadence de rafraîchissement (R36, décisions Franck 2026-10-28 ; Optimisation_Requetes_v1 2026-11-02 : S1 quotidien mar.–ven., S2 Miro au début de sprint). Cadrage : Portefeuille_PLQ/05_Pilotage/Cadence_Rafraichissement_v4.md. Modifier ici, jamais dans le code.",
   "sprint": { "ancre": "2026-11-09", "duree_j": 21 },
   "ordre": ["smartsheet", "outlook_equipe", "outlook", "jira", "jira_data", "jira_data_reel", "artefacts", "gantt", "miro"],
   "remplace": { "jira_data_reel": ["jira_data"], "outlook": ["outlook_equipe"] },
   "passages": {
     "lundi": { "tache": "portefeuille-plq-lundi", "heure": "07:00", "jours": [1],
-      "adaptateurs": ["smartsheet", "jira", "jira_data_reel", "artefacts", "gantt", "miro"],
-      "debut_sprint": ["outlook"], "instantane": true, "digest": true, "teams": true },
-    "quotidien": { "tache": "portefeuille-plq-quotidien", "heure": "09:00", "jours": [1, 2, 3, 4, 5],
+      "adaptateurs": ["smartsheet", "jira", "jira_data_reel", "artefacts", "gantt"],
+      "debut_sprint": ["outlook", "miro"], "instantane": true, "digest": true, "teams": true },
+    "quotidien": { "tache": "portefeuille-plq-quotidien", "heure": "09:00", "jours": [2, 3, 4, 5],
       "adaptateurs": ["jira", "jira_data"], "par_jour": { "3": ["artefacts"] },
       "instantane": false, "digest": false, "teams": false },
     "jeudi": { "tache": "portefeuille-plq-jeudi", "heure": "13:00", "jours": [4],

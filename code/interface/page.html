@@ -50,8 +50,9 @@ h1{margin:0;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02
 .tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--line2);color:var(--ink2);white-space:nowrap;display:inline-block}
 .tag.ok{background:var(--green-t);color:var(--green-ink)}.tag.warn{background:var(--gold-t);color:var(--gold-ink)}.tag.bad{background:var(--bad-t);color:var(--bad)}.tag.blue{background:var(--mist);color:var(--navy)}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.tiles.t3c{grid-template-columns:repeat(3,minmax(0,1fr))}
-.tile{border-radius:8px;padding:16px 18px;color:var(--on-tile);display:flex;flex-direction:column;gap:4px;min-height:92px;justify-content:flex-end}
-.tile b{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.02em}.tile span{font-size:12px;font-weight:500}
+/* R57: compact tiles — number and label on one line */
+.tile{border-radius:8px;padding:10px 14px;color:var(--on-tile);display:flex;flex-direction:row;align-items:baseline;gap:10px}
+.tile b{font-size:24px;flex:none;font-weight:800;line-height:1;letter-spacing:-.02em}.tile span{font-size:12px;font-weight:500}
 .tile[data-act],.stage[data-act]{cursor:pointer}.tile[data-act]:hover{filter:brightness(1.06)}.tile.on{box-shadow:0 0 0 3px var(--cyan)}.stage[data-act]:hover{border-color:var(--blue)}.stage.on{box-shadow:inset 0 0 0 1px var(--blue)}
 .tile:focus-visible,.stage:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}.chip.on{display:inline-flex;align-items:center;gap:4px;background:var(--navy);color:var(--card)}.chip.on .tg{color:var(--card)}
 /* U20: sprint tiles neutral; a coloured edge only when a threshold is crossed */
@@ -118,8 +119,8 @@ h1{margin:0;font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02
 .s-bad{background:var(--bad)}.s-warn{background:var(--warn)}.s-low{background:var(--gold);color:var(--on-terroir)}
 ul.al{margin:8px 0 0;padding-left:0;list-style:none;font-size:12px;display:flex;flex-direction:column;gap:6px}
 ul.al summary{cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}ul.al details[open] summary{white-space:normal}
-.funnel{display:flex;gap:6px;flex-wrap:wrap}.stage{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
-.stage b{font-size:22px;font-weight:800;color:var(--navy)}.stage span{font-size:12px;color:var(--ink2)}.stage.on{border-color:var(--blue)}
+.funnel{display:flex;gap:6px;flex-wrap:wrap}.stage{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:flex;flex-direction:row;align-items:baseline;gap:6px}
+.stage b{font-size:18px;font-weight:800;color:var(--navy)}.stage span{font-size:12px;color:var(--ink2)}.stage.on{border-color:var(--blue)}
 .kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;font-size:13px;margin:10px 0 0}.kv dt{color:var(--mute)}.kv dd{margin:0;font-weight:500;min-width:0}
 .modal-bg{position:fixed;inset:0;z-index:20;background:rgba(0,27,41,.55);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
 .modal{background:var(--bg);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.35);width:min(720px,100%);padding:16px}.modal .card{box-shadow:none}
@@ -179,6 +180,10 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
 /* U01: sticky header */
 .hdr{position:sticky;top:0;z-index:6;background:var(--bg);align-items:center;padding:8px 0;margin:-8px 0;border-bottom:1px solid var(--line)}
 .hdr-t{font-size:20px}
+/* R58/R59: project and sprint titles frozen under the sticky header (--hdr-h set at render) */
+.phead{position:sticky;top:var(--hdr-h,64px);z-index:5;background:var(--bg);align-items:center;padding:6px 0;margin:-6px 0;border-bottom:1px solid var(--line)}
+.phead h1{font-size:22px}
+.psrc{margin-top:-12px}
 @media (max-width:1100px){.main2{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){.hdr{position:static}}
 @media (max-width:760px){.tiles,.tiles.t3c{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.f3{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}.kv{grid-template-columns:100px 1fr}}
@@ -530,9 +535,9 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       <div class="tile t3${S.focus === 'alertes' ? ' on' : ''}" role="button" aria-pressed="${S.focus === 'alertes'}" tabindex="0" data-act="focus" data-f="alertes" title="Filtrer la grille"><b>${al.length}</b><span>alertes${al.length ? ' : ' + Object.keys(kinds).map((k) => `${kinds[k]} ${KFR[k]}`).join(' · ') : ''}</span></div>
     </div>
     <!-- U13: admission funnel right under the tiles (summary first) -->
-    <div class="card"><div class="between"><span class="eyebrow">Entonnoir d'admission</span><span class="muted">Priorité = valeur + urgence − effort · risque affiché à côté</span></div>
-      <div class="funnel" style="margin-top:10px">${ETAPES.map(([k, l]) => `<div class="stage${S.focus === k ? ' on' : ''}" role="button" aria-pressed="${S.focus === k}" tabindex="0" data-act="focus" data-f="${k}" title="Filtrer la grille"><b>${cnt[k]}</b><span>${l}${stageSub[k] ? ` <small class="muted">${stageSub[k]}</small>` : ''}</span></div>`).join('')}</div>
-      <p class="muted" style="margin:8px 0 0">Projets et runs, programmes exclus. Terminé : dernière mise à jour il y a 90 jours ou moins.</p></div>
+    <div class="card" style="padding:12px 16px"><div class="between"><span class="eyebrow" title="Projets et runs, programmes exclus. Terminé : dernière mise à jour il y a 90 jours ou moins.">Entonnoir d'admission <span aria-hidden="true">ⓘ</span></span><span class="muted">Priorité = valeur + urgence − effort · risque affiché à côté</span></div>
+      <div class="funnel" style="margin-top:8px">${ETAPES.map(([k, l]) => `<div class="stage${S.focus === k ? ' on' : ''}" role="button" aria-pressed="${S.focus === k}" tabindex="0" data-act="focus" data-f="${k}" title="Filtrer la grille"><b>${cnt[k]}</b><span>${l}${stageSub[k] ? ` <small class="muted">${stageSub[k]}</small>` : ''}</span></div>`).join('')}</div>
+      </div>
     <div class="row">
       <label class="chip">Voie <select data-act="filter" data-f="voie" aria-label="Voie"><option value="toutes">toutes</option><option value="scrum"${S.filters.voie === 'scrum' ? ' selected' : ''}>Scrum</option><option value="flux"${S.filters.voie === 'flux' ? ' selected' : ''}>Flux</option></select></label>
       <label class="chip">Étape <select data-act="filter" data-f="etape" aria-label="Étape"><option value="ap">Actif + Planifié + candidats</option><option value="nt"${S.filters.etape === 'nt' ? ' selected' : ''}>Tout sauf Terminé</option><option value="all"${S.filters.etape === 'all' ? ' selected' : ''}>Toutes</option></select></label>
@@ -623,13 +628,14 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const srcTag = (r) => r.source ? `<span class="prov" title="${esc(prov(r.source))}">${esc(SYS_FR[r.source.systeme] || r.source.systeme)}</span>` : '<span class="prov">cascade</span>';
     return `
     <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › ${parent ? `<a href="#" data-act="open-item" data-id="${esc(parent.id)}">${esc(parent.nom)}</a>` : 'Hors programme'} › <span style="color:var(--ink);font-weight:600">${esc(it.nom)}</span></div>
-    <div class="between" style="align-items:center">
-      <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="eyebrow">${esc(natureLbl(it, parent))}</span>
+    <div class="between phead">
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow">${esc(natureLbl(it, parent))}</span>
         <h1><span class="rag ${ragCls(it)}"></span>${esc(it.nom)}${it.visible === false ? ' <span class="tag warn" title="Masqué pour les visiteurs et le digest">masqué</span>' : ''}</h1>
-        <span class="muted">Source : ${provHtml(it.source)}</span></div>
+      </div>
       <div class="row">${S.canEdit ? '<button class="btn" type="button" data-act="modal" aria-haspopup="dialog">Modifier</button>' : ''}${spAct ? `<button class="btn ghost" type="button" data-act="open-sprint" data-id="${esc(spAct.id)}">Voir le sprint ${esc(spAct.nom.replace(/^G2\.1 - /, ''))}</button>` : ''}
         ${(it.liens || []).map(lienHtml).join('')}</div>
     </div>
+    <span class="muted psrc">Source : ${provHtml(it.source)}</span>
     ${santeBanner(it, san, nx)}
     <ol class="steps" aria-label="Étape du cycle de vie">${ETAPES.map(([k, l], n) => `<li class="step${n < stepIdx ? ' done' : n === stepIdx ? ' on' : ''}"${n === stepIdx ? ' aria-current="step"' : ''}>${n < stepIdx ? '✓ ' : ''}${l}</li>`).join('')}</ol>
     <div class="main2">
@@ -1044,13 +1050,13 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       .map((a) => (prev && a.sprint === prev.id ? Object.assign({ precedent: true }, a) : a));
     return `
     <div class="crumb"><a href="#" data-act="view" data-v="portefeuille">Portefeuille</a> › Sprints GOU21 › <span style="color:var(--ink);font-weight:600">${esc(s.nom)}</span></div>
-    <div class="between" style="align-items:center">
-      <div style="display:flex;flex-direction:column;gap:4px"><span class="eyebrow">Sprint GOU21 · ${esc(SYS_FR[s.source.systeme])} · Jira fait foi</span>
-        <h1>${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)} → ${C.fmtDate(s.fin, true)}</h1>
-        ${sprintTempo(s, sv)}
-        <span class="muted">${sv.jours_ouvres} jours ouvrés · état ${esc(s.etat)} · ${provHtml(s.source)}</span></div>
+    <div class="between phead">
+      <div style="display:flex;flex-direction:column;gap:2px"><span class="eyebrow">Sprint GOU21 · ${esc(SYS_FR[s.source.systeme])} · Jira fait foi</span>
+        <h1>${esc(s.nom.replace(/^G2\.1 - /, ''))} · ${C.fmtDate(s.debut)} → ${C.fmtDate(s.fin, true)}</h1></div>
       <div class="tabs">${sprints.map((x) => `<button class="tab${x.id === s.id ? ' on' : ''}" type="button" data-act="open-sprint" data-id="${esc(x.id)}" title="${esc(x.etat)}">${esc(x.nom.replace(/^G2\.1 - /, ''))}<small style="font-weight:500;opacity:.75"> · ${x.etat === 'clos' ? 'précédent' : x.etat === 'actif' ? 'courant' : 'suivant'}</small></button>`).join('')}</div>
     </div>
+    <div class="psrc" style="display:flex;flex-direction:column;gap:4px">${sprintTempo(s, sv)}
+      <span class="muted">${sv.jours_ouvres} jours ouvrés · état ${esc(s.etat)} · ${provHtml(s.source)}</span></div>
     ${(() => { // R21: sprint goal as a full-width band under the title (Jira « But du sprint », one line per goal)
       const goals = goalsOf(s); const pg = prev && !clos ? goalsOf(prev) : [];
       return `<div class="goal"><span class="eyebrow">Objectif du sprint · Jira</span>${goals.length ? (goals.length > 1 ? `<ul>${goals.map((g) => `<li>${esc(g)}</li>`).join('')}</ul>` : `<p>${esc(goals[0])}</p>`) : '<p class="empty">Aucun objectif saisi dans Jira (champ « But du sprint » du sprint).</p>'}${pg.length ? `<small class="muted">Sprint précédent (${esc(prev.nom.replace(/^G2\.1 - /, ''))}) : ${esc(pg.join(' · '))}</small>` : ''}</div>`; })()}
@@ -1102,6 +1108,8 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     else body = S.view === 'projet' ? viewProjet() : S.view === 'sprint' ? viewSprint() : viewPortefeuille();
     const n = C.COLLECTIONS.reduce((k, c) => k + S.base[c].length, 0);
     $('#app').innerHTML = header() + body + `<details class="diag"><summary>Détails techniques</summary><pre>${esc([`Base : ${n} enregistrements · ${S.status}`].concat(S.diag).join('\n'))}</pre></details>`;
+    // R58: the frozen project title sits right under the sticky header, whatever its wrapped height
+    const hd = document.querySelector('.hdr'); if (hd) document.documentElement.style.setProperty('--hdr-h', hd.offsetHeight + 'px');
     // R53: a Gantt opens on today (today line a quarter from the left), the frozen title column stays in view
     document.querySelectorAll('.gwrap').forEach((w) => { const n = w.querySelector('.gnow'); const tl = w.querySelector('.gtl'); if (n && tl) w.scrollLeft = Math.max(0, n.offsetLeft - (w.clientWidth - tl.offsetWidth) / 4); });
   }

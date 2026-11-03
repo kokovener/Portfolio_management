@@ -22,6 +22,11 @@
  *       ≤ 5 signals; refused (exit 4) when malformed — the digest is then built without them, never with a guess.
  *   node tools/lundi.js versions <versions_avant.json> [applied batch.json ...]   → prints current versions
  *       (a pinned set/update bumps a version by 1, a create starts at 1); pass only batches the db accepted.
+ *   node tools/lundi.js apply <base_avant_dir> <out_dir> [accepted batch.json ...]
+ *       (Optimisation_Requetes_v1 S5) rebuilds base_apres locally instead of re-exporting the 17 collections: copies the
+ *       export base_avant_dir (<collection>/<id>.json + versions.json) to out_dir, replays each accepted batch in order
+ *       (set = replace, update = shallow merge of top-level fields, delete = K13/K14 purge only, else refused) and writes
+ *       out_dir/versions.json with the same rule as `versions`. Pass only batches the db accepted (adapters and lectures).
  *   node tools/lundi.js writes <batch.json> <out_dir> [<from> <to>]  → one JSON file per write in out_dir and, on
  *       stdout, the `writes` array for ArtifactData batch (file_path instead of inline data), in chunks of ≤ 50.
  *   node tools/lundi.js pagecheck <built.html> <published.html>
@@ -252,7 +257,9 @@ function cmdDigest(args) {
 
   // 3) adapters and their signals
   const adapt = statut.adaptateurs || [];
-  const ok = adapt.filter((a) => a.statut === 'ok').length;
+  // model v18: an "inchange" read (guard held, previous raw reused) is a successful, fresh read
+  const isOk = (a) => a.statut === 'ok' || a.statut === 'inchange';
+  const ok = adapt.filter(isOk).length;
   const sigs = [];
   adapt.forEach((a) => {
     if (!a.report) return;
@@ -271,7 +278,7 @@ function cmdDigest(args) {
   const L = [];
   L.push(`# Digest Portefeuille PLQ — semaine du ${Core.fmtDate(lundi, true)}`, '');
   L.push(`> Calculé le ${fmtLocal(nowTs)} · sources lues ${ok}/${adapt.length} · instantané ${courant ? '`' + courant.id + '` écrit avant recalcul' : '**absent**'} · [Portefeuille PLQ](${url})`, '');
-  const echecs = adapt.filter((a) => a.statut !== 'ok');
+  const echecs = adapt.filter((a) => !isOk(a));
   if (echecs.length) {
     L.push('## Sources non lues', '', '| Source | Statut | Cause |', '|---|---|---|');
     echecs.forEach((a) => L.push(`| ${ADAPT[a.nom] || a.nom} | ${a.statut} | ${cell(a.cause || '—')} |`));
@@ -362,9 +369,7 @@ function isK13Purge(w) {
   if (w.purge === 'K14') return ['jalons', 'dependances'].includes(w.collection) && /^feed\.archi\./.test(w.doc_id);
   return false;
 }
-function cmdVersions([avant, ...batches]) {
-  if (!avant) usage();
-  const v = JSON.parse(fs.readFileSync(avant, 'utf8'));
+function computeVersions(v, batches) {
   batches.forEach((b) => JSON.parse(fs.readFileSync(b, 'utf8')).forEach((w) => {
     const k = `${w.collection}/${w.doc_id}`;
     if (w.op === 'delete') {
@@ -374,7 +379,48 @@ function cmdVersions([avant, ...batches]) {
     }
     v[k] = (k in v) ? v[k] + 1 : 1;
   }));
+  return v;
+}
+function cmdVersions([avant, ...batches]) {
+  if (!avant) usage();
+  const v = computeVersions(JSON.parse(fs.readFileSync(avant, 'utf8')), batches);
   process.stdout.write(JSON.stringify(v, null, 0) + '\n');
+}
+// S5: base_apres rebuilt from base_avant + accepted batches (same file layout as an ArtifactData list export, keys sorted)
+function sortKeys(x) {
+  if (Array.isArray(x)) return x.map(sortKeys);
+  if (x && typeof x === 'object') return Object.keys(x).sort().reduce((o, k) => { o[k] = sortKeys(x[k]); return o; }, {});
+  return x;
+}
+function applyBatches(avantDir, batches) {
+  const docs = {}; // "collection/id" -> data
+  Core.COLLECTIONS.forEach((c) => {
+    const d = path.join(avantDir, c); if (!fs.existsSync(d)) return;
+    fs.readdirSync(d).filter((f) => f.endsWith('.json')).forEach((f) => { const r = JSON.parse(fs.readFileSync(path.join(d, f), 'utf8')); docs[`${c}/${r.id || f.slice(0, -5)}`] = r; });
+  });
+  const stats = { set: 0, update: 0, delete: 0, batches: batches.length };
+  batches.forEach((b) => JSON.parse(fs.readFileSync(b, 'utf8')).forEach((w) => {
+    if (!Core.COLLECTIONS.includes(w.collection)) fail(`refused: ${b} writes unknown collection ${w.collection}`);
+    const k = `${w.collection}/${w.doc_id}`;
+    const data = w.data !== undefined ? w.data : (w.file_path ? JSON.parse(fs.readFileSync(w.file_path, 'utf8')) : undefined);
+    if (w.op === 'delete') { if (!isK13Purge(w)) fail(`refused: ${b} holds a delete`); delete docs[k]; stats.delete++; return; }
+    if (w.op === 'set') { docs[k] = data; stats.set++; return; }
+    if (w.op === 'update') { docs[k] = Object.assign({}, docs[k] || {}, data); stats.update++; return; }
+    fail(`refused: ${b} holds op ${w.op}`);
+  }));
+  return { docs, stats };
+}
+function cmdApply([avantDir, outDir, ...batches]) {
+  if (!outDir) usage();
+  if (path.resolve(avantDir) === path.resolve(outDir)) fail('refused: out_dir = base_avant_dir (the export must stay as read)');
+  const vp = path.join(avantDir, 'versions.json');
+  if (!fs.existsSync(vp)) fail(`refused: ${vp} absent — copy the export versions first (step 1a)`);
+  const { docs, stats } = applyBatches(avantDir, batches);
+  const versions = computeVersions(JSON.parse(fs.readFileSync(vp, 'utf8')), batches);
+  if (fs.existsSync(outDir) && fs.readdirSync(outDir).length) fail(`refused: ${outDir} not empty`);
+  Object.keys(docs).sort().forEach((k) => { const i = k.indexOf('/'); writeJson(path.join(outDir, k.slice(0, i), `${k.slice(i + 1)}.json`), sortKeys(docs[k])); });
+  writeJson(path.join(outDir, 'versions.json'), versions);
+  console.log(`${Object.keys(docs).length} documents → ${outDir} (${stats.batches} lots : ${stats.set} set · ${stats.update} update · ${stats.delete} delete)`);
 }
 function cmdWrites([batchP, outDir, from, to]) {
   if (!outDir) usage();
@@ -424,6 +470,7 @@ if (require.main === module) {
   else if (cmd === 'pagecheck') cmdPagecheck(rest);
   else if (cmd === 'versions') cmdVersions(rest);
   else if (cmd === 'writes') cmdWrites(rest);
+  else if (cmd === 'apply') cmdApply(rest);
   else usage();
 }
-module.exports = { buildSnapshot, loadBase, signalLines, fmtLocal, keyOf, readSignaux };
+module.exports = { buildSnapshot, loadBase, signalLines, fmtLocal, keyOf, readSignaux, applyBatches, computeVersions };

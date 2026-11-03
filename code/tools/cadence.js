@@ -3,15 +3,20 @@
  * "lecture" record (model v6) written after each adapter so the page can show each block's freshness.
  *
  * Usage:
- *   node tools/cadence.js plan <lundi|quotidien|jeudi> <date>          → JSON: adapters due, ordered, with their reason
+ *   node tools/cadence.js plan <lundi|quotidien|jeudi> <date> [--force] → JSON: adapters due, ordered, with their reason.
+ *        Outside the pass's days (cadence.json "jours") the list is EMPTY with motif "jour hors du passage"
+ *        (Optimisation_Requetes_v1 S1: the daily pass no longer runs on Mondays); --force = manual launch, the
+ *        pass's adapters are planned anyway with a warning.
  *   node tools/cadence.js plan demande <date> <cible>                   → cible ∈ keys of cadence.json "demande"
  *   node tools/cadence.js sprint <date>                                  → JSON: {debut_sprint, sprint_debut, sprint_fin}
  *   node tools/cadence.js base <export_dir> <heure> <out.json>
  *        light passes (no snapshot): builds the validation base (all collections of a full ArtifactData export, as the
  *        Monday snapshot's base_avant.json) so validate_model.py can resolve references; never written to the db.
- *   node tools/cadence.js lecture <adaptateur> <passage> <lu_le> <ok|partiel|echec> <ecrits> <versions.json|-> <out_batch.json> <schema.json> [cause]
+ *   node tools/cadence.js lecture <adaptateur> <passage> <lu_le> <ok|partiel|echec|inchange> <ecrits> <versions.json|-> <out_batch.json> <schema.json> [cause]
  *        writes a one-write batch (set lectures/lecture.<adaptateur>, pinned with if_version when the versions file
  *        knows the doc) — to pass to ArtifactData batch. lu_le comes from `TZ=America/Toronto date`, never computed here.
+ *        inchange (model v18, Optimisation_Requetes_v1 S3): the "unchanged" guard held, previous raw reused, 0 write
+ *        (any other count is refused); cause optional; counts as a fresh read on the page (core.js skips only echec).
  * Config: config/cadence.json (never hard-code a schedule here). Never writes a source; never deletes.
  */
 'use strict';
@@ -31,7 +36,8 @@ function sprintOf(cad, date) {
   const debut = Core.addDays(cad.sprint.ancre, k * cad.sprint.duree_j);
   return { debut_sprint: debut === date, sprint_debut: debut, sprint_fin: Core.addDays(debut, cad.sprint.duree_j - 3) };
 }
-function plan(cad, passage, date, cible) {
+function plan(cad, passage, date, cible, opts) {
+  const force = !!(opts && opts.force);
   if (!DATE.test(date)) throw new Error(`date ${date} : AAAA-MM-JJ attendu`);
   const wd = Core.d(date).getDay(); const due = []; const add = (a, motif) => { if (!due.some((x) => x.adaptateur === a)) due.push({ adaptateur: a, motif }); };
   let flags = { instantane: false, digest: false, teams: false }; const avert = [];
@@ -41,7 +47,11 @@ function plan(cad, passage, date, cible) {
     list.forEach((a) => add(a, `à la demande : ${cible}`));
   } else {
     const p = cad.passages[passage]; if (!p) throw new Error(`passage « ${passage} » inconnu`);
-    if (!p.jours.includes(wd)) avert.push(`${date} est un ${JOURS[wd]} : jour hors du passage ${passage} (lancement manuel ?)`);
+    if (!p.jours.includes(wd)) {
+      // S1: a scheduled pass outside its days does nothing; only a manual launch (--force) keeps the old behaviour
+      if (!force) return { passage, date, jour: JOURS[wd], adaptateurs: [], motif: 'jour hors du passage', avertissements: [`${date} est un ${JOURS[wd]} : jour hors du passage ${passage} (--force pour un lancement manuel)`], instantane: false, digest: false, teams: false, sprint: sprintOf(cad, date) };
+      avert.push(`${date} est un ${JOURS[wd]} : jour hors du passage ${passage} (lancement manuel, --force)`);
+    }
     p.adaptateurs.forEach((a) => add(a, `${passage} ${p.heure}`));
     ((p.par_jour || {})[String(wd)] || []).forEach((a) => add(a, `${passage} du ${JOURS[wd]}`));
     const sp = sprintOf(cad, date);
@@ -57,6 +67,7 @@ function plan(cad, passage, date, cible) {
 }
 function lecture(schema, adaptateur, passage, luLe, statut, ecrits, versions, cause) {
   if (!TS.test(luLe) || /Z$/.test(luLe)) throw new Error(`lu_le ${luLe} : horodatage avec décalage attendu (jamais Z)`);
+  if (statut === 'inchange' && Number(ecrits) !== 0) throw new Error(`inchange : 0 écriture attendue (reçu ${ecrits})`);
   const rec = { id: `lecture.${adaptateur.replace(/_/g, '-')}`, adaptateur, passage, lu_le: luLe, statut, ecrits: Number(ecrits),
     source: { systeme: 'calcul', ref: `tâche ${passage}`, lu_le: luLe, par: 'cadence' } };
   if (cause) rec.cause = cause;
@@ -70,7 +81,7 @@ if (require.main === module) {
   const fail = (m) => { console.error(m); process.exit(2); };
   try {
     const cad = loadCadence();
-    if (cmd === 'plan') console.log(JSON.stringify(plan(cad, a[0], a[1], a[2]), null, 2));
+    if (cmd === 'plan') { const force = a.includes('--force'); const pa = a.filter((x) => x !== '--force'); console.log(JSON.stringify(plan(cad, pa[0], pa[1], pa[2], { force }), null, 2)); }
     else if (cmd === 'base') {
       const [dir, heure, out] = a; if (!out || !TS.test(heure)) fail('usage: base <export_dir> <heure> <out.json>');
       const base = Core.emptyBase(); let n = 0;
@@ -82,7 +93,7 @@ if (require.main === module) {
     else if (cmd === 'sprint') console.log(JSON.stringify(sprintOf(cad, a[0])));
     else if (cmd === 'lecture') {
       const [ad, passage, luLe, statut, ecrits, vp, out, schemaP, cause] = a;
-      if (!schemaP) fail('usage: lecture <adaptateur> <passage> <lu_le> <statut> <ecrits> <versions.json|-> <out_batch.json> <schema.json> [cause]');
+      if (!schemaP) fail('usage: lecture <adaptateur> <passage> <lu_le> <ok|partiel|echec|inchange> <ecrits> <versions.json|-> <out_batch.json> <schema.json> [cause]');
       const schema = JSON.parse(fs.readFileSync(schemaP, 'utf8'));
       const versions = vp && vp !== '-' && fs.existsSync(vp) ? JSON.parse(fs.readFileSync(vp, 'utf8')) : {};
       const ws = lecture(schema, ad, passage, luLe, statut, ecrits, versions, cause);

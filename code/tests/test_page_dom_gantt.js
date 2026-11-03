@@ -76,6 +76,19 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   assert.strictEqual(ce.querySelectorAll('.gtr:not(.g):not(.h)').length, 80); assert(ce.querySelectorAll('.gb.fait').length > 30);
   assert(/Artefact · lu/.test(ce.textContent) && /plan calculé le 29 oct\./.test(ce.textContent));
   ok('Expert G1: Gantt from its feed block — 80 rows, done rows faded, provenance Artefact');
+  // R58: project title frozen — sticky bar is a direct child of #app (sticky needs the scrolling parent), holds the h1, sits under the header
+  { const ph = d.querySelector('#app > .phead'); assert(ph && ph.querySelector('h1') && /Expert G1/.test(ph.textContent), 'phead with the project title');
+    const css = d.querySelector('style').textContent; assert(/\.phead\{position:sticky;top:var\(--hdr-h/.test(css), 'phead sticky under the header');
+    assert(/Source :/.test(d.querySelector('#app > .psrc').textContent), 'source line outside the frozen bar'); }
+  ok('R58: project title frozen under the sticky header');
+  // R59: sprint title frozen the same way (title + sprint tabs in the bar, tempo and source line scroll)
+  click(d.querySelector('[data-act="view"][data-v="sprint"]')); await sleep(20);
+  { const ph = d.querySelector('#app > .phead'); assert(ph && ph.querySelector('h1') && ph.querySelector('[data-act="open-sprint"]'), 'sprint phead with title and tabs');
+    assert(/jours ouvrés/.test(d.querySelector('#app > .psrc').textContent), 'tempo / source line outside the frozen bar'); }
+  ok('R59: sprint title frozen under the sticky header');
+  // R57: compact tiles and funnel (one line, footnote in the funnel tooltip)
+  { const css = d.querySelector('style').textContent; assert(/\.tile\{[^}]*flex-direction:row/.test(css) && /\.stage\{[^}]*flex-direction:row/.test(css), 'tiles / stages on one line'); }
+  ok('R57: compact tiles and funnel stages');
   assert(!errors.length, errors.join(' | '));
   console.log(`${n} ok`);
 })().catch((e) => { console.error(e); process.exit(1); });
