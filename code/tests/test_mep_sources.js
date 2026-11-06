@@ -27,7 +27,7 @@ ok('label from the body "[SDD-2990] … - Jira", else the cleaned subject', () =
   assert.strictEqual(labelOf('MEP (SQL) | SDD-2990 | G1', "Billet : [SDD-2990] Ajout contrat d'innovation usine 301 - Jira  Instructions", 'SDD-2990'), "Ajout contrat d'innovation usine 301");
   assert.strictEqual(labelOf('MEP G1 SDD-2960 Composition', '', 'SDD-2960'), 'Composition');
 });
-ok('calendar not found: one signal, no evidence, no retry', () => { assert(sig(ev, 'calendrier_mep_inaccessible')); assert(!ev.preuves.some((p) => p.source === 'calendrier')); });
+ok('calendar no longer read (Franck 5 Nov.): no signal, no evidence, even with a calendar key in the raw file', () => { assert(!sig(ev, 'calendrier_mep_inaccessible')); assert(!ev.preuves.some((p) => p.source === 'calendrier')); });
 ok('noise ignored: Statut TI, Jira notifications, digests, Service Desk without a dated announcement', () => {
   const refs = ev.preuves.map((p) => p.ref).join('\n');
   assert(!/Statut TI|STG21|Reaction|PLQ-9440|Organismes/.test(refs));
@@ -74,11 +74,11 @@ ok('a reply is linked to its thread only within 7 days', () => {
   const p = preuves({ emails: [['2026-10-01T15:00:00Z', 'A', 'MEP Extranets', 'Billet de MEP: GOU21-1'], ['2026-10-25T15:00:00Z', 'A', 'RE: MEP Extranets', 'MEP terminée']] }, '2026-10-30T10:00-04:00');
   assert(!p.preuves.some((x) => x.statut === 'completee'));
 });
-ok('calendar (rank 1) gives the date even against an email proof; open ticket with only a proof keeps its MEP', () => {
+ok('a calendar event left in a raw file is ignored; open ticket with only a proof keeps its MEP', () => {
   const rr = JSON.parse(JSON.stringify(raw)); const t = rr.mep_tickets.find((x) => x.key === 'GOU21-11300'); t.status = 'En cours'; t.cat = 'indeterminate';
   const s2 = Object.assign({}, src, { calendar: { status: 'ok', events: [['2026-10-21T19:00:00', 'MEP SDD-2981']] } });
   const r2 = adapt(rr, base, {}, ledgers, s2);
-  assert.strictEqual(mp(r2.doc, 'SDD-2981').date, '2026-10-21');
+  assert.strictEqual(mp(r2.doc, 'SDD-2981').date, '2026-10-23');
   const m = mp(r2.doc, 'GOU21-11300'); assert(m && m.date === '2026-10-22'); assert(sig(r2.report, 'mep_ecart', 'GOU21-11300'));
 });
 ok('partial email read and ledger-only MEPs are reported (courriels_partiels, mep_non_recoupee)', () => { assert(sig(r.report, 'courriels_partiels')); assert(sig(r.report, 'mep_non_recoupee', 'SDD-2967')); });
@@ -87,5 +87,35 @@ ok('manual MEP (saisie): never reported as not re-read; a read MEP with the same
   const r3 = adapt(raw, b2, {}, ledgers, src);
   assert(!sig(r3.report, 'mep_non_relue', 'saisie.run-ti.mep.y')); assert(sig(r3.report, 'mep_saisie_doublon', 'saisie.run-ti.mep.x'));
   assert(!r3.writes.some((w) => /^saisie\./.test(w.doc_id)));
+});
+// --- 5 Nov. 2026 (cause: query "MEP" + subject filter missed SDD-3004 / SDD-2974; 3 past MEPs left « non confirmées ») ---
+const rt = (subj, sum, iso) => preuves({ emails: [[iso || '2026-11-04T18:46:38Z', 'Richard Tremblay', subj, sum]] }, '2026-11-05T10:00-05:00').preuves;
+ok('paid error 5 Nov.: Richard Tremblay\'s first mail with a ticket = done, even without « MEP » nor a done phrase (SDD-3004)', () => {
+  const p = rt('SDD-3004 - ajout de demandes absentes de rapports proActions pour quatre producteurs', 'Bonjour, http://jira-l-02:8080/browse/SDD-3004 Nous avons ajouté quatre demandes ...');
+  assert.deepStrictEqual([p[0].statut, p[0].date, p[0].keys[0]], ['completee', '2026-11-04', 'SDD-3004']);
+});
+ok('ticket only in the body (« …\\MEP\\ SDD-3004\\ Destination », space after the folder) still counts', () => assert.deepStrictEqual(rt('Ajout en prod', 'Source : \\\\fplq\\PLQ\\MEP\\ SDD-3004\\ Destination : SQL-W-01')[0].keys, ['SDD-3004']));
+ok('a reply from Richard Tremblay is not a proof by itself (« Pour procéder à une mep le lundi tu dois justifier »)', () => {
+  const p = rt('RE: MEP de modification de réquisitions ajustées (prévu mardi)', 'Bonjour Claude, Pour procéder à une mep le lundi tu dois justifier la MEP');
+  assert(!p.some((x) => x.statut === 'completee'));
+});
+ok('operator rule not applied to an announcement, a question, another Tremblay or an auto-reply (fresh review 5 Nov.)', () => {
+  assert(!rt('SDD-3010 - correction', 'MEP SDD-3010 prévue jeudi soir').some((x) => x.statut === 'completee'));
+  assert(!rt('SDD-3011 - script', 'Pouvez-vous valider avant la MEP ?').some((x) => x.statut === 'completee'));
+  assert(!preuves({ emails: [['2026-11-04T18:46:38Z', 'Julie Tremblay', 'SDD-3012 - données', 'Voici le fichier']] }, '2026-11-05T10:00-05:00').preuves.some((x) => x.statut === 'completee'));
+  assert(!rt('Réponse automatique : SDD-3013', 'Je suis absent').some((x) => x.statut === 'completee'));
+});
+ok('ITI tickets are recognised (ITI-804 « terminé avec succès »)', () => assert.deepStrictEqual(rt('MEP ITI-804 Infra LAITWEB et SQL-W-01 terminé avec succès', 'mep complétée', '2026-11-04T01:30:48Z')[0].keys, ['ITI-804']));
+ok('Franck\'s confirmation (rank 0) closes a past planned MEP, source saisie, id kept jira.*, never reported as a manual duplicate', () => {
+  const conf = { _doc: 'x', 'PLQ-9462': { statut: 'completee', date: '2026-11-02', le: '2026-11-05', motif: 'bascule réalisée' } };
+  const r4 = adapt(raw, base, {}, ledgers, src, conf);
+  const m = mp(r4.doc, 'PLQ-9462'); assert.deepStrictEqual([m.id, m.statut, m.date, m.source.systeme], ['jira.plq-9462', 'completee', '2026-11-02', 'saisie']);
+  const b4 = { sprints: base.sprints, meps: base.meps.filter((x) => x.id !== m.id).concat([m]) };
+  const r5 = adapt(raw, b4, {}, ledgers, src, conf);
+  assert(!sig(r5.report, 'mep_saisie_doublon')); assert(!sig(r5.report, 'mep_non_relue', 'jira.plq-9462'));
+});
+ok('a confirmation without date is reported, never applied', () => {
+  const r6 = adapt(raw, base, {}, ledgers, src, { 'PLQ-9462': { statut: 'completee', le: '2026-11-05' } });
+  assert(sig(r6.report, 'mep_confirmation_invalide', 'PLQ-9462')); assert.strictEqual(mp(r6.doc, 'PLQ-9462').statut, 'planifiee');
 });
 console.log(`\n${n} tests OK`);

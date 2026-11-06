@@ -7,7 +7,7 @@
  *   emails [[receivedDateTime, senderName, subject, summary]] and teams [[createdDateTime, from, subject, preview]]:
  *     union of previous and new, keyed by (date, sender, subject) — the new row wins on a duplicate;
  *     only rows dated on or after D−30 days are kept; sorted newest first.
- *   calendar, queries and read_at come from the new read; queries.note says how many rows were reused / added.
+ *   queries and read_at come from the new read (a calendar key, dropped 5 Nov. 2026, would be copied as is); queries.note says how many rows were reused / added.
  *   Previous file absent, "-" or empty: output = new read (window D−30 still applied).
  * Never reads a source, never writes the base; personal data: output stays in dist/ (gitignored), never committed.
  */

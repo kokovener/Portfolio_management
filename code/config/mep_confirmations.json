@@ -1,0 +1,6 @@
+{
+  "_doc": "MEP status confirmed by Franck when no source says it (adapt_jira.js, rank 0). One entry per ticket: statut completee|annulee|planifiee, date AAAA-MM-JJ (deployment date), le = day of the confirmation, motif. Never deleted: a confirmation is history.",
+  "PLQ-9437": { "statut": "completee", "date": "2026-10-26", "le": "2026-11-05", "motif": "MEP réalisée, aucune confirmation écrite" },
+  "PLQ-9462": { "statut": "completee", "date": "2026-11-02", "le": "2026-11-05", "motif": "bascule réalisée, aucune confirmation écrite" },
+  "SDD-2942": { "statut": "completee", "date": "2026-10-07", "le": "2026-11-05", "motif": "MEP G1 réalisée par Richard Tremblay" }
+}

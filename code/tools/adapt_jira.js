@@ -15,6 +15,8 @@
  * Calendar > Jira > Email > Teams > ledger. Jira keeps the status of a GOU21 ticket; a proof of deployment beats an
  * announcement; between two proofs of the same kind the higher source wins. Jira has no deployment date: its closing
  * date is the last fallback. SDD / PLQ tickets seen only in an email or Teams post are written (source outlook / teams).
+ * v13 (Kickoff D18 v11, 5 Nov. 2026): calendar dropped; Franck's confirmations (config/mep_confirmations.json) are
+ * rank-0 evidence: Confirmation > Jira > Email > Teams > ledger.
  * R9 (Optimisation_Requetes_v1): batch.json holds only records whose content changed (source.lu_le excluded); doc.json
  * and report.json keep every record (report.inchanges = records not rewritten).
  * Never writes Jira nor the ledger; never deletes a db document.
@@ -23,7 +25,9 @@
 const fs = require('fs');
 const path = require('path');
 const Core = require('../interface/core.js');
-const { preuves: readPreuves, RANG } = require('./mep_preuves.js');
+const { preuves: readPreuves, fromConfirmations, RANG } = require('./mep_preuves.js');
+// Franck's MEP confirmations (5 Nov. 2026), versioned with the code: read by the CLI when present
+const CONFIRMATIONS = path.join(__dirname, '..', 'config', 'mep_confirmations.json');
 
 const READY = ['Pret pour déploiement en production', 'Terminé', 'Annulé']; // version issue states counted as ready
 const RE_MEP = /^\s*MEP\b/i;
@@ -71,7 +75,7 @@ function parseLedger(text, file) {
   return out;
 }
 
-function adapt(raw, base, versions, ledgers, sources) {
+function adapt(raw, base, versions, ledgers, sources, confirmations) {
   const now = raw.read_at; const signals = []; const rows = [];
   const src = (ref) => ({ systeme: 'jira', ref, lu_le: now, par: 'adaptateur-jira' });
   const out = { sprints: [], meps: [] };
@@ -116,6 +120,10 @@ function adapt(raw, base, versions, ledgers, sources) {
   // ---------- M365 evidence (D18 v8): calendar, emails, Teams ----------
   const ev = sources ? readPreuves(sources, now, WINDOW_DAYS) : { preuves: [], signals: [{ kind: 'sources_mep_absentes', row: 'mep_sources', texte: 'Calendrier, courriels et Teams non lus pour les MEP : Jira et ledger seuls' }] };
   signals.push(...ev.signals);
+  // Franck's confirmations (rank 0) are evidence like the others, so the same choice rule applies
+  const conf = fromConfirmations(confirmations);
+  conf.filter((c) => !c.date || !['completee', 'annulee', 'planifiee'].includes(c.statut)).forEach((c) => signals.push({ kind: 'mep_confirmation_invalide', row: c.keys[0], texte: `${c.keys[0]} : confirmation sans date ou statut inconnu (${c.statut}) — ignorée` }));
+  ev.preuves = ev.preuves.concat(conf.filter((c) => c.date && ['completee', 'annulee', 'planifiee'].includes(c.statut)));
   const epicTickets = raw.mep_tickets.concat((raw.mep_tickets_hors_epopee || []).map((t) => Object.assign({ hors_epopee: true }, t)));
   // A version name in an email / Teams post points to the MEP ticket that carries it (summary or linked version)
   const ticketOfVersion = (name) => epicTickets.filter((t) => RE_MEP.test(t.summary) && (t.summary.includes(name) || t.versions_in_description.some((id) => verById[id] && verById[id].name === name))).map((t) => t.key);
@@ -131,10 +139,10 @@ function adapt(raw, base, versions, ledgers, sources) {
   // Best evidence: closing proofs first when wanted, then by source rank, then the most recent date within a source
   const best = (list, wantClosed) => list.filter((p) => p && p.date && (wantClosed ? closedSt(p.statut) : !closedSt(p.statut)))
     .sort((a, b) => a.rang - b.rang || (b.date || '').localeCompare(a.date || ''))[0] || null;
-  // Calendar (rank 1) decides the date whenever it has an event for the ticket, past or future (Statut TI: Calendar > all)
-  const calOf = (list) => list.filter((p) => p && p.source === 'calendrier' && p.date).sort((a, b) => b.date.localeCompare(a.date))[0] || null;
+  // Calendar "Calendar - MEP" dropped (Franck, 5 Nov. 2026: never shared); kept as a no-op so the choice rule reads the same
+  const calOf = () => null;
   const evRef = (p) => `date : ${p.source === 'ledger' ? 'ledger ' : ''}${p.ref}`;
-  const srcSys = { calendrier: 'outlook', email: 'outlook', teams: 'teams', ledger: 'ledger' };
+  const srcSys = { email: 'outlook', teams: 'teams', ledger: 'ledger', confirmation: 'saisie' };
   const mepId = (ticket) => 'jira.' + ticket.toLowerCase();
 
   epicTickets.forEach((t) => {
@@ -161,7 +169,7 @@ function adapt(raw, base, versions, ledgers, sources) {
     const pick = calOf(evs) || (closedSt(statut) ? best(evs, true) || best(evs, false) : best(evs, false) || best(evs, true));
     const date = pick ? pick.date : closedSt(statut) ? edtDate(t.status_changed) : null;
     const dateOrigin = pick ? `${pick.source} ${pick.ref}` : date ? 'Jira (passage à Terminé)' : null;
-    if (!date) { signals.push({ kind: 'mep_sans_date', row: t.key, texte: `${t.key} « ${libelleOf(t.summary)} » : ouverte, aucune date (ni calendrier, ni courriel, ni Teams, ni ledger) — non écrite` }); rows.push({ kind: 'mep', id: t.key, decision: 'non écrite (sans date)', lu: { statut_jira: t.status } }); return; }
+    if (!date) { signals.push({ kind: 'mep_sans_date', row: t.key, texte: `${t.key} « ${libelleOf(t.summary)} » : ouverte, aucune date (ni courriel, ni Teams, ni ledger) — non écrite` }); rows.push({ kind: 'mep', id: t.key, decision: 'non écrite (sans date)', lu: { statut_jira: t.status } }); return; }
     if (t.hors_epopee) signals.push({ kind: 'mep_hors_epopee', row: t.key, texte: `${t.key} : ticket « MEP » hors épopée ${raw.mep_epic} — lu quand même` });
     if (led && led.statut !== statut) signals.push({ kind: 'mep_ecart', row: t.key, texte: `${t.key} : ledger « ${led.statut} », Jira « ${t.status} » → ${statut} (Jira fait foi)` });
     const proof = best(evByTicket[t.key] || [], true);
@@ -219,11 +227,12 @@ function adapt(raw, base, versions, ledgers, sources) {
   });
   // base MEPs not seen in this run: kept untouched (never deleted), reported
   // manual MEPs (Gérer, source saisie) are Franck's: never read, never rewritten; a read MEP with the same ticket is reported
-  const isSaisie = (m) => m.source && m.source.systeme === 'saisie';
+  // a read MEP decided by Franck's confirmation also carries source « saisie » but keeps its jira.* id: only saisie.* is manual
+  const isSaisie = (m) => m.source && m.source.systeme === 'saisie' && /^saisie\./.test(m.id);
   base.meps.filter((m) => !isSaisie(m) && !out.meps.some((o) => o.id === m.id)).forEach((m) => signals.push({ kind: 'mep_non_relue', row: m.id, texte: `${m.id} en base, absente de cette lecture — conservée` }));
   base.meps.filter((m) => isSaisie(m) && m.ticket).forEach((m) => { const o = out.meps.find((x) => x.ticket === m.ticket); if (o) signals.push({ kind: 'mep_saisie_doublon', row: m.id, texte: `${m.ticket} saisie à la main (${m.id}) et lue (${o.source.ref}) : supprimer la saisie dans Gérer` }); });
 
-  const doc = { modele: '1', source: { systeme: 'jira', ref: `GOU21 board ${raw.board} · épopée ${raw.mep_epic} · versions · ${sources ? 'calendrier, courriels, Teams · ' : ''}ledger`, lu_le: now, par: 'adaptateur-jira' }, sprints: out.sprints, meps: out.meps };
+  const doc = { modele: '1', source: { systeme: 'jira', ref: `GOU21 board ${raw.board} · épopée ${raw.mep_epic} · versions · ${sources ? 'courriels (dossier MEP, miseenprod), Teams · ' : ''}${conf.length ? 'confirmations de Franck · ' : ''}ledger`, lu_le: now, par: 'adaptateur-jira' }, sprints: out.sprints, meps: out.meps };
   const writes = [];
   let inchanges = 0;
   ['sprints', 'meps'].forEach((c) => doc[c].forEach((r) => {
@@ -263,7 +272,8 @@ if (require.main === module) {
   const present = ledgerPs.filter((p) => fs.existsSync(p)); const missing = ledgerPs.filter((p) => !fs.existsSync(p));
   if (!present.length) { console.error('refused: no ledger found among ' + ledgerPs.join(', ')); process.exit(2); }
   const ledgers = present.map((p) => parseLedger(fs.readFileSync(p, 'utf8'), p));
-  const { doc, writes, report } = adapt(raw, base, versions, ledgers, sources);
+  const confirmations = fs.existsSync(CONFIRMATIONS) ? JSON.parse(fs.readFileSync(CONFIRMATIONS, 'utf8')) : null;
+  const { doc, writes, report } = adapt(raw, base, versions, ledgers, sources, confirmations);
   missing.forEach((p) => report.signals.push({ kind: 'ledger_absent', row: path.basename(p), texte: `ledger ${path.basename(p)} absent à la lecture (écrit par le briefing quotidien) — semaine lue sans lui` }));
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'doc.json'), JSON.stringify(doc, null, 2));

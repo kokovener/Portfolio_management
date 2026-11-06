@@ -1,7 +1,7 @@
 # Instructions projet — Portefeuille PLQ
 
 Outil de visibilité du portefeuille TI (3 mois glissants, sprints, jalons, dépendances, risques, charge, MEP, run).
-Couche 0 au-dessus de Goutte 2.1. Décisions D1–D22 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v10.md` (motifs dans l'annexe).
+Couche 0 au-dessus de Goutte 2.1. Décisions D1–D22 : `01_Cadrage/Portefeuille_PLQ_Kickoff_v11.md` (motifs dans l'annexe).
 Ne rouvrir une décision qu'en écrivant l'écart et sa cause, puis en proposant.
 
 ## Langue, heure, style
@@ -60,7 +60,7 @@ Racine plafonnée à ces 7 entrées. Nouveau sujet → dans une phase existante.
 |---|---|
 | Goutte 2.1 (lecture) | `C:\Users\fkowalczyk\OneDrive - Les producteurs de lait du Québec\Documents\Claude\Goutte2.1\` |
 | Smartsheet | `Goutte21_Master` 230627583414148 · `Jalons_Entites` 2733930749841284 |
-| Jira | GOU21 seul (sprints, versions MEP, tickets liés aux demandes STG21) ; SDD et PLQ hors connecteur ; MEP : calendrier MEP > Jira > courriel > Teams « 05 - Déploiements » > ledger (Kickoff D18 v8) |
+| Jira | GOU21 seul (sprints, versions MEP, tickets liés aux demandes STG21) ; SDD et PLQ hors connecteur ; MEP : confirmation de Franck > Jira > courriels (dossier « MEP » + adresse-masquee@exemple.test) > Teams « 05 - Déploiements » > ledger ; plus de calendrier (Kickoff D18 v11) |
 | Artefacts | Roadmap de l'architecte (Personne_09, lue telle que livrée) https://claude.ai/artifact/7wZxwDRbqFhdG3SwsZq8eM · Maquettes https://claude.ai/artifact/DSpedLCbm6enVxTz9cS9nd · Expert G1 Gantt S1 https://claude.ai/artifact/E3KrS3o15gWHwuqrvpnETg · Design system https://claude.ai/artifact/SW339XsDhEpz696xhonAC1 |
 | Miro | Dernier board de rétro GOU21, cadre « Actions du sprint suivant » |
 | Teams | Canal du digest : `G1_Agent_Analystes` (groupId `e3fe050d-5ad9-4bd4-a483-cc4e5413ac49`, canal `19:bxs3bIvPMcXuZc0tA9xidnPdhemHhzafgN1S5FuKPV81@thread.tacv2`) |

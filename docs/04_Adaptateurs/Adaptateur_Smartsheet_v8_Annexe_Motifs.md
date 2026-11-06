@@ -72,3 +72,14 @@
 |---|---|
 | Lecture à la demande du 3 nov. : Fin prévue de L9, L11, L13, L16 saisie en texte (« 31/09/29 », jour inexistant, format JJ/MM/AA) ; `eom()` aurait levé une RangeError et bloqué tout l'adaptateur | Une colonne DATE Smartsheet accepte du texte : toute date lue est validée (AAAA-MM-JJ réelle) avant calcul ; une valeur invalide se signale et ne bloque jamais les autres lignes |
 | Option écartée : interpréter « 31/09/29 » comme 2029-09-30 | Le portefeuille ne corrige pas la source (F14) ; le défaut se corrige dans la feuille |
+
+## Procédure v4 (2026-11-05) — lecture du Master et des gates en un appel chacun
+
+| # | Motif | Cause réutilisable |
+|---|---|---|
+| S25 | Passage jeudi 5 nov. 13 h 02 : `get_sheet_summary` du Master sans `columns` rendait 80 lignes sur 99 ; la tâche a relu les 19 restantes par un filtre ID et a proposé « deux passes de 80 lignes » | Le plafond est un budget de ~8 000 jetons, pas un nombre de lignes : réduire `columns` aux champs du brut (12 sur 25) remonte le plafond à 166 lignes ; la 2e passe reste un repli, pas la règle |
+| S26 | Même passage : filtre `Jalon` IN (BA-3, AC-4, QA-2, QA-3) — 7 gates AC-4 manquées, libellé « AC-4 GO Dev formel (KICKOFF ÉQUIPE) » sur les entités récentes | IN compare des libellés exacts, jamais un préfixe ; la feuille porte deux libellés pour AC-4 (56 + 5 au 5 nov.) : lister les libellés exacts et contrôler 4 gates par entité |
+| S27 | Option écartée : filtre AC-4 sur le rôle « Archi » (conseil de la tâche) | Le rôle Archi porte aussi AC-1, AC-2, AC-3 (244 lignes) : il ramène 3 jalons de trop par entité et ne corrige pas la cause (le libellé) |
+| S28 | Relecture à contexte neuf du 5 nov. : le contrôle « 4 gates par entité renvoyée » ne voyait ni l'entité absente (aucun libellé connu) ni le doublon AC-4 (deux libellés → même id `<item>.ac-4`, non dédoublonné par l'adaptateur) | Un contrôle de complétude porte sur la liste attendue (entités du brut précédent), pas sur ce que la requête a rendu |
+| S29 | Même relecture : la clé `derniere_maj` lue par l'adaptateur n'était nommée nulle part (colonne vide au brut de référence) | Une clé lue par un script mais absente de l'exemple doit être nommée dans la procédure, sinon la fraîcheur retombe en silence sur l'historique |
+| S30 | Option écartée : retirer « Notes hebdo » et « Trimestre cible » de `columns` (non lues par l'adaptateur) | Le brut reste une transcription fidèle du brut de référence ; le gain (2 colonnes) est inutile avec 67 lignes de marge |

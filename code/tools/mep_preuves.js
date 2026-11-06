@@ -1,22 +1,26 @@
 #!/usr/bin/env node
 /* MEP evidence from the M365 sources (Kickoff D18 v8, rules of the Statut TI weekly task, Franck 30 Oct. 2026).
  *
- * Priority on status, date and owner: Calendar "Calendar - MEP" (rank 1) > Jira GOU21 (2, handled by adapt_jira.js)
- * > Email (3) > Teams channel "05 - Déploiements" (4) > ledger (5, handled by adapt_jira.js).
+ * Priority on status, date and owner: Franck's confirmation (rank 0, config/mep_confirmations.json, adapt_jira.js)
+ * > Jira GOU21 (2, adapt_jira.js) > Email (3) > Teams channel "05 - Déploiements" (4) > ledger (5, adapt_jira.js).
+ * The calendar "Calendar - MEP" is no longer read (Franck, 5 Nov. 2026: it will never be shared); a "calendar" key
+ * left in an old raw file is ignored.
+ * Emails = everything in the Outlook folder "MEP" plus everything sent to adresse-masquee@exemple.test (5 Nov. 2026: the
+ * query "MEP" missed SDD-3004 and SDD-2974, whose subjects do not contain the word).
  * This module only turns the raw reads into evidence rows; adapt_jira.js merges them with Jira and the ledger.
  *
  * Raw shape (dist/runs/<date>/mep_sources/raw.json, read by Claude through the M365 connector):
- *   { read_at, queries, calendar: {status: "ok"|"not_found", events: [[startIso, subject, body?], ...]},
- *     emails: [[receivedIso, senderName, subject, summary], ...], teams: [[createdIso, author, subject, body], ...] }
- * Evidence row: { source: "calendrier"|"email"|"teams", rang, statut: "completee"|"planifiee"|null, date, responsable,
+ *   { read_at, queries, emails: [[receivedIso, senderName, subject, summary], ...], teams: [[createdIso, author, subject, body], ...] }
+ * Evidence row: { source: "email"|"teams", rang, statut: "completee"|"planifiee"|null, date, responsable,
  *   keys: [ticket keys], versions: [Jira version names], libelle, ref }
  * Pure functions, no I/O except the CLI (prints the evidence for a raw file).
  */
 'use strict';
 const Core = require('../interface/core.js');
 
-const RANG = { calendrier: 1, jira: 2, email: 3, teams: 4, ledger: 5 };
-const RE_KEY = /\b(GOU21|SDD|PLQ)-\d+\b(?!\.\w)/g; // "SDD-1981.sql" is a file name, not a ticket
+const RANG = { confirmation: 0, jira: 2, email: 3, teams: 4, ledger: 5 };
+// ITI = infrastructure tickets (Jira DC), e.g. "MEP ITI-804 Infra LAITWEB et SQL-W-01 terminé avec succès"
+const RE_KEY = /\b(GOU21|SDD|PLQ|ITI)-\d+\b(?!\.\w)/g; // "SDD-1981.sql" is a file name, not a ticket
 const RE_VERSION = /\bOPS_[A-Za-z]+_\d+\b|\bExtraTransporteurV\d+\b|\bCode_Taxe_L\d+\b/g;
 const RE_FW = /^\s*((re|tr|fw|fwd)\s*:\s*)+/i;
 // Proof of deployment, searched in the message's own text (quoted history removed): "MEP complétée", "la MEP est
@@ -75,9 +79,16 @@ function fromEmails(emails, signals) {
     let keys = keysOf(subject).length ? keysOf(subject) : keysOf(summary);
     let versions = versionsOf(subject + ' ' + summary);
     if (!keys.length) { const t = threadOf(subject, iso); keys = t.keys; versions = uniq(versions.concat(t.versions)); }
-    const g1Done = /tremblay/i.test(sender) && /\\MEP\\SDD-\d+/i.test(summary) && /destination/i.test(summary);
+    // G1 rule of the Statut TI task, widened 5 Nov. 2026: Richard Tremblay runs the G1 scripts and infra interventions
+    // himself, so his own first mail (not a reply / forward) carrying a ticket = done on the date of the mail
+    // (SDD-3004 "nous avons ajouté", SDD-2974 "ajusté en prod", SDD-2942, ITI-804; "\MEP\ SDD-3004\" has a space)
+    // Fresh review 5 Nov.: exact sender name (Tremblay is a common name), no auto-reply, and not when his own text
+    // announces, asks or reports a failure (then the usual announce / done rules apply)
+    const RE_NOT_DONE = /pr[ée]vue?s?\b|planifi|demain|ce soir|[àa] venir|[ée]chec|rollback|annul|pouvez-vous|peux-tu|\?/i;
+    const operator = /^richard tremblay$/i.test(sender.trim()) && !RE_FW.test(subject) && !/^\s*(r[ée]ponse automatique|automatic reply|absent\b|out of office)/i.test(subject)
+      && (keysOf(subject).length || keysOf(summary).length) && !RE_NOT_DONE.test(ownText(summary));
+    const g1Done = operator || (/tremblay/i.test(sender) && /\\MEP\\\s*SDD-\d+/i.test(summary) && /destination/i.test(summary));
     let statut = null; let date = null;
-    // G1 rule of the Statut TI task: Richard Tremblay's deployment mail = done on the date of the mail
     if (!serviceDesk && g1Done) { statut = 'completee'; date = local(iso).date; }
     else if (!serviceDesk && RE_DONE.test(ownText(summary))) { statut = 'completee'; date = closingDate(iso); }
     else if (serviceDesk) {
@@ -109,19 +120,13 @@ function fromTeams(msgs, signals) {
   return out;
 }
 
-function fromCalendar(cal, today, signals) {
-  if (!cal || cal.status !== 'ok') {
-    signals.push({ kind: 'calendrier_mep_inaccessible', row: 'Calendar - MEP', texte: `Calendrier « Calendar - MEP » non accessible (${cal ? cal.status : 'non lu'}) — dates prises dans Jira, les courriels, Teams, puis le ledger` });
-    return [];
-  }
-  return (cal.events || []).map(([iso, subject, body]) => {
-    // The connector gives a wall-clock start in the mailbox time zone: without offset, its date is the Québec date
-    const text = `${subject} ${body || ''}`; const date = /[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? local(iso).date : iso.slice(0, 10);
-    return { source: 'calendrier', rang: RANG.calendrier, statut: date >= today ? 'planifiee' : null, date, responsable: null, keys: keysOf(text), versions: versionsOf(text), libelle: null, ref: `calendrier MEP ${date} « ${subject.slice(0, 60)} »` };
-  }).filter((e) => {
-    if (e.keys.length || e.versions.length) return true;
-    signals.push({ kind: 'mep_preuve_orpheline', row: e.ref, texte: `${e.ref} : événement sans billet ni version reconnaissable — non écrit` }); return false;
-  });
+// Franck's confirmations (config/mep_confirmations.json): { "<TICKET>": { statut, date?, le, motif } }.
+// A confirmation is the highest evidence; without its own date it keeps the date the other sources give.
+function fromConfirmations(conf) {
+  return Object.entries(conf || {}).filter(([k]) => !k.startsWith('_')).map(([key, c]) => ({
+    source: 'confirmation', rang: RANG.confirmation, statut: c.statut, date: c.date || null, responsable: null, keys: [key], versions: [], libelle: null,
+    ref: `confirmé par Franck le ${c.le}${c.motif ? ' (' + c.motif + ')' : ''}`,
+  }));
 }
 
 function preuves(raw, now, windowDays) {
@@ -132,7 +137,7 @@ function preuves(raw, now, windowDays) {
     const oldest = emails.map(([iso]) => local(iso).date).sort()[0]; const start = Core.addDays(today, -(windowDays || 30));
     if (Core.daysBetween(start, oldest) > 3) signals.push({ kind: 'courriels_partiels', row: 'emails', texte: `Courriels MEP lus du ${oldest} seulement (fenêtre depuis le ${start}) : les MEP d'avant restent au ledger seul` });
   }
-  const list = fromCalendar(raw.calendar, today, signals).concat(fromEmails(raw.emails || [], signals), fromTeams(raw.teams || [], signals));
+  const list = fromEmails(raw.emails || [], signals).concat(fromTeams(raw.teams || [], signals));
   return { preuves: list, signals };
 }
 
@@ -142,4 +147,4 @@ if (require.main === module) {
   r.preuves.forEach((p) => console.log([p.source, p.statut, p.date, p.keys.join(',') || '-', p.versions.join(',') || '-', p.responsable || '-', p.libelle || ''].join(' | ')));
   r.signals.forEach((s) => console.log('SIGNAL ' + s.kind + ' ' + s.texte));
 }
-module.exports = { preuves, RANG, closingDate, frenchDate, labelOf };
+module.exports = { preuves, fromConfirmations, RANG, closingDate, frenchDate, labelOf };

@@ -184,6 +184,24 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
 .phead{position:sticky;top:var(--hdr-h,64px);z-index:5;background:var(--bg);align-items:center;padding:6px 0;margin:-6px 0;border-bottom:1px solid var(--line)}
 .phead h1{font-size:22px}
 .psrc{margin-top:-12px}
+/* S1 (Franck 5 Nov.): search box in the sticky header — projects, milestones, Gantt tasks */
+.srch{position:relative;flex:1 1 240px;max-width:400px;min-width:200px}
+.srch input{width:100%;font-size:13px;padding:8px 30px 8px 32px;border:1px solid var(--idle);border-radius:999px;background:var(--card);color:var(--ink)}
+.srch .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none;font-size:13px}
+.srch kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:600 11px Montserrat,sans-serif;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 5px;pointer-events:none}
+.srch-res{position:absolute;left:0;top:calc(100% + 6px);width:min(560px,92vw);max-height:70vh;overflow-y:auto;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.18);padding:6px 0;font-size:13px}
+.srch-res[hidden]{display:none}
+.srch-g{padding:8px 12px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.srch-i{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:6px 12px;cursor:pointer}
+.srch-i:hover,.srch-i.on{background:var(--mist)}
+.srch-i .rf{font-size:11px;font-weight:700;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srch-i .nm{font-weight:600;color:var(--ink);overflow-wrap:anywhere}.srch-i small{display:block;color:var(--mute);font-size:11px;font-weight:500}
+.srch-i .dt{font-size:11px;color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.srch-res mark{background:var(--gold-t);color:inherit;border-radius:2px;padding:0 1px}
+.srch-help{padding:8px 12px;font-size:11px;color:var(--mute);border-top:1px solid var(--line2);margin-top:4px}.srch-help:first-child{border-top:none;margin-top:0}
+.srch-more{padding:2px 12px 6px 82px;font-size:11px;color:var(--mute)}
+@keyframes srchflash{0%,55%{background:var(--gold-t);box-shadow:inset 0 0 0 2px var(--gold)}100%{background:transparent;box-shadow:none}}
+.flash,.flash>.gtl{animation:srchflash 2.6s ease-out}
 @media (max-width:1100px){.main2{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){.hdr{position:static}}
 @media (max-width:760px){.tiles,.tiles.t3c{grid-template-columns:repeat(2,minmax(0,1fr))}.two,.f3{grid-template-columns:minmax(0,1fr)}h1{font-size:22px}.kv{grid-template-columns:100px 1fr}}
@@ -331,6 +349,75 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
   const ACC = { 'j ouvrés': 'j ouvré', 'jours ouvrés': 'jour ouvré', 'tâches': 'tâche', 'sous-tâches': 'sous-tâche', 'bloqués': 'bloqué', 'tickets': 'ticket', 'jours-personne': 'jour-personne' };
   function accord(h) { return h.replace(/(^|[^\d,.])([01]) (sous-tâches|tâches|j ouvrés|jours ouvrés|bloqués|tickets|jours-personne)(?![\wÀ-ÿ-])/g, (m, a, n, w) => `${a}${n} ${ACC[w]}`); }
   // ---------- header ----------
+  // ---------- S1 search (Franck 5 Nov.): projects, milestones and Gantt tasks, from the header, on every view ----------
+  // Reads S.base only (the visitor view already drops hidden items); accent- and case-insensitive; every word must match.
+  const SRCH_SCOPE = 'Cherche dans : noms des projets et programmes · jalons (nom, réf.) · tâches des Gantt (réf., nom, groupe, onglet). Sans accents ni majuscules ; plusieurs mots = tous requis.';
+  const SRCH_MAX = 8;
+  const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  function srchBox() {
+    return `<div class="srch" role="search"><span class="ico" aria-hidden="true">⌕</span>
+      <input id="srch" type="search" autocomplete="off" spellcheck="false" value="${esc(S.q || '')}" placeholder="Rechercher projet, jalon, tâche…" aria-label="Rechercher un projet, un jalon ou une tâche de Gantt" title="${esc(SRCH_SCOPE + '\nRaccourci : /')}" aria-controls="srch-res" aria-autocomplete="list">
+      ${S.q ? '' : '<kbd title="Raccourci clavier">/</kbd>'}<div class="srch-res" id="srch-res" role="listbox" hidden></div></div>`;
+  }
+  function srchIndex() {
+    const out = [];
+    S.base.items.forEach((i) => out.push({ type: 'item', ref: '', nom: i.nom, ctx: [i.parent ? itemNom(i.parent) : '', (ETAPES.find((e) => e[0] === i.etape) || [, i.etape])[1]].filter(Boolean).join(' · '), date: '', t: { item: i.id } }));
+    S.base.jalons.filter((j) => S.ix.items[j.item]).forEach((j) => { const ref = String(j.id).startsWith('feed.') ? String(j.id).split('.').pop().toUpperCase() : '';
+      out.push({ type: 'jalon', ref, nom: j.nom, ctx: itemNom(j.item), date: j.date ? C.fmtDate(j.date, true) : '', sort: j.date || '', t: { item: j.item, jalon: j.id } }); });
+    (S.base.gantts || []).filter((g) => S.ix.items[g.item]).forEach((g) => (g.onglets || []).forEach((o, k) => (o.groupes || []).forEach((gr, gi) => (gr.taches || []).forEach((t, ti) =>
+      out.push({ type: 'gantt', ref: t.ref || '', nom: t.nom, extra: gr.nom + ' ' + o.nom, ctx: [itemNom(g.item), (g.onglets.length > 1 ? o.nom : ''), gr.nom].filter(Boolean).join(' · '),
+        date: t.debut ? (t.debut === t.fin || !t.fin ? C.fmtDate(t.debut, true) : `${C.fmtDate(t.debut)} → ${C.fmtDate(t.fin, true)}`) : '', sort: t.debut || '', t: { item: g.item, onglet: k, gt: gi + '.' + ti } })))));
+    out.forEach((r) => { r.key = fold([r.ref, r.nom, r.extra || ''].join(' ')); });
+    return out;
+  }
+  function srchFind(q) {
+    const words = fold(q).split(/\s+/).filter(Boolean); const qf = words.join(' ');
+    if (qf.length < 2) return null;
+    const rank = (r) => { const rf = fold(r.ref); const nm = fold(r.nom);
+      return rf && rf === qf ? 0 : rf && rf.startsWith(qf) ? 1 : nm.startsWith(qf) ? 2 : nm.includes(qf) ? 3 : 4; };
+    const hits = srchIndex().filter((r) => words.every((w) => r.key.includes(w))).map((r) => Object.assign(r, { rank: rank(r) }));
+    hits.sort((a, b) => a.rank - b.rank || String(a.sort || '').localeCompare(String(b.sort || '')) || a.nom.localeCompare(b.nom));
+    return { words, groups: [['item', 'Projets'], ['jalon', 'Jalons'], ['gantt', 'Tâches de Gantt']].map(([k, l]) => { const all = hits.filter((h) => h.type === k); return { k, l, n: all.length, list: all.slice(0, SRCH_MAX) }; }).filter((g) => g.n) };
+  }
+  // Highlight the matched words on the original text (accents kept): fold char by char, map back to positions
+  function srchMark(s, words) {
+    s = String(s || ''); let f = ''; const map = [];
+    for (let i = 0; i < s.length; i++) { const c = fold(s[i]); for (let k = 0; k < c.length; k++) { f += c[k]; map.push(i); } }
+    const on = new Array(s.length).fill(false);
+    words.forEach((w) => { let p = f.indexOf(w); while (p >= 0 && w) { for (let k = p; k < p + w.length; k++) on[map[k]] = true; p = f.indexOf(w, p + w.length); } });
+    let h = ''; let open = false;
+    for (let i = 0; i < s.length; i++) { if (on[i] !== open) { h += on[i] ? '<mark>' : '</mark>'; open = on[i]; } h += esc(s[i]); }
+    return h + (open ? '</mark>' : '');
+  }
+  function srchShow() {
+    const box = document.getElementById('srch-res'); if (!box) return;
+    const res = srchFind(S.q || ''); S.qHits = [];
+    const help = `<div class="srch-help">${esc(SRCH_SCOPE)}</div>`;
+    if (!res) { box.innerHTML = `<div class="srch-help">Tape au moins 2 caractères (ex. « coordonnées », « SC-15 »).</div>${help}`; box.hidden = false; return; }
+    if (!res.groups.length) { box.innerHTML = `<div class="srch-help">Aucun résultat pour « ${esc(S.q)} ».</div>${help}`; box.hidden = false; return; }
+    box.innerHTML = res.groups.map((g) => `<div class="srch-g">${g.l} · ${g.n}</div>` + g.list.map((r) => { const ix = S.qHits.push(r) - 1;
+      return `<div class="srch-i${ix === (S.qSel || 0) ? ' on' : ''}" role="option" id="srch-o${ix}" aria-selected="${ix === (S.qSel || 0)}" data-act="srch-go" data-ix="${ix}">
+        <span class="rf">${srchMark(r.ref, res.words)}</span><span class="nm">${srchMark(r.nom, res.words)}<small>${esc(r.ctx)}</small></span><span class="dt">${esc(r.date)}</span></div>`; }).join('')
+      + (g.n > g.list.length ? `<div class="srch-more">+ ${g.n - g.list.length} autres : préciser la recherche</div>` : '')).join('') + help;
+    box.hidden = false;
+    const inp = document.getElementById('srch'); if (inp) inp.setAttribute('aria-activedescendant', 'srch-o' + (S.qSel || 0));
+  }
+  function srchHide() { const box = document.getElementById('srch-res'); if (box) box.hidden = true; }
+  // Open the result: the item's fiche, the right Gantt tab, the row scrolled into view and flashed
+  function srchGo(r) {
+    if (!r) return; const t = r.t;
+    S.view = 'projet'; S.itemId = t.item; S.creating = false; S.modal = false; S.gerer = { tab: 'item', id: null }; S.errors = []; S.qFocus = false;
+    if (t.onglet != null) S.ganttTab[t.item] = t.onglet;
+    if (t.jalon) { S.toggled.delete('sec:jalons'); saveToggled(); }
+    pushNav(); render(); srchHide();
+    const el = t.jalon ? [...document.querySelectorAll('[data-jalon]')].find((x) => x.dataset.jalon === t.jalon) : t.gt ? document.querySelector(`#gantt .gtr[data-gt="${t.gt}"]`) : null;
+    if (!el) { window.scrollTo(0, 0); return; }
+    if (el.scrollIntoView) el.scrollIntoView({ block: 'center' });
+    const w = el.closest('.gwrap'); const b = el.querySelector('.gb,.gms'); const tl = el.querySelector('.gtl');
+    if (w && b) w.scrollLeft = Math.max(0, b.offsetLeft - (tl ? tl.offsetWidth : 0) - 40);
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  }
+
   function header() {
     const inst = S.base.instantanes.slice().sort((a, b) => b.pris_le.localeCompare(a.pris_le))[0];
     // U06: one freshness line — latest source read, last Monday snapshot, and a red tag when a block's source is stale
@@ -346,6 +433,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       <div style="display:flex;flex-direction:column;gap:0"><span class="eyebrow">PLQ · TI</span>
       <h1 class="hdr-t">Portefeuille PLQ <span class="beta" title="Version bêta : données et affichage encore en rodage">(Bêta)</span></h1></div>
       <div class="tabs" role="tablist">${nav}</div>
+      ${srchBox()}
       <div class="row"><span class="muted" title="${esc('Dernière lecture d\u2019une source' + instTip + ' · page ouverte ' + C.fmtTs(S.loadedAt))}">${esc(fresh)}${stale}</span>
       ${S.ownerEdit ? `<button class="btn ghost" type="button" data-act="visitor" aria-pressed="${S.visitor}" title="Voir la page comme l\u2019équipe : sans « Modifier », sans items masqués">${S.visitor ? 'Revenir en vue propriétaire' : 'Vue visiteur'}</button>` : ''}
       ${S.canEdit ? '<button class="btn" type="button" data-act="new-item">+ Ajouter un projet</button>' : `<span class="tag">${S.visitor ? 'vue visiteur' : 'lecture seule'}</span>`}</div></header>
@@ -435,19 +523,22 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       <span class="tx"><a href="#" data-act="open-item" data-id="${esc(i.id)}" title="${esc(i.nom)}">${i.visible === false ? '<span class="tag warn" title="Masqué pour les visiteurs et le digest">masqué</span> ' : ''}${esc(i.nom)}</a><small title="${esc(bits)}">${esc(bits)}</small></span></div>
       <div class="trk">${ferBands()}${barHtml(i)}${msHtml(rowJalons(i))}<div class="now-line" style="left:${nowL}%"></div></div></div>`;
   }
-  // R45: collective absences (holidays, closures; one record per day) merged into runs of consecutive working days with
-  // the same label. A one-day run = thin vertical band across the whole grid (hover = label); longer runs keep a bar.
+  // R45: collective absences (holidays, closures; one record per day) merged into runs of consecutive working days.
+  // Fix 6 Nov. (Franck): runs merge whatever the label (24 Dec closure + 25 Dec Noël + 28–31 Dec closure + 1 Jan = one
+  // run), and EVERY run gets a vertical band across the grid — before, multi-day runs only had a chip in the sprint row.
   function congesRuns() {
     const h0 = hStart(); const h1 = C.addDays(h0, hDays());
     const days = S.base.absences.filter((a) => a.personne === null && a.fin >= h0 && a.debut <= h1).sort((a, b) => a.debut.localeCompare(b.debut));
     const runs = [];
-    days.forEach((a) => { const r = runs[runs.length - 1]; const lab = a.libelle || 'congés';
-      if (r && r.libelle === lab && C.workingDaysBetween(r.fin, a.debut) <= 1) { r.fin = a.fin > r.fin ? a.fin : r.fin; r.jours += C.weekdaysInRange(a.debut, a.fin); }
-      else runs.push({ debut: a.debut, fin: a.fin, libelle: lab, jours: C.weekdaysInRange(a.debut, a.fin), src: a.source }); });
-    runs.forEach((r) => { const s = r.src || {}; r.title = `${r.libelle} · ${C.fmtDate(r.debut)}${r.fin !== r.debut ? ' → ' + C.fmtDate(r.fin) : ''} · ${s.systeme === 'calcul' ? 'férié' : s.systeme === 'outlook' ? 'fermeture (calendrier de Franck)' : SYS_FR[s.systeme] || ''}`; });
+    const kind = (a) => ((a.source || {}).systeme === 'calcul' ? 'férié' : (a.source || {}).systeme === 'outlook' ? 'fermeture' : SYS_FR[(a.source || {}).systeme] || '');
+    days.forEach((a) => { const r = runs[runs.length - 1]; const lab = a.libelle || 'congés'; const d = `${C.fmtDate(a.debut)} ${lab} (${kind(a)})`;
+      if (r && C.workingDaysBetween(r.fin, a.debut) <= 1) { r.fin = a.fin > r.fin ? a.fin : r.fin; r.jours += C.weekdaysInRange(a.debut, a.fin); if (!r.labels.includes(lab)) r.labels.push(lab); r.detail.push(d); }
+      else runs.push({ debut: a.debut, fin: a.fin, labels: [lab], detail: [d], jours: C.weekdaysInRange(a.debut, a.fin) }); });
+    runs.forEach((r) => { r.libelle = r.labels.join(' · ');
+      r.title = `${C.fmtDate(r.debut)}${r.fin !== r.debut ? ' → ' + C.fmtDate(r.fin) : ''} · ${r.jours} j ouvré${r.jours > 1 ? 's' : ''} non travaillé${r.jours > 1 ? 's' : ''}\n${r.detail.join('\n')}`; });
     return runs;
   }
-  function ferBands() { return congesRuns().filter((r) => r.jours <= 1).map((r) => `<div class="fer" style="left:${pos(r.debut)}%;width:${pos(C.addDays(r.fin, 1)) - pos(r.debut)}%" title="${esc(r.title)}"></div>`).join(''); }
+  function ferBands() { return congesRuns().map((r) => `<div class="fer" style="left:${pos(r.debut)}%;width:${pos(C.addDays(r.fin, 1)) - pos(r.debut)}%" title="${esc(r.title)}"></div>`).join(''); }
   function timeline() {
     const h0 = hStart(); const items = S.base.items.filter(visible);
     const weeks = []; for (let k = 0; k < hDays() / 7; k++) weeks.push(C.addDays(h0, 7 * k));
@@ -671,7 +762,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
         ${livraisons(it)}
         ${js.length ? `<div class="card">${secHead('jalons', `Jalons · ${js.length} (dont ${js.filter((j) => j.statut === 'fait').length} faits)`, `<span class="muted">progression ${p ? C.fmtNum(p.valeur) + ' % ' + (p.origine === 'source' ? '(lue à la source)' : '= faits / total') : '—'}</span>`)}
           ${isOpen('sec:jalons') ? js.map((j) => { const st = STATUT_J[j.statut] || [j.statut, '']; const rc = C.recul(j); const late = j.statut !== 'fait' && j.date < S.today;
-            return `<div class="lrow jal"><div class="dot ${j.statut}"></div><div>${esc(j.nom)} ${srcTag(j)}${editBtn('jalons', j)}</div><span>${j.precision === 'mois' ? 'fin ' : ''}${C.fmtDate(j.date, true)}${rc ? ` <small class="muted">(init. ${C.fmtDate(j.date_initiale, true)}, +${rc} j ouvrés)</small>` : ''}</span><span class="tag ${late ? 'bad' : st[1]}">${late ? 'dépassé' : st[0]}${j.fait_le && j.fait_le < j.date ? ' · ' + C.workingDaysBetween(j.fait_le, j.date) + ' j ouvrés d\'avance' : ''}${j.statut === 'fait' && C.retardGate(j, S.today) ? ' · ' + C.retardGate(j, S.today) + ' j ouvrés de retard' : ''}</span></div>`; }).join('') : ''}
+            return `<div class="lrow jal" data-jalon="${esc(j.id)}"><div class="dot ${j.statut}"></div><div>${esc(j.nom)} ${srcTag(j)}${editBtn('jalons', j)}</div><span>${j.precision === 'mois' ? 'fin ' : ''}${C.fmtDate(j.date, true)}${rc ? ` <small class="muted">(init. ${C.fmtDate(j.date_initiale, true)}, +${rc} j ouvrés)</small>` : ''}</span><span class="tag ${late ? 'bad' : st[1]}">${late ? 'dépassé' : st[0]}${j.fait_le && j.fait_le < j.date ? ' · ' + C.workingDaysBetween(j.fait_le, j.date) + ' j ouvrés d\'avance' : ''}${j.statut === 'fait' && C.retardGate(j, S.today) ? ' · ' + C.retardGate(j, S.today) + ' j ouvrés de retard' : ''}</span></div>`; }).join('') : ''}
         </div>` : ''}
         ${ms.length ? `<div class="card">${secHead('meps', `MEP · ${ms.length}`, '')}${isOpen('sec:meps') ? ms.slice(0, 12).map((m) => `<div class="lrow" style="grid-template-columns:110px minmax(0,1fr) auto"><span>${C.fmtDate(m.date, true)}</span><span style="min-width:0">${esc(m.systeme)} · ${esc(m.libelle || '')} <small class="muted">${esc(m.ticket || 'sans billet')}</small> ${srcTag(m)}${editBtn('meps', m)}</span><span class="tag ${mepPassee(m) ? 'bad' : STATUT_MEP[m.statut][1]}">${mepPassee(m) ? 'non confirmée' : STATUT_MEP[m.statut][0]}</span></div>`).join('') + (ms.length > 12 ? `<p class="muted" style="margin:6px 0 0">${ms.length - 12} plus anciennes : grille du portefeuille.</p>` : '') : ''}</div>` : ''}
         ${videsCard(js, ms, risques, att)}
@@ -777,7 +868,7 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
       : `<span class="ref">${esc(t.ref || '')}</span><span class="nm">${esc(t.nom)}</span>`;
     const rows = o.groupes.map((gr, gi) => { const col = GCOL[gi % GCOL.length];
       return (g.calcule && (o.groupes.length === 1 || gr.taches.length === 1) ? '' : `<div class="gtr g"><div class="gtl"><span class="gsw" style="background:${col}"></span>${esc(gr.nom)}</div><div class="gtk" style="${grid}">${now}</div></div>`)
-        + gr.taches.map((t) => `<div class="gtr"><div class="gtl" title="${esc(tip(t))}">${g.calcule && gr.taches.length === 1 && o.groupes.length > 1 ? `<span class="gsw" style="background:${col}"></span>` : ''}${label(t)}</div><div class="gtk" style="${grid}">${now}${bar(t, col)}</div></div>`).join(''); }).join('');
+        + gr.taches.map((t, ti) => `<div class="gtr"${g.calcule ? '' : ` data-gt="${gi}.${ti}"`}><div class="gtl" title="${esc(tip(t))}">${g.calcule && gr.taches.length === 1 && o.groupes.length > 1 ? `<span class="gsw" style="background:${col}"></span>` : ''}${label(t)}</div><div class="gtk" style="${grid}">${now}${bar(t, col)}</div></div>`).join(''); }).join('');
     const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
     const weeks = mois ? Array.from({ length: nW }, (_, i) => { const m = (Number(d0.slice(5, 7)) - 1 + i) % 12; const y = Number(d0.slice(0, 4)) + Math.floor((Number(d0.slice(5, 7)) - 1 + i) / 12);
       return `<span>${MOIS[m]}${i === 0 || m === 0 ? ' ' + y : ''}</span>`; }).join('') : Array.from({ length: nW }, (_, i) => { const w = C.addDays(d0, 7 * i); return `<span>${C.fmtDate(w)}${i === 0 || w.slice(5, 7) === '01' && C.addDays(w, -7).slice(0, 4) !== w.slice(0, 4) ? ' ' + w.slice(0, 4) : ''}</span>`; }).join('');
@@ -1143,7 +1234,31 @@ details.diag{font-size:11px;color:var(--mute)}details.diag pre{white-space:pre-w
     const hd = document.querySelector('.hdr'); if (hd) document.documentElement.style.setProperty('--hdr-h', hd.offsetHeight + 'px');
     // R53: a Gantt opens on today (today line a quarter from the left), the frozen title column stays in view
     document.querySelectorAll('.gwrap').forEach((w) => { const n = w.querySelector('.gnow'); const tl = w.querySelector('.gtl'); if (n && tl) w.scrollLeft = Math.max(0, n.offsetLeft - (w.clientWidth - tl.offsetWidth) / 4); });
+    // S1: a re-render while typing keeps the search box focused, caret at the end, results open
+    if (S.qFocus) { const i = $('#srch'); if (i) { i.focus(); const L = i.value.length; try { i.setSelectionRange(L, L); } catch (err) { /* ignore */ } srchShow(); } }
   }
+  // ---------- S1 search events: typing never re-renders the page, only the result list ----------
+  document.addEventListener('input', (e) => { if (e.target.id !== 'srch') return; S.q = e.target.value; S.qSel = 0;
+    const k = e.target.parentNode.querySelector('kbd'); if (k) k.remove(); srchShow(); });
+  document.addEventListener('focusin', (e) => { if (e.target.id === 'srch') { S.qFocus = true; srchShow(); } });
+  document.addEventListener('focusout', (e) => { if (e.target.id === 'srch') S.qFocus = false; });
+  // keep focus in the box while a result is clicked
+  document.addEventListener('mousedown', (e) => { if (e.target.closest && e.target.closest('.srch-res')) e.preventDefault(); });
+  document.addEventListener('click', (e) => {
+    const o = e.target.closest && e.target.closest('[data-act="srch-go"]'); if (o) { e.preventDefault(); e.stopImmediatePropagation(); srchGo((S.qHits || [])[+o.dataset.ix]); return; }
+    if (!(e.target.closest && e.target.closest('.srch'))) srchHide();
+  }, true);
+  document.addEventListener('keydown', (e) => {
+    const inBox = e.target.id === 'srch';
+    if (!inBox) { // « / » focuses the box from anywhere but a field or the modal
+      if (e.key === '/' && !S.modal && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || '') && !e.target.isContentEditable) { const i = $('#srch'); if (i) { e.preventDefault(); i.focus(); } }
+      return;
+    }
+    const n = (S.qHits || []).length;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!n) return; S.qSel = ((S.qSel || 0) + (e.key === 'ArrowDown' ? 1 : n - 1)) % n; srchShow(); const on = document.getElementById('srch-o' + S.qSel); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest' }); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (n) { const r = S.qHits[S.qSel || 0]; e.target.blur(); srchGo(r); } }
+    else if (e.key === 'Escape') { e.preventDefault(); if (S.q) { S.q = ''; e.target.value = ''; S.qSel = 0; srchShow(); } else { srchHide(); e.target.blur(); } }
+  });
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-act]'); if (!t || t.tagName === 'SELECT') return;
     const a = t.dataset.act;
